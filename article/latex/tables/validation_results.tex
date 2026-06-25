@@ -1,0 +1,38 @@
+\begin{table}[H]
+\centering
+\caption{Seeded Validation Summary}
+\label{tab:validation-summary}
+\footnotesize
+\begin{tabular}{@{}lr@{}}
+\toprule
+Metric & Value \\
+\midrule
+Generation requests assessed & 1,000 \\
+Pass outcomes & 800 (80.0\%) \\
+Review outcomes & 120 (12.0\%) \\
+Fail outcomes & 80 (8.0\%) \\
+Selected evidence bundles & 88 \\
+Automated tests passed & 14 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Captured Exceptions and Remediation Artifacts}
+\label{tab:exception-types}
+\scriptsize
+\begin{tabularx}{\columnwidth}{@{}p{0.42\columnwidth} r X@{}}
+\toprule
+Control category & Count & Primary artifact \\
+\midrule
+Consent existence / validity & 31 & risk and remediation item \\
+Consent scope & 14 & risk item \\
+Model filing metadata & 9 & assessment result \\
+Visible AIGC label & 66 & review/fail finding \\
+Invisible / metadata label & 11 & remediation item \\
+Content safety & 67 & review/block finding \\
+Complaint handling & 15 & remediation item \\
+\bottomrule
+\end{tabularx}
+\end{table}

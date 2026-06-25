@@ -1,0 +1,23 @@
+\begin{table}[H]
+\centering
+\caption{Machine-Readable Evidence Profile}
+\label{tab:evidence-profile}
+\scriptsize
+\begin{tabularx}{\columnwidth}{@{}p{0.34\columnwidth} X p{0.26\columnwidth}@{}}
+\toprule
+Property & Purpose & Example \\
+\midrule
+\texttt{control\_id} & Stable control key & \texttt{LABEL\_CHECK} \\
+\texttt{regulation\_source} & Source motivating the control & Labeling measures \\
+\texttt{lifecycle\_phase} & Service phase & Publication \\
+\texttt{target\_type} & Artifact evaluated & Output \\
+\texttt{evidence\_type} & Expected record & Labeling check \\
+\texttt{evaluation\_method} & Check logic & Metadata present \\
+\texttt{enforcement\_mode} & Operational response & Review/block \\
+\texttt{risk\_level} & Risk severity & Medium \\
+\texttt{threshold} & Measurable rule & 72-hour SLA \\
+\texttt{responsible\_role} & Operational owner & Compliance ops \\
+\texttt{remediation\_action} & Follow-up action & Re-run labeling \\
+\bottomrule
+\end{tabularx}
+\end{table}
