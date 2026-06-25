@@ -1,0 +1,72 @@
+{
+  "metadata": {
+    "project": "china-ai-compliance-evidence",
+    "version": "0.2",
+    "generated_at": "2026-06-25T03:31:04+00:00",
+    "data_classification": "synthetic_operational_logs",
+    "contains_real_personal_data": false,
+    "contains_real_face_or_voice_data": false,
+    "contains_real_contract_data": false,
+    "contains_real_company_data": false,
+    "jurisdiction": "CN",
+    "prototype_notice": "Synthetic policy controls for demo evidence only; not legal advice."
+  },
+  "items": [
+    {
+      "remediation_id": "REM-001",
+      "risk_id": "RISK-001",
+      "control_id": "AIGC_INVISIBLE_LABEL",
+      "action": "Re-run metadata labeling pipeline and prevent publication until present.",
+      "priority": "high",
+      "status": "open"
+    },
+    {
+      "remediation_id": "REM-002",
+      "risk_id": "RISK-002",
+      "control_id": "AIGC_VISIBLE_LABEL",
+      "action": "Confirm visible AIGC label placement before release.",
+      "priority": "medium",
+      "status": "open"
+    },
+    {
+      "remediation_id": "REM-003",
+      "risk_id": "RISK-003",
+      "control_id": "COMPLAINT_HANDLING",
+      "action": "Escalate overdue complaints and record resolution evidence.",
+      "priority": "high",
+      "status": "open"
+    },
+    {
+      "remediation_id": "REM-004",
+      "risk_id": "RISK-004",
+      "control_id": "CONSENT_EXISTS",
+      "action": "Refresh consent status and block use of expired or revoked actor assets.",
+      "priority": "high",
+      "status": "open"
+    },
+    {
+      "remediation_id": "REM-005",
+      "risk_id": "RISK-005",
+      "control_id": "CONSENT_SCOPE_USAGE",
+      "action": "Route commercial usage outside consent scope to contract review.",
+      "priority": "high",
+      "status": "open"
+    },
+    {
+      "remediation_id": "REM-006",
+      "risk_id": "RISK-006",
+      "control_id": "CONTENT_SAFETY",
+      "action": "Block high-risk outputs or route them to manual review.",
+      "priority": "high",
+      "status": "open"
+    },
+    {
+      "remediation_id": "REM-007",
+      "risk_id": "RISK-007",
+      "control_id": "MODEL_FILING",
+      "action": "Suspend affected model until filing metadata is registered.",
+      "priority": "high",
+      "status": "open"
+    }
+  ]
+}

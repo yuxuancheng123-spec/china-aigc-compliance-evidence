@@ -1,0 +1,78 @@
+# Synthetic AIGC Compliance Evidence Report
+
+## Executive Summary
+
+This v0.2 prototype generated a synthetic compliance assessment for a China-based AIGC actor / digital human advertising video platform. The run assessed {{ bundle.summary.total_requests }} generation requests using synthetic operational logs only.
+
+| Outcome | Count |
+| --- | ---: |
+| Pass | {{ bundle.summary.pass }} |
+| Review | {{ bundle.summary.review }} |
+| Fail | {{ bundle.summary.fail }} |
+
+Data classification: `{{ bundle.metadata.data_classification }}`
+
+No real personal data, face data, voice data, contracts, or company data are included.
+
+## Dataset Summary
+
+| Source | Count |
+| --- | ---: |
+{% for key, value in bundle.source_inventory.items() -%}
+| {{ key }} | {{ value }} |
+{% endfor %}
+
+## Control Catalog Summary
+
+| Control | Severity | Description |
+| --- | --- | --- |
+{% for control in bundle.control_catalog -%}
+| {{ control.id }} | {{ control.severity }} | {{ control.description }} |
+{% endfor %}
+
+## Validation Results
+
+| Control | Severity | Pass | Review | Fail | Total |
+| --- | --- | ---: | ---: | ---: | ---: |
+{% for row in artifacts.control_summary -%}
+| {{ row.control_id }} | {{ row.severity }} | {{ row.pass }} | {{ row.review }} | {{ row.fail }} | {{ row.total }} |
+{% endfor %}
+
+## Key Failed Controls
+
+{% set failed = artifacts.control_summary | selectattr("fail", "gt", 0) | list -%}
+{% if failed -%}
+| Control | Failed Items | Why It Matters |
+| --- | ---: | --- |
+{% for row in failed -%}
+| {{ row.control_id }} | {{ row.fail }} | {{ row.description }} |
+{% endfor %}
+{% else -%}
+No failed controls were identified in this synthetic run.
+{% endif %}
+
+## Risk Register Summary
+
+| Risk | Control | Impact | Review | Fail | Owner |
+| --- | --- | --- | ---: | ---: | --- |
+{% for risk in artifacts.risk_register.risks -%}
+| {{ risk.risk_id }} | {{ risk.control_id }} | {{ risk.impact }} | {{ risk.open_review_items }} | {{ risk.open_fail_items }} | {{ risk.owner }} |
+{% endfor %}
+
+## Remediation Plan
+
+| Item | Control | Priority | Action |
+| --- | --- | --- | --- |
+{% for item in artifacts.remediation_items["items"] -%}
+| {{ item.remediation_id }} | {{ item.control_id }} | {{ item.priority }} | {{ item.action }} |
+{% endfor %}
+
+## Per-Request Evidence Bundles
+
+Selected per-request bundles are generated for 10 pass, 10 review, 10 fail examples, plus all complaint-related requests. Each selected bundle joins actor, consent, model, generation request, output, labeling check, content safety check, and complaint records when available.
+
+Generated bundle count: {{ artifacts.request_bundles | length }}
+
+## Limitations and Legal Disclaimer
+
+This prototype is a technical demonstration and is not legal advice. The controls are simplified and synthetic. Production use would require legal review, complete policy mapping, verified data lineage, real control ownership, secure evidence retention, and human governance procedures. This project intentionally excludes real personal data, real face data, real voice data, real contracts, and real company data.

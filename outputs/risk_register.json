@@ -1,0 +1,86 @@
+{
+  "metadata": {
+    "project": "china-ai-compliance-evidence",
+    "version": "0.2",
+    "generated_at": "2026-06-25T03:31:04+00:00",
+    "data_classification": "synthetic_operational_logs",
+    "contains_real_personal_data": false,
+    "contains_real_face_or_voice_data": false,
+    "contains_real_contract_data": false,
+    "contains_real_company_data": false,
+    "jurisdiction": "CN",
+    "prototype_notice": "Synthetic policy controls for demo evidence only; not legal advice."
+  },
+  "risks": [
+    {
+      "risk_id": "RISK-001",
+      "control_id": "AIGC_INVISIBLE_LABEL",
+      "risk_statement": "AIGC_INVISIBLE_LABEL has 11 synthetic exceptions requiring attention.",
+      "severity": "medium",
+      "impact": "high",
+      "open_review_items": 0,
+      "open_fail_items": 11,
+      "owner": "synthetic_compliance_operations"
+    },
+    {
+      "risk_id": "RISK-002",
+      "control_id": "AIGC_VISIBLE_LABEL",
+      "risk_statement": "AIGC_VISIBLE_LABEL has 66 synthetic exceptions requiring attention.",
+      "severity": "medium",
+      "impact": "medium",
+      "open_review_items": 66,
+      "open_fail_items": 0,
+      "owner": "synthetic_compliance_operations"
+    },
+    {
+      "risk_id": "RISK-003",
+      "control_id": "COMPLAINT_HANDLING",
+      "risk_statement": "COMPLAINT_HANDLING has 15 synthetic exceptions requiring attention.",
+      "severity": "medium",
+      "impact": "high",
+      "open_review_items": 6,
+      "open_fail_items": 9,
+      "owner": "synthetic_compliance_operations"
+    },
+    {
+      "risk_id": "RISK-004",
+      "control_id": "CONSENT_EXISTS",
+      "risk_statement": "CONSENT_EXISTS has 31 synthetic exceptions requiring attention.",
+      "severity": "high",
+      "impact": "high",
+      "open_review_items": 0,
+      "open_fail_items": 31,
+      "owner": "synthetic_compliance_operations"
+    },
+    {
+      "risk_id": "RISK-005",
+      "control_id": "CONSENT_SCOPE_USAGE",
+      "risk_statement": "CONSENT_SCOPE_USAGE has 14 synthetic exceptions requiring attention.",
+      "severity": "high",
+      "impact": "high",
+      "open_review_items": 0,
+      "open_fail_items": 14,
+      "owner": "synthetic_compliance_operations"
+    },
+    {
+      "risk_id": "RISK-006",
+      "control_id": "CONTENT_SAFETY",
+      "risk_statement": "CONTENT_SAFETY has 67 synthetic exceptions requiring attention.",
+      "severity": "high",
+      "impact": "high",
+      "open_review_items": 53,
+      "open_fail_items": 14,
+      "owner": "synthetic_compliance_operations"
+    },
+    {
+      "risk_id": "RISK-007",
+      "control_id": "MODEL_FILING",
+      "risk_statement": "MODEL_FILING has 9 synthetic exceptions requiring attention.",
+      "severity": "high",
+      "impact": "high",
+      "open_review_items": 0,
+      "open_fail_items": 9,
+      "owner": "synthetic_compliance_operations"
+    }
+  ]
+}

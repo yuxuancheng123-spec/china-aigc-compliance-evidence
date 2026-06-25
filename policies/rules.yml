@@ -1,0 +1,36 @@
+jurisdiction: CN
+prototype_notice: Synthetic policy controls for demo evidence only; not legal advice.
+controls:
+  consent_exists:
+    id: CONSENT_EXISTS
+    description: Actor asset has an active synthetic consent record.
+    severity: high
+  consent_scope_usage:
+    id: CONSENT_SCOPE_USAGE
+    description: Requested usage is within the allowed consent usage scope.
+    severity: high
+  consent_scope_region:
+    id: CONSENT_SCOPE_REGION
+    description: Requested region is within the allowed consent region scope.
+    severity: medium
+  model_filing:
+    id: MODEL_FILING
+    description: Generation model has synthetic filing or registration metadata.
+    severity: high
+  visible_label:
+    id: AIGC_VISIBLE_LABEL
+    description: Generated output has a visible AIGC label.
+    severity: medium
+  invisible_label:
+    id: AIGC_INVISIBLE_LABEL
+    description: Generated output has invisible AIGC provenance metadata.
+    severity: medium
+  content_safety:
+    id: CONTENT_SAFETY
+    description: Content safety checks pass before release.
+    severity: high
+  complaint_handling:
+    id: COMPLAINT_HANDLING
+    description: Complaints are acknowledged and resolved within the demo SLA.
+    severity: medium
+complaint_sla_hours: 72
