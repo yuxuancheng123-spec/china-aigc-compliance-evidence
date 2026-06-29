@@ -2,6 +2,8 @@
 
 A research prototype for machine-readable compliance evidence in China-facing AIGC actor and digital human platforms.
 
+**Article PDF:** [Making China AIGC Compliance Evidence Machine-Readable: A Governance Pipeline Prototype for Synthetic Actor and Digital Human Platforms](article/china-aigc-compliance-evidence-paper.pdf)
+
 `china-ai-compliance-evidence` is a Python 3.11 prototype that converts synthetic operational logs for a China-based AIGC actor / digital human advertising platform into machine-readable compliance evidence. It models a platform that generates advertising videos from licensed virtual actor assets and evaluates whether each request has valid consent, scoped usage, model filing metadata, AIGC labels, content safety review, and complaint handling evidence.
 
 All data in this repository are synthetic. The project does not use real personal data, face data, voice data, biometric data, contracts, company records, or customer records.

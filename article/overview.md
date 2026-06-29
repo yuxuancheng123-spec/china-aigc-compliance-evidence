@@ -2,6 +2,8 @@
 
 This project demonstrates a machine-readable evidence workflow for a China-based AIGC actor or digital human advertising platform.
 
+Full article PDF: [Making China AIGC Compliance Evidence Machine-Readable](china-aigc-compliance-evidence-paper.pdf).
+
 It intentionally uses synthetic operational logs only. It does not include real face data, real voice data, biometric templates, client personal data, or real consent records.
 
 The prototype checks:
