@@ -1,4 +1,14 @@
 {
+  "schema_version": "0.3",
+  "generated_at": "2026-06-29T03:35:39+00:00",
+  "jurisdiction": "CN",
+  "case_ref": {
+    "request_id": "REQ-0003",
+    "output_id": "OUT-0003",
+    "actor_asset_id": "VACTOR-003",
+    "model_id": "MODEL-AIGC-003",
+    "consent_id": "CONSENT-SYN-0003"
+  },
   "metadata": {
     "bundle_type": "per_request_synthetic_evidence",
     "data_classification": "synthetic_operational_logs",
@@ -105,6 +115,260 @@
       }
     ]
   },
+  "control_results": [
+    {
+      "control_id": "CONSENT_EXISTS",
+      "description": "Actor asset has an active synthetic consent record.",
+      "status": "pass",
+      "severity": "high",
+      "evidence": {
+        "actor_asset_id": "VACTOR-003",
+        "consent_id": "CONSENT-SYN-0003",
+        "consent_status": "active"
+      },
+      "message": "Active synthetic consent found."
+    },
+    {
+      "control_id": "CONSENT_SCOPE_USAGE",
+      "description": "Requested usage is within the allowed consent usage scope.",
+      "status": "pass",
+      "severity": "high",
+      "evidence": {
+        "requested_usage": "advertising_video",
+        "allowed_usage": "advertising_video,product_demo,livestream"
+      },
+      "message": "Requested usage is within consent scope."
+    },
+    {
+      "control_id": "CONSENT_SCOPE_REGION",
+      "description": "Requested region is within the allowed consent region scope.",
+      "status": "pass",
+      "severity": "medium",
+      "evidence": {
+        "requested_region": "SG",
+        "allowed_regions": "CN,HK,SG"
+      },
+      "message": "Requested region is within consent scope."
+    },
+    {
+      "control_id": "MODEL_FILING",
+      "description": "Generation model has synthetic filing or registration metadata.",
+      "status": "pass",
+      "severity": "high",
+      "evidence": {
+        "model_id": "MODEL-AIGC-003",
+        "filing_status": "registered",
+        "registration_ref": "CN-AIGC-SYN-2026-0003"
+      },
+      "message": "Registered synthetic model filing metadata found."
+    },
+    {
+      "control_id": "AIGC_VISIBLE_LABEL",
+      "description": "Generated output has a visible AIGC label.",
+      "status": "pass",
+      "severity": "medium",
+      "evidence": {
+        "output_id": "OUT-0003",
+        "has_visible_label": true
+      },
+      "message": "Visible AIGC label present."
+    },
+    {
+      "control_id": "AIGC_INVISIBLE_LABEL",
+      "description": "Generated output has invisible AIGC provenance metadata.",
+      "status": "pass",
+      "severity": "medium",
+      "evidence": {
+        "output_id": "OUT-0003",
+        "has_invisible_label": true,
+        "metadata_label_status": "present"
+      },
+      "message": "Invisible AIGC metadata present."
+    },
+    {
+      "control_id": "CONTENT_SAFETY",
+      "description": "Content safety checks pass before release.",
+      "status": "pass",
+      "severity": "high",
+      "evidence": {
+        "risk_level": "low",
+        "action": "allow",
+        "categories": ""
+      },
+      "message": "Content safety action is appropriate for the risk level."
+    },
+    {
+      "control_id": "COMPLAINT_HANDLING",
+      "description": "Complaints are acknowledged and resolved within the demo SLA.",
+      "status": "pass",
+      "severity": "medium",
+      "evidence": {
+        "complaint_id": null,
+        "status": null,
+        "age_hours": null,
+        "resolution_hours": null
+      },
+      "message": "No complaint linked to this request."
+    }
+  ],
+  "policy_mapping": [
+    {
+      "policy_source": "Deep Synthesis Provisions / AIGC governance background",
+      "obligation_id": "ACTOR_CONSENT_AUTHORIZATION",
+      "obligation_summary": "Synthetic actor asset use should be backed by active authorization evidence.",
+      "control_ids": [
+        "CONSENT_EXISTS"
+      ],
+      "required_evidence": [
+        "actor_asset_id",
+        "consent_id",
+        "consent_status",
+        "evidence_uri"
+      ],
+      "artifact": [
+        "outputs/assessment_results.json",
+        "outputs/evidence_bundles/{request_id}.json"
+      ],
+      "pipeline_stage": "pre_generation"
+    },
+    {
+      "policy_source": "Deep Synthesis Provisions / personal rights authorization background",
+      "obligation_id": "CONSENT_USAGE_SCOPE",
+      "obligation_summary": "Requested commercial use should remain within the consented usage scope.",
+      "control_ids": [
+        "CONSENT_SCOPE_USAGE"
+      ],
+      "required_evidence": [
+        "requested_usage",
+        "allowed_usage",
+        "consent_id"
+      ],
+      "artifact": [
+        "outputs/assessment_results.json",
+        "outputs/evidence_bundles/{request_id}.json"
+      ],
+      "pipeline_stage": "pre_generation"
+    },
+    {
+      "policy_source": "Personal Information Protection Law / consent scope background",
+      "obligation_id": "CONSENT_REGION_SCOPE",
+      "obligation_summary": "Requested deployment region should remain within the consented region scope.",
+      "control_ids": [
+        "CONSENT_SCOPE_REGION"
+      ],
+      "required_evidence": [
+        "requested_region",
+        "allowed_regions",
+        "consent_id"
+      ],
+      "artifact": [
+        "outputs/assessment_results.json",
+        "outputs/evidence_bundles/{request_id}.json"
+      ],
+      "pipeline_stage": "pre_generation"
+    },
+    {
+      "policy_source": "Generative AI Interim Measures / filing and disclosure background",
+      "obligation_id": "MODEL_FILING_METADATA",
+      "obligation_summary": "Generation requests should reference model filing or registration metadata.",
+      "control_ids": [
+        "MODEL_FILING"
+      ],
+      "required_evidence": [
+        "model_id",
+        "filing_status",
+        "registration_ref"
+      ],
+      "artifact": [
+        "outputs/assessment_results.json",
+        "outputs/evidence_bundles/{request_id}.json"
+      ],
+      "pipeline_stage": "model_governance"
+    },
+    {
+      "policy_source": "AIGC Labeling Measures 2025 / GB 45438-2025",
+      "obligation_id": "AIGC_LABELING_VISIBLE",
+      "obligation_summary": "Generated synthetic content should carry visible disclosure where applicable.",
+      "control_ids": [
+        "AIGC_VISIBLE_LABEL"
+      ],
+      "required_evidence": [
+        "output_id",
+        "has_visible_label",
+        "visible_disclosure_text",
+        "visible_label_position"
+      ],
+      "artifact": [
+        "outputs/assessment_results.json",
+        "outputs/label_metadata.json",
+        "outputs/evidence_bundles/{request_id}.json"
+      ],
+      "pipeline_stage": "output_transparency"
+    },
+    {
+      "policy_source": "AIGC Labeling Measures 2025 / GB 45438-2025",
+      "obligation_id": "AIGC_LABELING_MACHINE_READABLE",
+      "obligation_summary": "Generated synthetic content should carry machine-readable label metadata.",
+      "control_ids": [
+        "AIGC_INVISIBLE_LABEL"
+      ],
+      "required_evidence": [
+        "output_id",
+        "label_id",
+        "metadata_label_status",
+        "machine_readable_format",
+        "output_hash_sha256",
+        "metadata_hash_sha256",
+        "verification_status"
+      ],
+      "artifact": [
+        "outputs/label_metadata.json",
+        "outputs/label_verification_results.json",
+        "outputs/evidence_bundles/{request_id}.json"
+      ],
+      "pipeline_stage": "output_transparency"
+    },
+    {
+      "policy_source": "Generative AI Interim Measures / content safety background",
+      "obligation_id": "CONTENT_SAFETY_REVIEW",
+      "obligation_summary": "High-risk content should be blocked or routed to manual review.",
+      "control_ids": [
+        "CONTENT_SAFETY"
+      ],
+      "required_evidence": [
+        "safety_check_id",
+        "risk_level",
+        "action",
+        "categories"
+      ],
+      "artifact": [
+        "outputs/assessment_results.json",
+        "outputs/evidence_bundles/{request_id}.json"
+      ],
+      "pipeline_stage": "safety_review"
+    },
+    {
+      "policy_source": "Generative AI Interim Measures / platform accountability background",
+      "obligation_id": "COMPLAINT_HANDLING_SLA",
+      "obligation_summary": "Linked complaints should be tracked and handled within the synthetic service threshold.",
+      "control_ids": [
+        "COMPLAINT_HANDLING"
+      ],
+      "required_evidence": [
+        "complaint_id",
+        "status",
+        "age_hours",
+        "resolution_hours"
+      ],
+      "artifact": [
+        "outputs/assessment_results.json",
+        "outputs/risk_register.json",
+        "outputs/remediation_items.json",
+        "outputs/evidence_bundles/{request_id}.json"
+      ],
+      "pipeline_stage": "post_publication_monitoring"
+    }
+  ],
   "actor": {
     "actor_asset_id": "VACTOR-003",
     "asset_name": "Synthetic Virtual Actor 003",
@@ -126,8 +390,8 @@
       "HK",
       "SG"
     ],
-    "valid_from": "2025-04-26T03:31:04Z",
-    "valid_until": "2026-12-22T03:31:04Z",
+    "valid_from": "2025-04-30T03:35:38Z",
+    "valid_until": "2026-12-26T03:35:38Z",
     "evidence_uri": "synthetic://consents/CONSENT-SYN-0003.json"
   },
   "model": {
@@ -135,7 +399,7 @@
     "provider": "Synthetic Model Provider 03",
     "filing_status": "registered",
     "registration_ref": "CN-AIGC-SYN-2026-0003",
-    "last_reviewed_at": "2026-06-16T03:31:04Z"
+    "last_reviewed_at": "2026-06-20T03:35:38Z"
   },
   "generation_request": {
     "request_id": "REQ-0003",
@@ -159,7 +423,7 @@
     "request_id": "REQ-0003",
     "format": "mp4",
     "storage_uri": "synthetic://outputs/OUT-0003.mp4",
-    "created_at": "2026-06-25T03:31:07Z",
+    "created_at": "2026-06-29T03:35:41Z",
     "synthetic_media_only": true
   },
   "labeling_check": {
@@ -168,7 +432,7 @@
     "has_visible_label": true,
     "has_invisible_label": true,
     "metadata_label_status": "present",
-    "checked_at": "2026-06-25T03:31:17Z"
+    "checked_at": "2026-06-29T03:35:51Z"
   },
   "content_safety_check": {
     "safety_check_id": "SAFE-0003",
@@ -176,7 +440,101 @@
     "risk_level": "low",
     "action": "allow",
     "categories": [],
-    "checked_at": "2026-06-25T03:31:27Z"
+    "checked_at": "2026-06-29T03:36:01Z"
   },
-  "complaint": null
+  "complaint": null,
+  "label_metadata": {
+    "label_id": "LABEL-META-0003",
+    "output_id": "OUT-0003",
+    "request_id": "REQ-0003",
+    "actor_asset_id": "VACTOR-003",
+    "model_id": "MODEL-AIGC-003",
+    "content_type": "video",
+    "visible_disclosure_text": "AI-generated synthetic content",
+    "visible_label_position": "lower_third_overlay",
+    "machine_readable_format": "synthetic_metadata",
+    "ai_generated": true,
+    "output_hash_sha256": "0ed440acf67b876136d87c3cb6db4eed16962f5f5ca6537f8060840e4f9387e2",
+    "metadata_hash_sha256": "6a66181ff65cd04e71c4bb6a72be994852e7ef8983166943aa62f9e3acc99a61",
+    "verifier_uri": "synthetic://verifier/outputs/OUT-0003",
+    "label_created_at": "2026-06-29T03:35:51Z",
+    "label_verified_at": "2026-06-29T03:35:51Z",
+    "verification_status": "valid"
+  },
+  "provenance": {
+    "provenance_id": "PROV-REQ-0003",
+    "output_id": "OUT-0003",
+    "request_id": "REQ-0003",
+    "actor_asset_id": "VACTOR-003",
+    "consent_id": "CONSENT-SYN-0003",
+    "model_id": "MODEL-AIGC-003",
+    "label_id": "LABEL-META-0003",
+    "safety_check_id": "SAFE-0003",
+    "complaint_id": null,
+    "events": [
+      {
+        "event_type": "request_created",
+        "timestamp": "2026-06-29T03:35:11Z",
+        "actor": "synthetic_client",
+        "status": "submitted",
+        "evidence_ref": "synthetic://requests/REQ-0003"
+      },
+      {
+        "event_type": "consent_validated",
+        "timestamp": "2026-06-29T03:35:21Z",
+        "actor": "consent_control",
+        "status": "checked",
+        "evidence_ref": "synthetic://consents/CONSENT-SYN-0003"
+      },
+      {
+        "event_type": "model_filing_checked",
+        "timestamp": "2026-06-29T03:35:26Z",
+        "actor": "model_registry_control",
+        "status": "checked",
+        "evidence_ref": "synthetic://models/MODEL-AIGC-003"
+      },
+      {
+        "event_type": "output_generated",
+        "timestamp": "2026-06-29T03:35:41Z",
+        "actor": "synthetic_generation_service",
+        "status": "generated",
+        "evidence_ref": "synthetic://outputs/OUT-0003"
+      },
+      {
+        "event_type": "label_attached",
+        "timestamp": "2026-06-29T03:35:51Z",
+        "actor": "label_metadata_service",
+        "status": "valid",
+        "evidence_ref": "synthetic://labels/LABEL-META-0003"
+      },
+      {
+        "event_type": "content_safety_checked",
+        "timestamp": "2026-06-29T03:36:01Z",
+        "actor": "content_safety_control",
+        "status": "allow",
+        "evidence_ref": "synthetic://safety/SAFE-0003"
+      },
+      {
+        "event_type": "complaint_checked",
+        "timestamp": "2026-06-29T03:36:06Z",
+        "actor": "complaint_sla_control",
+        "status": "not_applicable",
+        "evidence_ref": null
+      },
+      {
+        "event_type": "assessment_completed",
+        "timestamp": "2026-06-29T03:36:11Z",
+        "actor": "compliance_assessment_engine",
+        "status": "pass",
+        "evidence_ref": "synthetic://assessments/REQ-0003"
+      }
+    ]
+  },
+  "audit": {
+    "evidence_hash_sha256": "736b0eb4d05ecb30c253eda15c3ba4bfd6f106500ccc29ddcb9bbf138b0dc704",
+    "schema_valid": true,
+    "generated_by": "china-ai-compliance-evidence v0.3",
+    "retention_class": "synthetic_research_artifact",
+    "synthetic_data_notice": "Synthetic demo evidence only; not legal certification."
+  }
 }

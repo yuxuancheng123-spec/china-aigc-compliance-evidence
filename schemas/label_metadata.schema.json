@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/china-aigc/label_metadata.schema.json",
+  "title": "Synthetic AIGC Label Metadata",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "jurisdiction", "records"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "generated_at": { "type": "string" },
+    "jurisdiction": { "type": "string" },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "label_id",
+          "output_id",
+          "request_id",
+          "actor_asset_id",
+          "model_id",
+          "content_type",
+          "machine_readable_format",
+          "ai_generated",
+          "output_hash_sha256",
+          "metadata_hash_sha256",
+          "verifier_uri",
+          "label_created_at",
+          "verification_status"
+        ]
+      }
+    }
+  }
+}

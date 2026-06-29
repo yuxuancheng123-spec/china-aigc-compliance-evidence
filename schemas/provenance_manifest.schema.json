@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/china-aigc/provenance_manifest.schema.json",
+  "title": "Synthetic AIGC Provenance Manifest",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "jurisdiction", "manifests"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "generated_at": { "type": "string" },
+    "jurisdiction": { "type": "string" },
+    "manifests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "provenance_id",
+          "output_id",
+          "request_id",
+          "actor_asset_id",
+          "model_id",
+          "label_id",
+          "events"
+        ],
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["event_type", "timestamp", "actor", "status"],
+              "properties": {
+                "event_type": { "type": "string" },
+                "timestamp": { "type": "string" },
+                "actor": { "type": "string" },
+                "status": { "type": "string" },
+                "evidence_ref": { "type": ["string", "null"] }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

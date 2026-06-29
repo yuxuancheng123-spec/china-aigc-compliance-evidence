@@ -9,6 +9,8 @@ This prototype uses the following Chinese AI governance rules and standards as b
 - Cyberspace Administration of China and other departments, [Measures for the Labeling of Artificial Intelligence-Generated Synthetic Content](https://www.cac.gov.cn/2025-03/14/c_1743654684782215.htm), 2025.
 - Cyberspace Administration of China and other departments, [Internet Information Service Algorithmic Recommendation Management Provisions](https://www.cac.gov.cn/2022-01/04/c_1642894606364259.htm), 2022.
 - National People's Congress, [Personal Information Protection Law of the People's Republic of China](https://www.npc.gov.cn/npc/c2/c30834/202108/t20210820_313088.html), 2021.
+- National People's Congress, [Data Security Law of the People's Republic of China](https://www.npc.gov.cn/npc/c30834/202106/7c9af12f51334a73b56d7938f99a788a.shtml), 2021.
+- National People's Congress, [Cybersecurity Law of the People's Republic of China](https://www.npc.gov.cn/npc/c12435/201611/104872ad1cfb4a8fa26f2d7e12f0c5b5.shtml), 2017.
 
 ## Standards And Technical Guidance
 
@@ -25,3 +27,4 @@ The code maps selected themes from these materials into synthetic controls:
 - Visible and invisible AIGC labeling checks.
 - Content safety disposition checks.
 - Complaint handling and escalation evidence.
+- Machine-readable label metadata, provenance manifests, and local audit API verification.

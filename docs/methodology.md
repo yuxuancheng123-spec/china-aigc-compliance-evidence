@@ -2,7 +2,11 @@
 
 ## Overview
 
-This project demonstrates a reproducible method for turning synthetic operational records into machine-readable compliance evidence. The workflow has three stages: synthetic data generation, control evaluation, and evidence bundle construction.
+This project demonstrates a reproducible method for turning synthetic operational records into machine-readable compliance evidence. The v0.3 workflow has six stages:
+
+```text
+Policy → Controls → Evidence → Label Metadata → Provenance → Audit API
+```
 
 ## Synthetic Data Generation
 
@@ -49,6 +53,26 @@ The evidence builder creates both aggregate and per-request artifacts:
 - `evidence_bundles/REQ-xxxx.json` joins all available records for selected requests.
 
 Per-request evidence bundles are generated for 10 passing requests, 10 review requests, 10 failing requests, and all complaint-related requests. Each bundle includes only synthetic records.
+
+## Policy-to-Control Mapping
+
+`policies/policy_to_control_mapping.yml` links selected policy sources, obligation summaries, control IDs, required evidence fields, generated artifacts, and pipeline stages. This mapping is illustrative. It is designed to show how policy requirements can be decomposed into controls and evidence artifacts without claiming full legal coverage.
+
+## Schema Validation
+
+The `schemas/` directory defines lightweight JSON Schemas for evidence bundles, label metadata, provenance manifests, and audit events. The pipeline validates aggregate evidence, label metadata, and provenance artifacts during generation and records validation results in the evidence bundle audit summary.
+
+## Machine-readable Label Metadata
+
+`src/label_metadata.py` generates one synthetic label metadata record per output. Each record includes a label ID, request ID, output ID, model ID, actor asset ID, content type, visible disclosure fields, machine-readable metadata format, deterministic synthetic hashes, verifier URI, timestamps, and verification status. The demo verifier marks a label as valid when the invisible/metadata label is present and missing otherwise.
+
+## Provenance Export
+
+`src/provenance.py` generates one provenance manifest per request/output. Each manifest records synthetic lifecycle events: request creation, consent validation, model filing check, output generation, label attachment, content safety check, complaint check, and assessment completion. The project writes both a JSON list for readability and NDJSON for machine processing.
+
+## Audit API
+
+`src/audit_api.py` provides a minimal FastAPI interface over generated artifacts. It supports health checks, request evidence lookup, output label metadata lookup, output provenance lookup, control exception lookup, risk/remediation retrieval, and evidence bundle verification. The API is intentionally unauthenticated and local-only for prototype use.
 
 ## Reproducibility
 

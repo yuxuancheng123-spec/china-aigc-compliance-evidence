@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/china-aigc/audit_event.schema.json",
+  "title": "Synthetic AIGC Audit Event",
+  "type": "object",
+  "required": ["event_type", "timestamp", "actor", "status"],
+  "properties": {
+    "event_type": { "type": "string" },
+    "timestamp": { "type": "string" },
+    "actor": { "type": "string" },
+    "status": { "type": "string" },
+    "evidence_ref": { "type": ["string", "null"] }
+  }
+}

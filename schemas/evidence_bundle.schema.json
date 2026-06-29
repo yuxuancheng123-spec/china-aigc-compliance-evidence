@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/china-aigc/evidence_bundle.schema.json",
+  "title": "Synthetic AIGC Evidence Bundle",
+  "type": "object",
+  "oneOf": [
+    {
+      "required": [
+        "schema_version",
+        "generated_at",
+        "jurisdiction",
+        "metadata",
+        "summary",
+        "request_results",
+        "policy_mapping_summary",
+        "artifact_index",
+        "audit_summary"
+      ]
+    },
+    {
+      "required": [
+        "schema_version",
+        "generated_at",
+        "jurisdiction",
+        "case_ref",
+        "control_results",
+        "policy_mapping",
+        "label_metadata",
+        "provenance",
+        "audit"
+      ]
+    }
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "generated_at": { "type": "string" },
+    "jurisdiction": { "type": "string" },
+    "case_ref": {
+      "type": "object",
+      "required": ["request_id", "output_id"],
+      "properties": {
+        "request_id": { "type": "string" },
+        "output_id": { "type": "string" }
+      }
+    },
+    "control_results": { "type": "array" },
+    "policy_mapping": { "type": "array" },
+    "label_metadata": { "type": ["object", "null"] },
+    "provenance": { "type": ["object", "null"] },
+    "audit": {
+      "type": "object",
+      "required": ["evidence_hash_sha256", "schema_valid", "generated_by", "retention_class", "synthetic_data_notice"]
+    }
+  }
+}

@@ -1,8 +1,11 @@
 {
+  "schema_version": "0.3",
+  "generated_at": "2026-06-29T03:35:39+00:00",
+  "jurisdiction": "CN",
   "metadata": {
     "project": "china-ai-compliance-evidence",
-    "version": "0.2",
-    "generated_at": "2026-06-25T03:31:04+00:00",
+    "version": "0.3",
+    "generated_at": "2026-06-29T03:35:39+00:00",
     "data_classification": "synthetic_operational_logs",
     "contains_real_personal_data": false,
     "contains_real_face_or_voice_data": false,
@@ -77,6 +80,119 @@
       "severity": "medium"
     }
   ],
+  "policy_mapping_summary": [
+    {
+      "obligation_id": "ACTOR_CONSENT_AUTHORIZATION",
+      "policy_source": "Deep Synthesis Provisions / AIGC governance background",
+      "control_ids": [
+        "CONSENT_EXISTS"
+      ],
+      "pipeline_stage": "pre_generation"
+    },
+    {
+      "obligation_id": "CONSENT_USAGE_SCOPE",
+      "policy_source": "Deep Synthesis Provisions / personal rights authorization background",
+      "control_ids": [
+        "CONSENT_SCOPE_USAGE"
+      ],
+      "pipeline_stage": "pre_generation"
+    },
+    {
+      "obligation_id": "CONSENT_REGION_SCOPE",
+      "policy_source": "Personal Information Protection Law / consent scope background",
+      "control_ids": [
+        "CONSENT_SCOPE_REGION"
+      ],
+      "pipeline_stage": "pre_generation"
+    },
+    {
+      "obligation_id": "MODEL_FILING_METADATA",
+      "policy_source": "Generative AI Interim Measures / filing and disclosure background",
+      "control_ids": [
+        "MODEL_FILING"
+      ],
+      "pipeline_stage": "model_governance"
+    },
+    {
+      "obligation_id": "AIGC_LABELING_VISIBLE",
+      "policy_source": "AIGC Labeling Measures 2025 / GB 45438-2025",
+      "control_ids": [
+        "AIGC_VISIBLE_LABEL"
+      ],
+      "pipeline_stage": "output_transparency"
+    },
+    {
+      "obligation_id": "AIGC_LABELING_MACHINE_READABLE",
+      "policy_source": "AIGC Labeling Measures 2025 / GB 45438-2025",
+      "control_ids": [
+        "AIGC_INVISIBLE_LABEL"
+      ],
+      "pipeline_stage": "output_transparency"
+    },
+    {
+      "obligation_id": "CONTENT_SAFETY_REVIEW",
+      "policy_source": "Generative AI Interim Measures / content safety background",
+      "control_ids": [
+        "CONTENT_SAFETY"
+      ],
+      "pipeline_stage": "safety_review"
+    },
+    {
+      "obligation_id": "COMPLAINT_HANDLING_SLA",
+      "policy_source": "Generative AI Interim Measures / platform accountability background",
+      "control_ids": [
+        "COMPLAINT_HANDLING"
+      ],
+      "pipeline_stage": "post_publication_monitoring"
+    },
+    {
+      "obligation_id": "PROVENANCE_EXPORT",
+      "policy_source": "Machine-readable evidence engineering design requirement",
+      "control_ids": [
+        "PROVENANCE_EXPORT"
+      ],
+      "pipeline_stage": "evidence_packaging"
+    },
+    {
+      "obligation_id": "AUDIT_API_VERIFICATION",
+      "policy_source": "Machine-readable evidence engineering design requirement",
+      "control_ids": [
+        "AUDIT_API_VERIFICATION"
+      ],
+      "pipeline_stage": "audit_interface"
+    }
+  ],
+  "artifact_index": {
+    "aggregate_evidence_bundle": "outputs/evidence_bundle.json",
+    "assessment_results": "outputs/assessment_results.json",
+    "risk_register": "outputs/risk_register.json",
+    "remediation_items": "outputs/remediation_items.json",
+    "summary_table": "outputs/summary_table.csv",
+    "label_metadata": "outputs/label_metadata.json",
+    "label_verification_results": "outputs/label_verification_results.json",
+    "provenance_export": "outputs/provenance_export.ndjson",
+    "provenance_manifest": "outputs/provenance_manifest.json",
+    "selected_request_bundles": "outputs/evidence_bundles/{request_id}.json"
+  },
+  "audit_summary": {
+    "schema_valid": true,
+    "generated_by": "china-ai-compliance-evidence v0.3",
+    "synthetic_data_notice": "All records are synthetic operational logs; no real personal, biometric, contract, company, face, or voice data are used.",
+    "schema_validation": {
+      "evidence_bundle": {
+        "schema_valid": true,
+        "errors": []
+      },
+      "label_metadata": {
+        "schema_valid": true,
+        "errors": []
+      },
+      "provenance_manifest": {
+        "schema_valid": true,
+        "errors": []
+      }
+    }
+  },
   "request_results": [
     {
       "request_id": "REQ-0001",

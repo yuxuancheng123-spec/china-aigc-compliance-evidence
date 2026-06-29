@@ -1,0 +1,155 @@
+- policy_source: "Deep Synthesis Provisions / AIGC governance background"
+  obligation_id: "ACTOR_CONSENT_AUTHORIZATION"
+  obligation_summary: "Synthetic actor asset use should be backed by active authorization evidence."
+  control_ids:
+    - CONSENT_EXISTS
+  required_evidence:
+    - actor_asset_id
+    - consent_id
+    - consent_status
+    - evidence_uri
+  artifact:
+    - outputs/assessment_results.json
+    - outputs/evidence_bundles/{request_id}.json
+  pipeline_stage: "pre_generation"
+
+- policy_source: "Deep Synthesis Provisions / personal rights authorization background"
+  obligation_id: "CONSENT_USAGE_SCOPE"
+  obligation_summary: "Requested commercial use should remain within the consented usage scope."
+  control_ids:
+    - CONSENT_SCOPE_USAGE
+  required_evidence:
+    - requested_usage
+    - allowed_usage
+    - consent_id
+  artifact:
+    - outputs/assessment_results.json
+    - outputs/evidence_bundles/{request_id}.json
+  pipeline_stage: "pre_generation"
+
+- policy_source: "Personal Information Protection Law / consent scope background"
+  obligation_id: "CONSENT_REGION_SCOPE"
+  obligation_summary: "Requested deployment region should remain within the consented region scope."
+  control_ids:
+    - CONSENT_SCOPE_REGION
+  required_evidence:
+    - requested_region
+    - allowed_regions
+    - consent_id
+  artifact:
+    - outputs/assessment_results.json
+    - outputs/evidence_bundles/{request_id}.json
+  pipeline_stage: "pre_generation"
+
+- policy_source: "Generative AI Interim Measures / filing and disclosure background"
+  obligation_id: "MODEL_FILING_METADATA"
+  obligation_summary: "Generation requests should reference model filing or registration metadata."
+  control_ids:
+    - MODEL_FILING
+  required_evidence:
+    - model_id
+    - filing_status
+    - registration_ref
+  artifact:
+    - outputs/assessment_results.json
+    - outputs/evidence_bundles/{request_id}.json
+  pipeline_stage: "model_governance"
+
+- policy_source: "AIGC Labeling Measures 2025 / GB 45438-2025"
+  obligation_id: "AIGC_LABELING_VISIBLE"
+  obligation_summary: "Generated synthetic content should carry visible disclosure where applicable."
+  control_ids:
+    - AIGC_VISIBLE_LABEL
+  required_evidence:
+    - output_id
+    - has_visible_label
+    - visible_disclosure_text
+    - visible_label_position
+  artifact:
+    - outputs/assessment_results.json
+    - outputs/label_metadata.json
+    - outputs/evidence_bundles/{request_id}.json
+  pipeline_stage: "output_transparency"
+
+- policy_source: "AIGC Labeling Measures 2025 / GB 45438-2025"
+  obligation_id: "AIGC_LABELING_MACHINE_READABLE"
+  obligation_summary: "Generated synthetic content should carry machine-readable label metadata."
+  control_ids:
+    - AIGC_INVISIBLE_LABEL
+  required_evidence:
+    - output_id
+    - label_id
+    - metadata_label_status
+    - machine_readable_format
+    - output_hash_sha256
+    - metadata_hash_sha256
+    - verification_status
+  artifact:
+    - outputs/label_metadata.json
+    - outputs/label_verification_results.json
+    - outputs/evidence_bundles/{request_id}.json
+  pipeline_stage: "output_transparency"
+
+- policy_source: "Generative AI Interim Measures / content safety background"
+  obligation_id: "CONTENT_SAFETY_REVIEW"
+  obligation_summary: "High-risk content should be blocked or routed to manual review."
+  control_ids:
+    - CONTENT_SAFETY
+  required_evidence:
+    - safety_check_id
+    - risk_level
+    - action
+    - categories
+  artifact:
+    - outputs/assessment_results.json
+    - outputs/evidence_bundles/{request_id}.json
+  pipeline_stage: "safety_review"
+
+- policy_source: "Generative AI Interim Measures / platform accountability background"
+  obligation_id: "COMPLAINT_HANDLING_SLA"
+  obligation_summary: "Linked complaints should be tracked and handled within the synthetic service threshold."
+  control_ids:
+    - COMPLAINT_HANDLING
+  required_evidence:
+    - complaint_id
+    - status
+    - age_hours
+    - resolution_hours
+  artifact:
+    - outputs/assessment_results.json
+    - outputs/risk_register.json
+    - outputs/remediation_items.json
+    - outputs/evidence_bundles/{request_id}.json
+  pipeline_stage: "post_publication_monitoring"
+
+- policy_source: "Machine-readable evidence engineering design requirement"
+  obligation_id: "PROVENANCE_EXPORT"
+  obligation_summary: "Request-level evidence should include a provenance trail for machine review."
+  control_ids:
+    - PROVENANCE_EXPORT
+  required_evidence:
+    - provenance_id
+    - request_id
+    - output_id
+    - events
+  artifact:
+    - outputs/provenance_export.ndjson
+    - outputs/provenance_manifest.json
+    - outputs/evidence_bundles/{request_id}.json
+  pipeline_stage: "evidence_packaging"
+
+- policy_source: "Machine-readable evidence engineering design requirement"
+  obligation_id: "AUDIT_API_VERIFICATION"
+  obligation_summary: "Evidence bundles should be retrievable and minimally verifiable through a prototype audit API."
+  control_ids:
+    - AUDIT_API_VERIFICATION
+  required_evidence:
+    - request_id
+    - output_id
+    - control_results
+    - evidence_hash_sha256
+    - schema_valid
+  artifact:
+    - src/audit_api.py
+    - outputs/evidence_bundles/{request_id}.json
+  pipeline_stage: "audit_interface"

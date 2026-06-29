@@ -5,8 +5,10 @@ from datetime import datetime, timezone
 
 from pydantic import BaseModel
 
-from .models import RequestEvaluation, SyntheticDataset
+from .models import LabelMetadata, RequestEvaluation, SyntheticDataset
 from .policy_engine import evaluate_request
+from .provenance import ProvenanceManifest
+from .schemas.validators import canonical_evidence_hash
 
 
 def _dump(model: BaseModel | None) -> dict | None:
@@ -17,20 +19,45 @@ def evaluate_dataset(dataset: SyntheticDataset, rules: dict) -> list[RequestEval
     return [evaluate_request(request, dataset, rules) for request in dataset.generation_requests]
 
 
-def build_evidence_bundle(dataset: SyntheticDataset, rules: dict) -> dict:
+def _policy_summary(policy_mapping: list[dict] | None) -> list[dict]:
+    return [
+        {
+            "obligation_id": item.get("obligation_id"),
+            "policy_source": item.get("policy_source"),
+            "control_ids": item.get("control_ids", []),
+            "pipeline_stage": item.get("pipeline_stage"),
+        }
+        for item in policy_mapping or []
+    ]
+
+
+def _policy_for_controls(policy_mapping: list[dict] | None, control_ids: set[str]) -> list[dict]:
+    return [
+        item
+        for item in policy_mapping or []
+        if control_ids.intersection(set(item.get("control_ids", [])))
+    ]
+
+
+def build_evidence_bundle(dataset: SyntheticDataset, rules: dict, policy_mapping: list[dict] | None = None) -> dict:
     results = evaluate_dataset(dataset, rules)
     summary = Counter(result.overall_status for result in results)
+    generated_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    jurisdiction = rules.get("jurisdiction", "CN")
     return {
+        "schema_version": "0.3",
+        "generated_at": generated_at,
+        "jurisdiction": jurisdiction,
         "metadata": {
             "project": "china-ai-compliance-evidence",
-            "version": "0.2",
-            "generated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
+            "version": "0.3",
+            "generated_at": generated_at,
             "data_classification": "synthetic_operational_logs",
             "contains_real_personal_data": False,
             "contains_real_face_or_voice_data": False,
             "contains_real_contract_data": False,
             "contains_real_company_data": False,
-            "jurisdiction": rules.get("jurisdiction", "CN"),
+            "jurisdiction": jurisdiction,
             "prototype_notice": rules.get("prototype_notice"),
         },
         "summary": {
@@ -53,6 +80,24 @@ def build_evidence_bundle(dataset: SyntheticDataset, rules: dict) -> dict:
             {"control_key": key, **value}
             for key, value in rules.get("controls", {}).items()
         ],
+        "policy_mapping_summary": _policy_summary(policy_mapping),
+        "artifact_index": {
+            "aggregate_evidence_bundle": "outputs/evidence_bundle.json",
+            "assessment_results": "outputs/assessment_results.json",
+            "risk_register": "outputs/risk_register.json",
+            "remediation_items": "outputs/remediation_items.json",
+            "summary_table": "outputs/summary_table.csv",
+            "label_metadata": "outputs/label_metadata.json",
+            "label_verification_results": "outputs/label_verification_results.json",
+            "provenance_export": "outputs/provenance_export.ndjson",
+            "provenance_manifest": "outputs/provenance_manifest.json",
+            "selected_request_bundles": "outputs/evidence_bundles/{request_id}.json",
+        },
+        "audit_summary": {
+            "schema_valid": True,
+            "generated_by": "china-ai-compliance-evidence v0.3",
+            "synthetic_data_notice": "All records are synthetic operational logs; no real personal, biometric, contract, company, face, or voice data are used.",
+        },
         "request_results": [_dump(result) for result in results],
     }
 
@@ -69,17 +114,40 @@ def _indexes(dataset: SyntheticDataset) -> dict:
     }
 
 
-def build_request_evidence_bundle(request_id: str, dataset: SyntheticDataset, result: dict) -> dict:
+def build_request_evidence_bundle(
+    request_id: str,
+    dataset: SyntheticDataset,
+    result: dict,
+    policy_mapping: list[dict] | None = None,
+    label_metadata: list[LabelMetadata] | None = None,
+    provenance_manifests: list[ProvenanceManifest] | None = None,
+) -> dict:
     indexes = _indexes(dataset)
     request = next(item for item in dataset.generation_requests if item.request_id == request_id)
     consent = indexes["consents"].get(request.consent_id)
-    return {
+    label_by_output = {item.output_id: item for item in label_metadata or []}
+    provenance_by_output = {item.output_id: item for item in provenance_manifests or []}
+    control_ids = {check["control_id"] for check in result["checks"]}
+    generated_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    bundle = {
+        "schema_version": "0.3",
+        "generated_at": generated_at,
+        "jurisdiction": "CN",
+        "case_ref": {
+            "request_id": request.request_id,
+            "output_id": request.output_id,
+            "actor_asset_id": request.actor_asset_id,
+            "model_id": request.model_id,
+            "consent_id": request.consent_id,
+        },
         "metadata": {
             "bundle_type": "per_request_synthetic_evidence",
             "data_classification": "synthetic_operational_logs",
             "contains_real_personal_data": False,
         },
         "assessment_result": result,
+        "control_results": result["checks"],
+        "policy_mapping": _policy_for_controls(policy_mapping, control_ids),
         "actor": _dump(indexes["actors"].get(request.actor_asset_id)),
         "consent": _dump(consent),
         "model": _dump(indexes["models"].get(request.model_id)),
@@ -88,7 +156,18 @@ def build_request_evidence_bundle(request_id: str, dataset: SyntheticDataset, re
         "labeling_check": _dump(indexes["labels"].get(request.labeling_check_id)),
         "content_safety_check": _dump(indexes["safety"].get(request.safety_check_id)),
         "complaint": _dump(indexes["complaints"].get(request.complaint_id)) if request.complaint_id else None,
+        "label_metadata": _dump(label_by_output.get(request.output_id)),
+        "provenance": _dump(provenance_by_output.get(request.output_id)),
+        "audit": {
+            "evidence_hash_sha256": None,
+            "schema_valid": True,
+            "generated_by": "china-ai-compliance-evidence v0.3",
+            "retention_class": "synthetic_research_artifact",
+            "synthetic_data_notice": "Synthetic demo evidence only; not legal certification.",
+        },
     }
+    bundle["audit"]["evidence_hash_sha256"] = canonical_evidence_hash(bundle)
+    return bundle
 
 
 def _selected_request_ids(dataset: SyntheticDataset, results: list[dict]) -> list[str]:
@@ -170,7 +249,14 @@ def _remediation_items(risk_register: list[dict]) -> list[dict]:
     ]
 
 
-def build_output_artifacts(dataset: SyntheticDataset, bundle: dict, rules: dict) -> dict:
+def build_output_artifacts(
+    dataset: SyntheticDataset,
+    bundle: dict,
+    rules: dict,
+    policy_mapping: list[dict] | None = None,
+    label_metadata: list[LabelMetadata] | None = None,
+    provenance_manifests: list[ProvenanceManifest] | None = None,
+) -> dict:
     results = bundle["request_results"]
     control_summary = _control_summary(results)
     risk_register = _risk_register(control_summary)
@@ -202,7 +288,14 @@ def build_output_artifacts(dataset: SyntheticDataset, bundle: dict, rules: dict)
         ],
         "control_summary": control_summary,
         "request_bundles": {
-            request_id: build_request_evidence_bundle(request_id, dataset, result_by_id[request_id])
+            request_id: build_request_evidence_bundle(
+                request_id,
+                dataset,
+                result_by_id[request_id],
+                policy_mapping=policy_mapping,
+                label_metadata=label_metadata,
+                provenance_manifests=provenance_manifests,
+            )
             for request_id in selected_ids
         },
     }

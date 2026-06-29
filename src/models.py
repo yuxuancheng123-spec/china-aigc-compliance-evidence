@@ -69,6 +69,25 @@ class LabelingCheck(BaseModel):
     checked_at: datetime
 
 
+class LabelMetadata(BaseModel):
+    label_id: str
+    output_id: str
+    request_id: str
+    actor_asset_id: str
+    model_id: str
+    content_type: Literal["video", "image", "audio", "text"]
+    visible_disclosure_text: str | None
+    visible_label_position: str | None
+    machine_readable_format: Literal["json-ld", "xmp", "c2pa_like_manifest", "synthetic_metadata"]
+    ai_generated: bool
+    output_hash_sha256: str
+    metadata_hash_sha256: str
+    verifier_uri: str
+    label_created_at: datetime
+    label_verified_at: datetime | None
+    verification_status: Literal["valid", "missing", "tampered", "unknown"]
+
+
 class ContentSafetyCheck(BaseModel):
     safety_check_id: str
     request_id: str
