@@ -28,7 +28,7 @@
       }
     }
   },
-  "required": ["control_id", "norm_id", "control_component", "control_derivation_type", "control_objective", "applicability", "evidence", "test", "outcomes", "automation_level", "traceability", "review"],
+  "required": ["control_id", "norm_id", "control_component", "control_derivation_type", "control_objective", "applicability", "evidence", "test", "outcomes", "automation_level", "automation_profile", "traceability", "review"],
   "properties": {
     "control_id": { "type": "string" },
     "norm_id": { "type": "string" },
@@ -95,6 +95,16 @@
     },
     "automation_level": {
       "enum": ["fully_automatable", "partially_automatable", "human_review_required"]
+    },
+    "automation_profile": {
+      "type": "object",
+      "required": ["applicability", "evidence_test", "final_decision"],
+      "properties": {
+        "applicability": {"enum": ["fully_automatable", "human_confirmed", "human_review_required"]},
+        "evidence_test": {"enum": ["fully_automatable", "partially_automatable", "human_review_required"]},
+        "final_decision": {"enum": ["fully_automatable", "automated_after_confirmation", "human_review_required"]}
+      },
+      "additionalProperties": false
     },
     "required_human_review": {
       "type": "object",

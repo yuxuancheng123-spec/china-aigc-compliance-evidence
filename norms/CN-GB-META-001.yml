@@ -12,7 +12,7 @@ source:
   promulgation_date: '2025-02-28'
   effective_date: '2025-09-01'
   retrieved_at: '2026-07-15'
-  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-gb-45438-registry, source_document_sha256: null, verification_status: metadata_only}
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: 847dac0a8d1048b33cf63678af3a933af858a1d201f126613eb65e53efb408cc, source_document_sha256: null, verification_status: metadata_only}
 norm: {regulated_actor: service_provider, modality: must, action: populate_selected_metadata_fields, object: synthetic_content_file, trigger: {output_is_ai_generated: true, file_supports_metadata: true}, exceptions: [], deadline_or_timing: at_generation}
 interpretation: {control_objective: Technical implementation check for selected metadata fields, automation_level: fully_automatable, ambiguity_level: low, reviewer_note: Official registry metadata is used because a stable public full-text source is not asserted by this prototype.}
 evidence: {evidence_type: metadata_inspection, required_fields: [generated_content_attribute, service_provider_name_or_code, content_id, content_production_elements, dissemination_service_provider_code, dissemination_content_id]}

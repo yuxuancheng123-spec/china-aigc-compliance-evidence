@@ -12,9 +12,9 @@ source:
   promulgation_date: '2025-03-07'
   effective_date: '2025-09-01'
   retrieved_at: '2026-07-15'
-  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-label-articles-4-and-9, source_document_sha256: null, verification_status: metadata_only}
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: dd17532b7d1f12f74aa44ca761913b749295a5d1643ee8d547f7e168ed47ed09, source_document_sha256: null, verification_status: metadata_only}
 norm: {regulated_actor: generative_ai_service_provider, modality: must, action: add_explicit_label_or_document_delivery_exception, object: user_facing_generated_synthetic_content, trigger: {output_is_ai_generated: true, output_is_user_facing: true, output_matches_explicit_label_scenario: true}, exceptions: [article_9_provider_delivery_exception], deadline_or_timing: before_delivery_or_publication}
-interpretation: {control_objective: Check label existence with human-confirmed scenario classification and scope Article 9 to provider delivery, automation_level: fully_automatable, ambiguity_level: medium, reviewer_note: The Article 9 path does not determine subsequent publication or dissemination obligations.}
+interpretation: {control_objective: Check label existence with human-confirmed scenario classification and scope Article 9 to provider delivery, automation_level: partially_automatable, ambiguity_level: medium, reviewer_note: The evidence test is automated after human-confirmed scenario classification; the Article 9 path does not determine later publication or dissemination obligations.}
 evidence: {evidence_type: labeling_check, required_fields: [visible_label_present]}
 test: {expression: visible_label_present == true, pass_condition: Visible label is present or scoped exception is complete, fail_condition: Label absent without exception, review_condition: Scenario classification or prominence review is pending.}
 review: {author_review_status: reviewed, legal_expert_review_status: not_reviewed, reviewer_role: researcher, reviewer_name: null, review_date: '2026-07-15', interpretation_version: '1.1', review_notes: Internally reviewed by the researcher; no independent qualified legal expert review is recorded.}

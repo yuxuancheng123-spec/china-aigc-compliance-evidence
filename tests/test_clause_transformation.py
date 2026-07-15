@@ -3,7 +3,7 @@ from pathlib import Path
 import yaml
 
 from src.evaluator import OUTCOMES, evaluate_control, evaluate_validation_cases, load_controls
-from src.validator import validate_control_mapping, validate_cross_file_integrity, validate_example_norms, validate_norm_artifacts, validate_repository
+from src.validator import validate_control_mapping, validate_cross_file_integrity, validate_example_norms, validate_norm_artifacts, validate_repository, validate_runtime_evidence, validate_validation_case_evidence
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -32,6 +32,14 @@ def test_mapping_is_traceable_and_classifies_control_derivation() -> None:
     assert validate_control_mapping()["valid"] is True
     assert {control["control_derivation_type"] for control in controls} == {"direct_legal_requirement", "derived_organizational_control", "technical_implementation_control"}
     assert {control["control_id"] for control in controls if control["control_derivation_type"] == "derived_organizational_control"} >= {"CTRL-DEEPSYN-FACE-VOICE-CONSENT-ASSURANCE", "CTRL-PIPL-SEPARATE-CONSENT"}
+
+
+def test_automation_profiles_distinguish_applicability_evidence_and_final_decision() -> None:
+    controls = {control["control_id"]: control for control in load_controls()}
+    assert controls["CTRL-AIGC-VISIBLE-LABEL-EXISTENCE"]["automation_profile"] == {"applicability": "human_confirmed", "evidence_test": "fully_automatable", "final_decision": "automated_after_confirmation"}
+    assert controls["CTRL-AIGC-VISIBLE-LABEL-PROMINENCE"]["automation_profile"]["final_decision"] == "human_review_required"
+    assert controls["CTRL-AIGC-METADATA-LABEL"]["automation_profile"]["final_decision"] == "fully_automatable"
+    assert all("automation_profile" in control for control in controls.values())
 
 
 def test_human_confirmed_fields_require_complete_matching_records() -> None:
@@ -89,6 +97,35 @@ def test_validation_cases_match_expected_outcomes() -> None:
     assert result["failed"] == 0
 
 
+def test_runtime_evidence_schema_accepts_valid_human_records() -> None:
+    result = validate_runtime_evidence({
+        "human_confirmations": {"scenario": _confirmation()},
+        "human_reviews": {"label_prominence": {"completed": False, "result": None}},
+    })
+    assert result["valid"] is True
+
+
+def test_runtime_evidence_schema_validates_all_validation_cases() -> None:
+    result = validate_validation_case_evidence()
+    assert result["valid"] is True
+    assert result["cases_checked"] >= 21
+
+
+def test_invalid_runtime_evidence_case_is_not_evaluated(tmp_path: Path) -> None:
+    cases_path = tmp_path / "invalid-case.yml"
+    cases_path.write_text(
+        yaml.safe_dump([{
+            "case_id": "CASE-INVALID-RUNTIME-EVIDENCE",
+            "evidence": {"human_confirmations": {"scenario": {"confirmed": False, "value": True, "reviewer_role": "reviewer", "reviewed_at": "2026-07-15"}}},
+            "expected": {"CTRL-AIGC-VISIBLE-LABEL-EXISTENCE": "review"},
+        }], sort_keys=False),
+        encoding="utf-8",
+    )
+    result = evaluate_validation_cases(cases_path)
+    assert result["failed"] == 1
+    assert result["results"][0]["actual"] == "validation_error"
+
+
 def test_every_control_exposes_all_four_outcomes() -> None:
     assert all(set(control["outcomes"]) == OUTCOMES for control in load_controls())
 
@@ -98,6 +135,7 @@ def test_repository_validation_reports_precise_layers_and_notice() -> None:
     assert result["schema_valid"] is True
     assert result["cross_file_valid"] is True
     assert result["legal_source_metadata_fields_complete"] is True
+    assert result["runtime_evidence_schema_valid"] is True
     assert "does not independently verify" in result["legal_source_metadata_notice"]
 
 

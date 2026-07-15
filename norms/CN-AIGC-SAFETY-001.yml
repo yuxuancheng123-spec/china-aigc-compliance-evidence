@@ -12,7 +12,7 @@ source: &genai_safety_source
   promulgation_date: '2023-07-10'
   effective_date: '2023-08-15'
   retrieved_at: '2026-07-15'
-  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-genai-article-4, source_document_sha256: null, verification_status: metadata_only}
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: 021079ec6fda5cb80f72942e5a3cc0aedd4ff61414a5e652b1128b6182e41c68, source_document_sha256: null, verification_status: metadata_only}
 norm: {regulated_actor: generative_ai_service_provider, modality: must_not, action: generate_prohibited_content, object: generated_content, trigger: {content_is_generated_for_user: true}, exceptions: [], deadline_or_timing: during_service}
 interpretation: {control_objective: Human review of selected content-safety obligations, automation_level: human_review_required, ambiguity_level: high, reviewer_note: Effective measures and content legality are not reducible to one Boolean check.}
 evidence: {evidence_type: safety_review_record, required_fields: [content_is_generated_for_user]}

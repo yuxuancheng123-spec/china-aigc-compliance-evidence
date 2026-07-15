@@ -91,3 +91,40 @@ def test_low_specificity_source_is_a_warning_not_a_failure(tmp_path: Path, monke
     result = validator.validate_cross_file_integrity()
 
     assert any("low-specificity" in warning["message"] for warning in result["warnings"])
+
+
+def test_source_excerpt_hash_mismatch_is_detected(tmp_path: Path, monkeypatch) -> None:
+    repo = _copy_validation_repo(tmp_path, monkeypatch)
+    norm_path = repo / "norms" / "CN-AIGC-LABEL-001.yml"
+    norm = yaml.safe_load(norm_path.read_text(encoding="utf-8"))
+    norm["source"]["source_text_zh"] += " 已修改"
+    norm_path.write_text(yaml.safe_dump(norm, allow_unicode=True, sort_keys=False), encoding="utf-8")
+
+    result = validator.validate_legal_source_metadata()
+
+    assert result["valid"] is False
+    assert any("stored source excerpt SHA-256 does not match" in error["message"] for error in result["errors"])
+
+
+def test_source_excerpt_hash_schema_rejects_empty_and_placeholder_values(tmp_path: Path, monkeypatch) -> None:
+    repo = _copy_validation_repo(tmp_path, monkeypatch)
+    norm = yaml.safe_load((repo / "norms" / "CN-AIGC-LABEL-001.yml").read_text(encoding="utf-8"))
+    norm["source"]["source_snapshot"]["source_excerpt_sha256"] = ""
+    empty = validator.validate_legal_norm(norm)
+    norm["source"]["source_snapshot"]["source_excerpt_sha256"] = "metadata-only-label"
+    placeholder = validator.validate_legal_norm(norm)
+
+    assert empty["valid"] is False
+    assert placeholder["valid"] is False
+
+
+def test_invalid_runtime_confirmation_and_review_records_fail_schema_validation() -> None:
+    missing_role = validator.validate_runtime_evidence({"human_confirmations": {"scenario": {"confirmed": True, "value": True, "reviewed_at": "2026-07-15"}}})
+    false_confirmation = validator.validate_runtime_evidence({"human_confirmations": {"scenario": {"confirmed": False, "value": True, "reviewer_role": "reviewer", "reviewed_at": "2026-07-15"}}})
+    invalid_result = validator.validate_runtime_evidence({"human_reviews": {"label": {"completed": True, "result": "unknown"}}})
+    pending = validator.validate_runtime_evidence({"human_reviews": {"label": {"completed": False, "result": None}}})
+
+    assert missing_role["valid"] is False
+    assert false_confirmation["valid"] is False
+    assert invalid_result["valid"] is False
+    assert pending["valid"] is True

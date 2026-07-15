@@ -154,7 +154,24 @@ review:
   legal_expert_review_status: not_reviewed
 \end{lstlisting}
 
-The schema is intentionally modest. It does not encode all legal meaning. It checks whether a proposed rule contains the minimum information needed for traceability and execution. Source metadata validation checks that required source fields are present and internally consistent; it does not automatically prove that the stored text remains identical to the current official webpage. The prototype therefore records `metadata_only` source-snapshot status unless independent snapshot or manual verification is recorded.
+The schema is intentionally modest. It does not encode all legal meaning. It checks whether a proposed rule contains the minimum information needed for traceability and execution. Source metadata validation checks that required source fields are present and internally consistent; it does not automatically prove that the stored text remains identical to the current official webpage. The prototype therefore records \texttt{metadata\_only} source-snapshot status unless independent snapshot or manual verification is recorded.
+
+\subsection{Runtime Evidence Schema}
+
+The repository separates four artifacts in the execution path:
+
+\begin{lstlisting}
+Norm schema
+-> Control schema
+-> Runtime evidence schema
+-> Evaluation result
+\end{lstlisting}
+
+The norm artifact records a human-reviewed legal interpretation; the control schema records the machine-readable rule derived from it; and the runtime evidence schema validates the shape of business facts, human confirmations, and keyed human-review records supplied to the evaluator. Runtime schema validation is intentionally generic for business facts because fields differ by control, but it strictly validates confirmation and review records. Semantic evaluation remains separate: it checks whether a confirmation agrees with business evidence and whether a required review key is complete.
+
+\subsection{Source Excerpt Integrity}
+
+Each norm stores a SHA-256 digest of the normalized Chinese source excerpt, computed from \texttt{source\_text\_zh.strip().encode("utf-8")}. The digest detects a change to the repository artifact. It does not establish that the stored excerpt is identical to the current official webpage; that question remains subject to independent source verification. The \texttt{metadata\_only} status and excerpt integrity are therefore distinct claims.
 
 \section{Human Review and Traceability}
 
@@ -164,9 +181,30 @@ The initial interpretation in this prototype is performed by the author as a res
 
 Rules are classified into three automation levels. Metadata field presence may be fully automatable once applicability is established. Human-confirmed applicability is represented as a structured record that identifies the confirmed value, reviewer role, and review time, and is checked against business evidence by the evaluator. Label prominence, confusion risk, and content-safety adequacy are routed through a declared human-review key because legal adequacy cannot be reduced to a single Boolean field.
 
+\subsection{Multi-Layer Automation Profile}
+
+A single automation label can conceal an important distinction: a control may have a deterministic evidence test while its legal applicability remains human-confirmed or its final conclusion requires review. The framework therefore records applicability automation, evidence-test automation, and final-decision automation separately. Table~\ref{tab:automation-profile} illustrates the distinction.
+
+\begin{table*}[!t]
+\centering
+\footnotesize
+\caption{Multi-Layer Automation Profile}
+\label{tab:automation-profile}
+\begin{tabularx}{\textwidth}{@{}p{0.26\textwidth}p{0.22\textwidth}p{0.24\textwidth}p{0.22\textwidth}@{}}
+\toprule
+\textbf{Control} & \textbf{Applicability} & \textbf{Evidence Test} & \textbf{Final Decision} \\
+\midrule
+Metadata label & Automated & Automated & Automated \\
+Visible label existence & Human-confirmed & Automated & Automated after confirmation \\
+Label prominence & Human-confirmed & Limited machine check & Human review \\
+Content safety & Automated trigger & Limited machine check & Human review \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
 \subsection{Direct Obligations and Derived Organizational Controls}
 
-The framework distinguishes a direct legal obligation from a supporting organizational assurance control. The first maps the legal duty itself into a machine-readable test. The second records an evidence practice that an engineering organization may choose in order to support assurance. For Deep Synthesis Article 14, the direct control checks that the provider presents a user prompt concerning notice and separate consent. A separate derived control checks whether edited-person consent evidence and scope review have been retained. The latter is not presented as a verbatim statutory requirement that a provider must retain a particular record in every case. Each control records `control_derivation_type` and `control_component` to make this relationship visible.
+The framework distinguishes a direct legal obligation from a supporting organizational assurance control. The first maps the legal duty itself into a machine-readable test. The second records an evidence practice that an engineering organization may choose in order to support assurance. For Deep Synthesis Article 14, the direct control checks that the provider presents a user prompt concerning notice and separate consent. A separate derived control checks whether edited-person consent evidence and scope review have been retained. The latter is not presented as a verbatim statutory requirement that a provider must retain a particular record in every case. Each control records \texttt{control\_derivation\_type} and \texttt{control\_component} to make this relationship visible.
 
 \subsection{Lifecycle Scope}
 

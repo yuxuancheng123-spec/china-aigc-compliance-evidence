@@ -12,7 +12,7 @@ source:
   promulgation_date: '2022-11-25'
   effective_date: '2023-01-10'
   retrieved_at: '2026-07-15'
-  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-deepsyn-article-17, source_document_sha256: null, verification_status: metadata_only}
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: 1b2cb19827a2ec824321e16d05d59b3a4ac2d87596d4b2086745088c4744be5c, source_document_sha256: null, verification_status: metadata_only}
 norm: {regulated_actor: deep_synthesis_service_provider, modality: must, action: add_prominent_label, object: confusion_risk_deep_synthesis_content, trigger: {deep_synthesis_content: true, content_may_confuse_public: true}, exceptions: [], deadline_or_timing: before_publication}
 interpretation: {control_objective: Route confusion-risk and prominence judgments to human review, automation_level: human_review_required, ambiguity_level: high, reviewer_note: Confusion risk and prominent presentation require contextual judgment.}
 evidence: {evidence_type: labeling_check, required_fields: [visible_label_present]}

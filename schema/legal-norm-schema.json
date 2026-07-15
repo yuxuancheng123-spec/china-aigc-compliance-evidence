@@ -42,7 +42,7 @@
           "required": ["retrieved_at", "source_excerpt_sha256", "source_document_sha256", "verification_status"],
           "properties": {
             "retrieved_at": { "type": "string" },
-            "source_excerpt_sha256": { "type": "string", "minLength": 1 },
+            "source_excerpt_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
             "source_document_sha256": { "type": ["string", "null"] },
             "verification_status": {
               "enum": ["metadata_only", "snapshot_verified", "manually_verified_against_official_source"]

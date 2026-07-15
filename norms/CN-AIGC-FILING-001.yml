@@ -12,9 +12,9 @@ source:
   promulgation_date: '2023-07-10'
   effective_date: '2023-08-15'
   retrieved_at: '2026-07-15'
-  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-genai-article-17, source_document_sha256: null, verification_status: metadata_only}
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: 610b0ad3ce0c3df1ed2cc02bfc9df1c0dcb82f35b6f577e84e83ed38e33289cf, source_document_sha256: null, verification_status: metadata_only}
 norm: {regulated_actor: generative_ai_service_provider, modality: must, action: complete_security_assessment_and_algorithm_filing, object: covered_public_facing_service, trigger: {service_is_public_facing: true, service_has_public_opinion_or_social_mobilization_capacity: true}, exceptions: [filing_not_required_after_review], deadline_or_timing: before_public_service_or_change}
-interpretation: {control_objective: Check filing only after a human applicability determination, automation_level: partially_automatable, ambiguity_level: medium, reviewer_note: Coverage and filing applicability are human-confirmed preconditions.}
+interpretation: {control_objective: Check filing only after a human applicability determination, automation_level: human_review_required, ambiguity_level: medium, reviewer_note: Coverage and filing applicability are human-confirmed preconditions; final conclusion uses keyed human review.}
 evidence: {evidence_type: model_filing_record, required_fields: [filing_applicability_reviewed, filing_required, filing_status]}
 test: {expression: filing_applicability_reviewed == true and (filing_required == false or filing_status == 'registered'), pass_condition: Applicable filing is registered or not required, fail_condition: Required filing is missing, review_condition: Applicability review is pending.}
 review: {author_review_status: reviewed, legal_expert_review_status: not_reviewed, reviewer_role: researcher, reviewer_name: null, review_date: '2026-07-15', interpretation_version: '1.1', review_notes: Internally reviewed by the researcher; no independent qualified legal expert review is recorded.}

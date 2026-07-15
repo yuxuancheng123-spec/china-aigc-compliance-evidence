@@ -12,7 +12,7 @@ source:
   promulgation_date: '2025-03-07'
   effective_date: '2025-09-01'
   retrieved_at: '2026-07-15'
-  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-label-article-4-prominence, source_document_sha256: null, verification_status: metadata_only}
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: 6f2785b3a3ae2dde24ed10f5820c5c54ace26c412369a1eaf1dec8f81fd5194c, source_document_sha256: null, verification_status: metadata_only}
 norm: {regulated_actor: generative_ai_service_provider, modality: must, action: present_explicit_label_prominently, object: explicit_label, trigger: {output_is_ai_generated: true, output_is_user_facing: true, output_matches_explicit_label_scenario: true}, exceptions: [], deadline_or_timing: before_publication}
 interpretation: {control_objective: Human review of explicit-label prominence and perceptibility, automation_level: human_review_required, ambiguity_level: high, reviewer_note: Prominence cannot be conclusively evaluated using a Boolean evidence field.}
 evidence: {evidence_type: human_label_review, required_fields: [visible_label_present]}

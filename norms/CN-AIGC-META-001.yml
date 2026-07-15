@@ -12,7 +12,7 @@ source:
   promulgation_date: '2025-03-07'
   effective_date: '2025-09-01'
   retrieved_at: '2026-07-15'
-  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-label-article-5, source_document_sha256: null, verification_status: metadata_only}
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: f01827d4c0012f5e493e7d6c40b06ac0419981117ce12f9ed62901c64e9b0ce1, source_document_sha256: null, verification_status: metadata_only}
 norm: {regulated_actor: generative_ai_service_provider, modality: must, action: add_implicit_metadata_label, object: generated_synthetic_content, trigger: {output_is_ai_generated: true}, exceptions: [], deadline_or_timing: at_generation_or_publication}
 interpretation: {control_objective: Verify selected required metadata fields, automation_level: fully_automatable, ambiguity_level: low, reviewer_note: This is a structured field-presence check, not a full technical-conformance test.}
 evidence: {evidence_type: label_metadata, required_fields: [generated_content_attribute, service_provider_name_or_code, content_id]}

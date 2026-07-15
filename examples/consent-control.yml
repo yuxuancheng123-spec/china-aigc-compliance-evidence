@@ -14,7 +14,7 @@ source:
   retrieved_at: "2026-07-15"
   source_snapshot:
     retrieved_at: "2026-07-15"
-    source_excerpt_sha256: metadata-only-consent-example
+    source_excerpt_sha256: ec341276fada70f962cd93c787960829db465411b60956df286fd67ef1ce80ca
     source_document_sha256: null
     verification_status: metadata_only
 norm:

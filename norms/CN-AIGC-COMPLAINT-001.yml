@@ -12,9 +12,9 @@ source: &genai_complaint_source
   promulgation_date: '2023-07-10'
   effective_date: '2023-08-15'
   retrieved_at: '2026-07-15'
-  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-genai-article-15, source_document_sha256: null, verification_status: metadata_only}
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: 63360b01df5fd0edfd221b3009c51cde9eac72d57bba405298fad1181b670fab, source_document_sha256: null, verification_status: metadata_only}
 norm: {regulated_actor: generative_ai_service_provider, modality: must, action: maintain_complaint_mechanism, object: complaint_record, trigger: {complaint_received: true}, exceptions: [], deadline_or_timing: within_disclosed_feedback_time_limit}
-interpretation: {control_objective: Verify process and feedback disclosure while routing timeliness to review, automation_level: partially_automatable, ambiguity_level: medium, reviewer_note: Substantive adequacy and timeliness need review.}
+interpretation: {control_objective: Verify process and feedback disclosure while routing timeliness to review, automation_level: human_review_required, ambiguity_level: medium, reviewer_note: Substantive adequacy and timeliness need keyed human review.}
 evidence: {evidence_type: complaint_record, required_fields: [complaint_process_disclosed, feedback_time_limit_disclosed, complaint_status]}
 test: {expression: complaint_process_disclosed == true and feedback_time_limit_disclosed == true and complaint_status != 'missing', pass_condition: Disclosures and status are recorded, fail_condition: A required disclosure or status is absent, review_condition: Timeliness review is pending.}
 review: {author_review_status: reviewed, legal_expert_review_status: not_reviewed, reviewer_role: researcher, reviewer_name: null, review_date: '2026-07-15', interpretation_version: '1.1', review_notes: Internally reviewed by the researcher; no independent qualified legal expert review is recorded.}

@@ -115,6 +115,14 @@ The label-existence control can produce a machine result after the scenario has 
 
 ## Automation Levels
 
+The repository distinguishes three layers of automation:
+
+1. applicability determination;
+2. evidence-test execution;
+3. final compliance conclusion.
+
+A machine-readable evidence test may be fully automatable even when legal applicability or the final conclusion requires human confirmation. Each control therefore carries an `automation_profile` with `applicability`, `evidence_test`, and `final_decision`; `automation_level` remains a compatibility summary of the final control posture.
+
 Each mapped rule declares one of three automation levels:
 
 - `fully_automatable`: The structured evidence can be checked mechanically, such as whether metadata fields exist.
@@ -127,6 +135,12 @@ The evaluator supports four outcomes:
 - `fail`: reviewed evidence contradicts the machine-readable test.
 - `review`: evidence is missing, ambiguous, or legal judgment is required.
 - `not_applicable`: the trigger conditions for the clause are not met.
+
+## Runtime Evidence Validation
+
+[evaluation-evidence-schema.json](schema/evaluation-evidence-schema.json) validates runtime `human_confirmations` and keyed `human_reviews` before validation cases enter the evaluator. The schema validates record structure; the evaluator separately checks semantic facts such as whether a confirmed value matches business evidence and whether the declared review key is complete.
+
+Each norm also stores `source_excerpt_sha256`, the SHA-256 digest of `source_text_zh.strip().encode("utf-8")`. This detects changes to the repository's excerpt. Its `metadata_only` snapshot status does not assert that the excerpt has been independently verified word-for-word against the current official webpage.
 
 ## Quick Start
 

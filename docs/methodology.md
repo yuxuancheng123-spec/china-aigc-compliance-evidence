@@ -96,6 +96,10 @@ Fully automatable controls can reach final `pass` or `fail` directly when eviden
 
 Partially automatable and human-review-required controls use a declared `required_human_review.review_key`. The evaluator reads a matching `human_reviews` record rather than hard-coding individual field names. A machine pass remains `review` until the keyed review is complete with a pass or fail conclusion. This prevents `visible_label_present == true` from being treated as a complete legal conclusion about prominence or statutory sufficiency.
 
+Automation is recorded at three layers: `applicability`, `evidence_test`, and `final_decision`. For example, visible-label existence has human-confirmed applicability, a fully automatable field-presence test, and an automated final decision only after confirmation. This avoids describing the entire legal obligation as fully automatable merely because the evidence test is deterministic.
+
+`schema/evaluation-evidence-schema.json` validates runtime human-confirmation and human-review record structures before validation cases enter the evaluator. Schema validation checks record shape; evaluator semantics separately check evidence-value consistency, required review keys, and the relationship between machine and final results.
+
 ## Direct Obligations, Derived Controls, and Lifecycle Scope
 
 Each control is classified as `direct_legal_requirement`, `derived_organizational_control`, or `technical_implementation_control`. This distinction prevents an evidentiary practice from being presented as a verbatim statutory duty. For example, the Deep Synthesis Article 14 provider-prompt control models the direct duty to prompt a user; retaining edited-person consent evidence and reviewing its scope is a separately labelled organizational assurance control.

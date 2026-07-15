@@ -12,9 +12,9 @@ source:
   promulgation_date: '2021-08-20'
   effective_date: '2021-11-01'
   retrieved_at: '2026-07-15'
-  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-pipl-article-29, source_document_sha256: null, verification_status: metadata_only}
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: ec341276fada70f962cd93c787960829db465411b60956df286fd67ef1ce80ca, source_document_sha256: null, verification_status: metadata_only}
 norm: {regulated_actor: personal_information_processor, modality: must, action: obtain_separate_consent, object: sensitive_personal_information, trigger: {processing_sensitive_personal_information: true}, exceptions: [lawful_exception_applies], deadline_or_timing: before_processing}
-interpretation: {control_objective: Retain separate-consent evidence after human-confirmed sensitive-information scope, automation_level: partially_automatable, ambiguity_level: medium, reviewer_note: Evidence retention is an organizational assurance implementation of the consent duty.}
+interpretation: {control_objective: Retain separate-consent evidence after human-confirmed sensitive-information scope, automation_level: human_review_required, ambiguity_level: medium, reviewer_note: Evidence retention is an organizational assurance implementation of the consent duty; final conclusion requires keyed human review.}
 evidence: {evidence_type: consent_record, required_fields: [separate_consent_present]}
 test: {expression: separate_consent_present == true, pass_condition: Separate-consent evidence is present, fail_condition: Evidence is absent, review_condition: Data scope or exception needs review.}
 review: {author_review_status: reviewed, legal_expert_review_status: not_reviewed, reviewer_role: researcher, reviewer_name: null, review_date: '2026-07-15', interpretation_version: '1.1', review_notes: Internally reviewed by the researcher; no independent qualified legal expert review is recorded.}

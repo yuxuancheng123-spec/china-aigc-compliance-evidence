@@ -6,6 +6,8 @@ from typing import Any
 
 import yaml
 
+from src.validator import validate_runtime_evidence
+
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTCOMES = {"pass", "fail", "review", "not_applicable"}
@@ -197,6 +199,9 @@ def evaluate_control(control: dict, evidence: dict[str, Any]) -> dict:
             return exception_result
         return _base_result(control, "fail", control["outcomes"]["fail"], machine_result="fail", confirmations_checked=confirmations)
 
+    if control.get("automation_profile", {}).get("final_decision") == "automated_after_confirmation":
+        return _base_result(control, "pass", control["outcomes"]["pass"], machine_result="pass", confirmations_checked=confirmations)
+
     if control["automation_level"] in {"partially_automatable", "human_review_required"}:
         return _review_result(control, evidence, "pass" if control["automation_level"] == "partially_automatable" else "review", confirmations)
 
@@ -213,6 +218,10 @@ def evaluate_validation_cases(path: Path | None = None, controls: list[dict] | N
     controls_by_id = {control["control_id"]: control for control in (controls or load_controls())}
     results = []
     for case in cases:
+        runtime_validation = validate_runtime_evidence(case["evidence"])
+        if not runtime_validation["valid"]:
+            results.append({"case_id": case["case_id"], "expected": case.get("expected", {}), "actual": "validation_error", "validation_errors": runtime_validation["errors"], "passed": False})
+            continue
         actual = {control_id: evaluate_control(controls_by_id[control_id], case["evidence"])["status"] for control_id in case.get("expected", {})}
         results.append({"case_id": case["case_id"], "expected": case.get("expected", {}), "actual": actual, "passed": actual == case.get("expected", {})})
     return {"cases_checked": len(results), "passed": sum(item["passed"] for item in results), "failed": sum(not item["passed"] for item in results), "results": results}

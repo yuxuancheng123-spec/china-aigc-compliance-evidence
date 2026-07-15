@@ -33,7 +33,11 @@
     fail: Visible label is absent and no complete exception path applies.
     review: Evidence is missing or explicit-label scenario classification requires human review.
     not_applicable: The output is not AI-generated, not user-facing, or is outside reviewed explicit-label scenarios.
-  automation_level: fully_automatable
+  automation_level: partially_automatable
+  automation_profile:
+    applicability: human_confirmed
+    evidence_test: fully_automatable
+    final_decision: automated_after_confirmation
   traceability:
     source_id: LABEL-2025
     document_title_zh: 人工智能生成合成内容标识办法
@@ -78,6 +82,10 @@
     review: Label prominence cannot be finally determined without human review.
     not_applicable: Explicit labeling does not apply or no visible label exists to review.
   automation_level: human_review_required
+  automation_profile:
+    applicability: human_confirmed
+    evidence_test: partially_automatable
+    final_decision: human_review_required
   required_human_review:
     review_key: label_prominence
   traceability:
@@ -114,6 +122,10 @@
     review: Metadata evidence is missing or cannot be parsed.
     not_applicable: The output is not AI-generated.
   automation_level: fully_automatable
+  automation_profile:
+    applicability: fully_automatable
+    evidence_test: fully_automatable
+    final_decision: fully_automatable
   traceability:
     source_id: LABEL-2025
     document_title_zh: 人工智能生成合成内容标识办法
@@ -152,6 +164,10 @@
     review: Metadata cannot be inspected or field mapping is unclear.
     not_applicable: The file does not support metadata or output is not AI-generated.
   automation_level: fully_automatable
+  automation_profile:
+    applicability: fully_automatable
+    evidence_test: fully_automatable
+    final_decision: fully_automatable
   traceability:
     source_id: GB45438-2025
     document_title_zh: GB 45438-2025 网络安全技术 人工智能生成合成内容标识方法
@@ -185,7 +201,11 @@
     fail: Separate consent evidence is absent and no exception applies.
     review: Sensitivity classification, scope, or exception requires legal review.
     not_applicable: No sensitive personal information is processed.
-  automation_level: partially_automatable
+  automation_level: human_review_required
+  automation_profile:
+    applicability: human_confirmed
+    evidence_test: fully_automatable
+    final_decision: human_review_required
   required_human_review:
     review_key: sensitive_information_scope
   traceability:
@@ -220,6 +240,10 @@
     review: Classification requires legal review.
     not_applicable: No biometric-like data is processed.
   automation_level: human_review_required
+  automation_profile:
+    applicability: fully_automatable
+    evidence_test: partially_automatable
+    final_decision: human_review_required
   required_human_review:
     review_key: biometric_classification
   traceability:
@@ -254,7 +278,11 @@
     fail: Face or voice editing is offered without the required provider prompt record.
     review: Whether the feature edits face or voice biometric information requires review.
     not_applicable: No face or voice editing feature is provided.
-  automation_level: partially_automatable
+  automation_level: human_review_required
+  automation_profile:
+    applicability: fully_automatable
+    evidence_test: fully_automatable
+    final_decision: human_review_required
   required_human_review:
     review_key: face_voice_feature_scope
   traceability:
@@ -289,7 +317,11 @@
     fail: The organizational assurance record shows missing consent evidence or scope review.
     review: Consent assurance evidence is incomplete or requires review.
     not_applicable: No face or voice editing feature is provided.
-  automation_level: partially_automatable
+  automation_level: human_review_required
+  automation_profile:
+    applicability: fully_automatable
+    evidence_test: fully_automatable
+    final_decision: human_review_required
   required_human_review:
     review_key: consent_assurance
   traceability:
@@ -330,7 +362,11 @@
     fail: Filing is required and registration metadata is missing.
     review: Filing applicability or public-opinion/social-mobilization capacity has not been reviewed.
     not_applicable: Service is not public-facing or lacks reviewed public opinion/social mobilization capacity.
-  automation_level: partially_automatable
+  automation_level: human_review_required
+  automation_profile:
+    applicability: human_confirmed
+    evidence_test: fully_automatable
+    final_decision: human_review_required
   required_human_review:
     review_key: filing_applicability
   traceability:
@@ -365,6 +401,10 @@
     review: Adequacy of effective measures and content legality requires human review.
     not_applicable: Content is not generated for a user-facing service.
   automation_level: human_review_required
+  automation_profile:
+    applicability: fully_automatable
+    evidence_test: partially_automatable
+    final_decision: human_review_required
   required_human_review:
     review_key: content_safety
   traceability:
@@ -400,7 +440,11 @@
     fail: Complaint process or feedback time limit is not disclosed, or status is missing.
     review: Timeliness or substantive adequacy requires human review.
     not_applicable: No complaint was received.
-  automation_level: partially_automatable
+  automation_level: human_review_required
+  automation_profile:
+    applicability: fully_automatable
+    evidence_test: fully_automatable
+    final_decision: human_review_required
   required_human_review:
     review_key: complaint_timeliness
   traceability:
@@ -438,6 +482,10 @@
     review: Whether content may confuse the public or whether the label is prominent requires human review.
     not_applicable: Content is not deep synthesis content or does not create reviewed confusion risk.
   automation_level: human_review_required
+  automation_profile:
+    applicability: human_confirmed
+    evidence_test: partially_automatable
+    final_decision: human_review_required
   required_human_review:
     review_key: deep_synthesis_label_prominence
   traceability:

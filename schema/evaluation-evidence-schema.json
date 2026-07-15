@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Runtime evidence for machine-readable control evaluation",
+  "type": "object",
+  "properties": {
+    "human_confirmations": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/human_confirmation_record"}
+    },
+    "human_reviews": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/human_review_record"}
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "human_confirmation_record": {
+      "type": "object",
+      "required": ["confirmed", "value", "reviewer_role", "reviewed_at"],
+      "properties": {
+        "confirmed": {"const": true},
+        "value": {},
+        "reviewer_role": {"type": "string", "minLength": 1},
+        "reviewer_name": {"type": ["string", "null"]},
+        "reviewed_at": {"type": "string", "minLength": 1},
+        "review_note": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "human_review_record": {
+      "type": "object",
+      "required": ["completed", "result"],
+      "properties": {
+        "completed": {"type": "boolean"},
+        "result": {"enum": ["pass", "fail", null]},
+        "reviewer_role": {"type": "string"},
+        "reviewer_name": {"type": ["string", "null"]},
+        "reviewed_at": {"type": "string"},
+        "review_note": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

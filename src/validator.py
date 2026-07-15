@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import ast
 import csv
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -38,6 +39,19 @@ def validate_legal_norm(norm: dict) -> dict:
 
 def validate_control(control: dict) -> dict:
     return validate_instance(control, ROOT / "schema" / "control-schema.json")
+
+
+def validate_runtime_evidence(evidence: dict) -> dict:
+    return validate_instance(evidence, ROOT / "schema" / "evaluation-evidence-schema.json")
+
+
+def validate_validation_case_evidence(path: Path | None = None) -> dict:
+    cases = load_yaml(path or ROOT / "examples" / "validation-cases.yml")
+    results = []
+    for case in cases:
+        result = validate_runtime_evidence(case["evidence"])
+        results.append({"case_id": case["case_id"], **result})
+    return {"valid": all(item["valid"] for item in results), "cases_checked": len(results), "results": results}
 
 
 def load_norm_artifacts() -> dict[str, dict]:
@@ -161,6 +175,23 @@ def validate_cross_file_integrity() -> dict:
             _append(errors, control_id, "pass exception path must declare control_scope")
         if control.get("applicability", {}).get("human_confirmed_fields") and not isinstance(control.get("applicability", {}).get("human_confirmed_fields"), list):
             _append(errors, control_id, "human_confirmed_fields must declare confirmation requirements")
+        profile = control.get("automation_profile")
+        if not profile:
+            _append(errors, control_id, "automation_profile is required")
+        else:
+            expected_level = {
+                "fully_automatable": "fully_automatable",
+                "automated_after_confirmation": "partially_automatable",
+                "human_review_required": "human_review_required",
+            }[profile["final_decision"]]
+            if control["automation_level"] != expected_level:
+                _append(errors, control_id, "automation_level is inconsistent with automation_profile final_decision")
+            if control.get("applicability", {}).get("human_confirmed_fields") and profile["applicability"] == "fully_automatable":
+                _append(errors, control_id, "human-confirmed applicability cannot be fully_automatable")
+            if control.get("required_human_review") and profile["final_decision"] != "human_review_required":
+                _append(errors, control_id, "required_human_review requires human_review_required final_decision")
+            if profile["final_decision"] == "fully_automatable" and (profile["applicability"] != "fully_automatable" or profile["evidence_test"] != "fully_automatable"):
+                _append(errors, control_id, "fully_automatable final decision requires fully automatable applicability and evidence test")
         if control["control_derivation_type"] == "direct_legal_requirement" and any(word in control["control_objective"].lower() for word in ("retain consent", "organizational assurance")):
             _append(errors, control_id, "direct legal requirement appears to contain an unlabelled derived assurance duty")
 
@@ -178,7 +209,7 @@ def validate_cross_file_integrity() -> dict:
             "complete norm artifact coverage", "source, article, date, URL, and specificity consistency",
             "automation and interpretation-version consistency", "expression variable declarations",
             "control derivation and component semantics", "human-confirmation declarations",
-            "scoped pass exceptions", "orphan norm detection", "low-specificity source warnings",
+            "automation-profile consistency", "scoped pass exceptions", "orphan norm detection", "low-specificity source warnings",
         ],
         "errors": errors,
         "warnings": warnings,
@@ -198,6 +229,10 @@ def validate_legal_source_metadata() -> dict:
             _append(errors, norm_id, "source URL and Chinese and English titles are required", "source")
         if source.get("source_url_specificity") == "institution_homepage":
             _append(warnings, norm_id, "source URL uses low-specificity institution_homepage", "source")
+        stored_hash = source.get("source_snapshot", {}).get("source_excerpt_sha256")
+        computed_hash = hashlib.sha256(source.get("source_text_zh", "").strip().encode("utf-8")).hexdigest()
+        if stored_hash != computed_hash:
+            _append(errors, norm_id, "stored source excerpt SHA-256 does not match source_text_zh", "source_snapshot")
     return {"valid": not errors, "errors": errors, "warnings": warnings, "notice": "This check confirms required source metadata fields are present and internally consistent. It does not independently verify that the stored text is identical to the current official source."}
 
 
@@ -205,14 +240,16 @@ def validate_repository() -> dict:
     mapping = validate_control_mapping()
     norms = validate_norm_artifacts()
     examples = validate_example_norms()
+    runtime_evidence = validate_validation_case_evidence()
     cross_file = validate_cross_file_integrity()
     legal_source = validate_legal_source_metadata()
     return {
         "schema_valid": mapping["valid"] and norms["valid"] and examples["valid"],
         "cross_file_valid": cross_file["valid"],
         "legal_source_metadata_fields_complete": legal_source["valid"],
+        "runtime_evidence_schema_valid": runtime_evidence["valid"],
         "legal_source_metadata_notice": legal_source["notice"],
-        "mapping": mapping, "norms": norms, "examples": examples,
+        "mapping": mapping, "norms": norms, "examples": examples, "runtime_evidence": runtime_evidence,
         "cross_file": cross_file, "legal_source_metadata": legal_source,
     }
 
