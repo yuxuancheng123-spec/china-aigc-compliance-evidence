@@ -1,0 +1,43 @@
+\begin{tikzpicture}[
+  font=\footnotesize,
+  node distance=3.3mm and 4mm,
+  box/.style={draw, rounded corners=1pt, align=center, minimum height=6.5mm, text width=42mm, inner sep=2pt},
+  branch/.style={draw, rounded corners=1pt, align=center, minimum height=7mm, text width=30mm, inner sep=2pt},
+  route/.style={draw, dashed, align=center, text width=26mm, inner sep=2pt},
+  flow/.style={-{Stealth[length=1.8mm]}, line width=.4pt},
+  review/.style={-{Stealth[length=1.5mm]}, dashed, line width=.4pt}
+]
+  \node[box] (source) {Official Chinese source};
+  \node[box, below=of source] (norm) {Canonical norm artifact};
+  \node[box, below=of norm] (interpret) {Human interpretation};
+  \node[box, below=of interpret] (apply) {Applicability confirmation};
+  \node[box, below=of apply] (derive) {Control derivation};
+  \node[branch, below left=6mm and 35mm of derive] (direct) {Direct requirement};
+  \node[branch, below=6mm of derive] (derived) {Derived assurance};
+  \node[branch, below right=6mm and 35mm of derive] (technical) {Technical control};
+  \node[box, below=7mm of derived] (profile) {Automation profile\\applicability / evidence test / final decision};
+  \node[box, below=of profile] (runtime) {Runtime evidence};
+  \node[box, below=of runtime] (evaluate) {Evaluator};
+  \node[box, below=of evaluate] (result) {Machine result};
+  \node[box, below=of result] (final) {Reviewed final status};
+  \node[route, left=15mm of norm] (invalid) {Source inconsistency\\validation error};
+  \node[route, right=15mm of apply] (review) {Open-textured concept\\human review};
+
+  \draw[flow] (source) -- (norm);
+  \draw[flow] (norm) -- (interpret);
+  \draw[flow] (interpret) -- (apply);
+  \draw[flow] (apply) -- (derive);
+  \draw[flow] (derive.south) |- (direct.north);
+  \draw[flow] (derive) -- (derived);
+  \draw[flow] (derive.south) |- (technical.north);
+  \draw[flow] (direct.south) |- (profile.west);
+  \draw[flow] (derived) -- (profile);
+  \draw[flow] (technical.south) |- (profile.east);
+  \draw[flow] (profile) -- (runtime);
+  \draw[flow] (runtime) -- (evaluate);
+  \draw[flow] (evaluate) -- (result);
+  \draw[flow] (result) -- (final);
+  \draw[review] (norm.west) -- (invalid.east);
+  \draw[review] (apply.east) -- (review.west);
+  \draw[review] (review.south) |- (final.east);
+\end{tikzpicture}

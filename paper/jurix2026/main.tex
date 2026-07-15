@@ -1,0 +1,148 @@
+% !TEX program = xelatex
+\documentclass{IOS-Book-Article}
+
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setmainfont{TeX Gyre Termes}
+\setCJKmainfont{FandolSong-Regular}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+\usepackage{cite}
+\usepackage[hidelinks]{hyperref}
+
+\begin{document}
+\begin{frontmatter}
+
+\title{From Legal Provisions to Machine-Readable Controls:\\
+A Transformation Framework for China AIGC Governance}
+\runningtitle{From Legal Provisions to Machine-Readable Controls}
+\author{\fnms{Yuxuan} \snm{Cheng}}
+\address{Independent Researcher}
+\runningauthor{Y. Cheng}
+
+\begin{abstract}
+Natural-language AI regulation is difficult to operationalize because engineering systems require explicit controls, evidence fields, and review routes. This paper presents a human-reviewed transformation framework for converting selected Chinese AIGC provisions into traceable machine-readable controls. Five source instruments are represented as 11 canonical norm artifacts and 12 scoped controls. The framework separates applicability determination, evidence-test execution, and final decision, and distinguishes direct legal requirements, derived organizational assurances, and technical implementation controls. Repository-level validation covers schema conformance, source-excerpt integrity, cross-file traceability, runtime evidence, and 21 designed cases; 46 automated tests passed in the evaluated repository state. The results demonstrate structural executability and review routing, not legal correctness or compliance certification. The contribution is a practical bridge between formal legal text and compliance-as-code that preserves human responsibility for legal interpretation.
+\end{abstract}
+
+\begin{keyword}
+AI governance \sep legal informatics \sep machine-readable rules
+\sep compliance-as-code \sep China AIGC regulation
+\end{keyword}
+\end{frontmatter}
+
+\section{Introduction}
+
+AI governance obligations are commonly expressed as natural-language statutes, regulations, technical standards, and regulator guidance. Their operational use, however, requires explicit controls, evidence fields, test logic, and review routes. The difference is not merely one of format. A legal provision may contain an actor, a modality, a trigger, an exception, and an open-textured standard that cannot safely be collapsed into a Boolean expression. Documentation approaches such as Model Cards and Datasheets improve transparency, while the NIST AI Risk Management Framework provides a governance vocabulary \cite{mitchell2019model,gebru2021datasheets,nistAiRmf2023}. These approaches do not by themselves establish how a particular legal clause becomes a scoped, executable control.
+
+The issue is salient for China-facing AIGC and deep-synthesis services. Selected obligations address generated-content labeling, metadata labels, model-filing triggers, face and voice editing, complaint handling, content safety, and sensitive personal information. An engineering team may be able to test whether a metadata field exists, but it cannot infer on its own whether a legal trigger applies, whether a label is sufficiently prominent, or whether an organizational evidence-retention practice is a direct statutory duty. The upstream question is therefore: \emph{Where did the control come from, and can its derivation remain reviewable?}
+
+This paper presents a short, source-to-control transformation framework for selected Chinese AIGC provisions. It treats legal interpretation as a human responsibility and machine execution as a bounded downstream activity. The study asks which semantic elements are needed for representation, how source-to-control traceability can be retained, which stages are automatable, and whether designed cases are routed consistently. The paper makes three contributions:
+\begin{enumerate}
+\item A source-to-control transformation model for selected Chinese AIGC provisions.
+\item A layered automation model separating applicability, evidence testing, and final decisions.
+\item A traceable prototype with 11 norm artifacts, 12 controls, and designed validation cases.
+\end{enumerate}
+
+\section{Related Work}
+
+AI-governance documentation and assurance work provides important foundations. Model Cards and Datasheets structure disclosures about models and datasets \cite{mitchell2019model,gebru2021datasheets}; NIST AI RMF provides a risk-management frame \cite{nistAiRmf2023}; and OSCAL provides machine-readable models for controls, implementations, and assessment artifacts \cite{nistOscal}. Recent work on machine-readable AI compliance evidence demonstrates how control-based assurance artifacts can be generated \cite{ugarte2026evidence}. These contributions improve documentation, assessment, and evidence exchange, but generally begin with a control catalog or another already operationalized representation.
+
+Rules-as-Code and computational-law research instead address how public rules can be represented for human and machine use. The OECD frames Rules as Code as a change in rulemaking and consumption \cite{mohun2020cracking}; the British Nationality Act logic-program example remains a landmark executable-law demonstration \cite{sergot1986nationality}. LegalRuleML, Akoma Ntoso, and LKIF-Core respectively support legal-rule, legal-document, and legal-concept representation \cite{legalRuleMl2021,akomaNtoso2018,breuker2007lkif}. They show that legal sources, norms, and formal representations should be distinguished, but do not prescribe a domain-specific operationalization path for Chinese AIGC obligations.
+
+More directly, LN2FR identifies the translation of concrete legal text into formal representation as an unresolved methodological problem \cite{borges2023ln2fr}. Work in \emph{Artificial Intelligence and Law} develops patterns for formalizing and checking deontic norms \cite{francesconi2023patterns}. An ICAIL-associated workshop study reports explicit interpretation of an entire statute into decision-support specifications \cite{doesburg2019aliens}. Prior work therefore formalizes norms, structures legal documents, or executes predefined controls. This study focuses on the intermediate, human-reviewed transformation from a formal Chinese legal clause to a scoped executable control.
+
+\section{Transformation Framework}
+
+\subsection{Corpus and Representation}
+
+The framework uses five representative instruments: the Interim Measures for the Management of Generative AI Services \cite{genaiMeasures2023}; the Deep Synthesis Provisions \cite{deepSynthesisProvisions2022}; the Measures for the Labeling of AI-Generated Synthetic Content \cite{aigcLabelingMeasures2025}; GB 45438--2025 \cite{gb45438}; and the Personal Information Protection Law (PIPL) \cite{pipl2021}. The corpus is deliberately narrow. It was selected where a source is traceable and a regulated actor, modality, action, object, trigger, exception, evidence need, and review status can be identified. It does not claim comprehensive coverage of Chinese AI law.
+
+Each selected provision is represented as a canonical norm artifact rather than as a free-form summary. The artifact records 13 core representation elements: source, normative fragment, actor, modality, action, object, trigger, exception, timing, evidence requirement, ambiguity, automation profile, and review status. The source block stores the formal Chinese excerpt, a working English translation, an official URL, effective-date metadata, and a SHA-256 digest of the normalized excerpt. The hash detects an internal change to the stored excerpt; it does not establish that the excerpt remains identical to an official webpage.
+
+\subsection{Clause-to-Control Pipeline}
+
+Figure~\ref{fig:pipeline} separates the interpretive and executable parts of the method. A reviewer selects and decomposes a source fragment into a canonical norm artifact. Human interpretation specifies the bounded meaning used by the prototype, including applicability and exceptions. Control derivation then produces one or more controls. This matters because a single norm may support a direct legal requirement, a derived organizational assurance, and a technical implementation control without making those categories legally identical.
+
+\begin{figure}[t]
+\centering
+\resizebox{\textwidth}{!}{\input{figures/transformation-pipeline}}
+\caption{Traceable pipeline from a formal Chinese provision to a reviewed machine-readable control result.}
+\label{fig:pipeline}
+\end{figure}
+
+The control layer declares evidence fields, a test expression, outcome messages, traceability fields, and review requirements. Runtime evidence is validated separately from the control definition. A runtime record can contain business facts, human confirmations, and keyed human reviews. This separation distinguishes invalid record structure from a substantively incomplete or conflicting fact pattern. It also makes it possible to preserve why an apparent automated result was not allowed to become a final conclusion.
+
+\subsection{Automation and Review Boundaries}
+
+The framework divides automation into three layers. \emph{Applicability automation} asks whether the legal trigger can be determined from data or requires a human-confirmed classification. \emph{Evidence-test automation} describes whether the declared evidence can be tested deterministically. \emph{Final-decision automation} specifies whether a machine result can be final or must await human review. A control can therefore have an automated evidence test while its applicability or final decision remains human-dependent.
+
+The derivation type is also explicit. A \emph{direct legal requirement} maps a stated duty into a control. A \emph{derived organizational assurance} records an evidence practice chosen to support assurance but not presented as verbatim statutory text. A \emph{technical implementation control} maps a selected technical field requirement to a machine check. This distinction is particularly important for digital-human and face/voice workflows: the Deep Synthesis provider-prompt control is direct, while retaining consent-assurance evidence is an organizational control.
+
+The visible-label example shows the boundary. Articles 4 and 9 of the Labeling Measures inform a control for a human-confirmed explicit-label scenario \cite{aigcLabelingMeasures2025}. Its visible-label test is deterministic. The Article 9 exception can pass only when the documented provider-delivery evidence is complete; that pass does not determine downstream publication or dissemination obligations. Thus the artifact expresses both a usable test and its lifecycle scope.
+
+\section{Prototype Evaluation}
+
+Table~\ref{tab:coverage} summarizes the evaluated repository artifacts. The selected corpus comprises 11 canonical norm artifacts and 12 controls: eight direct legal requirements, two derived organizational assurances, and two technical implementation controls. The figures describe an implementation-oriented research corpus, not a measure of regulatory completeness.
+
+\begin{table}[t]
+\caption{Artifact Coverage}
+\label{tab:coverage}
+\centering
+\footnotesize
+\begin{tabular}{@{}lr@{}}
+\toprule
+\textbf{Artifact} & \textbf{Count} \\
+\midrule
+Sources & 5 \\
+Norm artifacts & 11 \\
+Controls & 12 \\
+Direct / derived / technical & 8 / 2 / 2 \\
+Designed cases & 21 \\
+Automated tests & 46 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The 13 representation elements answer the first study question. All 12 controls retained end-to-end source-to-control traceability in the validated repository state. The automation results answer the third question: only two metadata controls are automated across applicability, evidence testing, and final decision. The remaining controls retain a human-confirmation or human-review boundary. Table~\ref{tab:automation} gives representative examples; the complete inventory is available in the accompanying repository.
+
+\begin{table}[t]
+\caption{Validation and Automation Summary}
+\label{tab:automation}
+\centering
+\footnotesize
+\begin{tabularx}{\columnwidth}{@{}p{0.29\columnwidth}p{0.20\columnwidth}p{0.19\columnwidth}X@{}}
+\toprule
+\textbf{Control} & \textbf{Applicability} & \textbf{Evidence test} & \textbf{Final decision} \\
+\midrule
+Metadata label & Automated & Automated & Automated \\
+Visible-label existence & Human-confirmed & Automated & Automated after confirmation \\
+Label prominence & Human-confirmed & Partial & Human review \\
+Model filing & Human-confirmed & Automated & Human review \\
+Content safety & Trigger check & Partial & Human review \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Repository-level validation passed for all 11 norm artifacts and all 12 controls. Cross-file traceability and source-excerpt hashes passed, and all 21 runtime cases matched expected routing. The 46 automated regression and integrity tests passed in the evaluated state. Representative adverse cases show the intended boundaries: missing human confirmation routes to \texttt{review}; invalid runtime evidence to \texttt{validation\_error}; an unsatisfied scoped exception to \texttt{fail}; and an absent required human review to \texttt{review}. These results answer the final study question by demonstrating consistent routing for designed cases.
+
+The results establish repository-level structural validity and routing consistency, not substantive legal correctness. They do not establish that the selected interpretations are the only defensible readings, that the corpus covers all obligations, or that a real service is compliant.
+
+\section{Discussion and Limitations}
+
+The prototype supports four methodological conclusions. First, applicability, evidence testing, and final decision should be modeled separately. A deterministic field-presence check cannot independently decide whether a legal trigger applies or whether an open-textured standard has been met. Second, direct requirements and derived assurances should remain distinguishable. An organization may retain stronger evidence than a legal text expressly requires, but its control artifact should not misstate that organizational choice as statutory language. Third, machine-readable representations are not machine-interpreted: they execute a documented human interpretation and should expose their review boundary. Fourth, source-excerpt hashes establish integrity of a repository excerpt, not identity with the currently published official source.
+
+Independent review is planned rather than completed. A second coder will independently encode all 11 norms, followed by qualified legal review of source fidelity, control derivation, Article 9 scope, Deep Synthesis Article 14, filing applicability, biometric classification, and open-textured concepts. Disagreements will be preserved and adjudicated through versioned records. The accompanying repository contains the planned protocol and blank templates; it does not report completed agreement metrics or legal-expert conclusions.
+
+The limitations are substantial. The corpus contains only five instruments and 11 norms; a single author performed the initial interpretation; working translations are not official translations; validation cases are designed cases; and the evaluator is not a production legal-judgment system. Regulatory text and official interpretation may change. The framework does not provide legal advice, legal certification, or a finding that a real system complies with Chinese law.
+
+\section{Conclusion}
+
+This paper presented a human-reviewed transformation framework from selected Chinese AIGC provisions to scoped machine-readable controls. The framework preserves a path from source excerpt and legal interpretation to applicability confirmation, evidence testing, and reviewed final status. Its layered automation model shows that deterministic checks can be useful without implying that legal applicability or sufficiency is automated. The prototype demonstrates structural traceability and expected routing for a small corpus and designed validation cases, while leaving legal correctness outside its claims. The next research stage is not further product expansion: it is independent second-coder analysis, qualified legal review, and transparent adjudication of disputed interpretations.
+
+\bibliographystyle{vancouver}
+\bibliography{references}
+\end{document}
