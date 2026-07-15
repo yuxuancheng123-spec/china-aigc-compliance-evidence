@@ -7,12 +7,31 @@
     "norm_id": { "type": "string", "minLength": 1 },
     "source": {
       "type": "object",
-      "required": ["document", "article", "effective_date", "original_text"],
+      "required": [
+        "source_id",
+        "document_title_zh",
+        "document_title_en",
+        "issuing_authority",
+        "article",
+        "source_text_zh",
+        "working_translation_en",
+        "source_url",
+        "promulgation_date",
+        "effective_date",
+        "retrieved_at"
+      ],
       "properties": {
-        "document": { "type": "string" },
-        "article": { "type": "string" },
+        "source_id": { "type": "string", "minLength": 1 },
+        "document_title_zh": { "type": "string", "minLength": 1 },
+        "document_title_en": { "type": "string", "minLength": 1 },
+        "issuing_authority": { "type": "string", "minLength": 1 },
+        "article": { "type": "string", "minLength": 1 },
+        "source_text_zh": { "type": "string", "minLength": 1 },
+        "working_translation_en": { "type": "string", "minLength": 1 },
+        "source_url": { "type": "string", "format": "uri" },
+        "promulgation_date": { "type": "string" },
         "effective_date": { "type": "string" },
-        "original_text": { "type": "string" }
+        "retrieved_at": { "type": "string" }
       }
     },
     "norm": {
@@ -64,10 +83,27 @@
     },
     "review": {
       "type": "object",
-      "required": ["legal_review_status", "interpretation_version"],
+      "required": [
+        "author_review_status",
+        "legal_expert_review_status",
+        "reviewer_role",
+        "reviewer_name",
+        "review_date",
+        "interpretation_version",
+        "review_notes"
+      ],
       "properties": {
-        "legal_review_status": { "enum": ["draft", "reviewed", "needs_legal_review"] },
-        "interpretation_version": { "type": "string" }
+        "author_review_status": {
+          "enum": ["not_reviewed", "under_review", "reviewed", "disputed", "superseded"]
+        },
+        "legal_expert_review_status": {
+          "enum": ["not_reviewed", "under_review", "reviewed", "disputed", "superseded"]
+        },
+        "reviewer_role": { "type": "string" },
+        "reviewer_name": { "type": ["string", "null"] },
+        "review_date": { "type": "string" },
+        "interpretation_version": { "type": "string" },
+        "review_notes": { "type": "string" }
       }
     }
   }

@@ -4,7 +4,9 @@ A research framework for transforming selected Chinese AIGC legal provisions int
 
 This repository studies how natural-language provisions from Chinese AIGC laws, regulations, and technical standards can be decomposed into structured legal norms and then translated into machine-readable controls. It does **not** try to be a user-facing compliance assessment product. The companion project [`ai-generated-actor-compliance`](https://github.com/yuxuancheng123-spec/ai-generated-actor-compliance) demonstrates how already-defined rules can be applied to concrete AI actor, digital human, and synthetic media cases. This repository focuses on the upstream research question: **where do the rules come from, and how can their legal interpretation be traced back to source clauses?**
 
-Earlier supplementary article PDF: [Making China AIGC Compliance Evidence Machine-Readable: A Governance Pipeline Prototype for Synthetic Actor and Digital Human Platforms](article/china-aigc-compliance-evidence-paper.pdf).
+Current paper draft: [paper/main.tex](paper/main.tex).
+
+Earlier supplementary prototype paper, superseded by the current legal-clause-to-control paper draft: [Making China AIGC Compliance Evidence Machine-Readable: A Governance Pipeline Prototype for Synthetic Actor and Digital Human Platforms](article/china-aigc-compliance-evidence-paper.pdf). The archived LaTeX package under `article/latex.zip` is likewise retained as a superseded prototype artifact.
 
 All examples are synthetic or paraphrased for research use. The project does not use real personal data, face data, voice data, biometric data, contracts, company records, customer records, or production media.
 
@@ -43,6 +45,19 @@ The machine-readable layer does not interpret law on its own. It executes struct
 - A small validation set that checks whether controls are traceable, executable, and correctly routed to human review when needed.
 
 The previous synthetic request pipeline remains available as a supplementary proof of concept. It shows that structured controls can be read by software and exercised against synthetic operational records, but it is no longer the main research contribution.
+
+## Legal Source Accuracy Updates
+
+The current mapping corrects several source references and narrows automation boundaries:
+
+- Complaint handling maps to Article 15 of the Interim Measures for the Management of Generative AI Services.
+- Model filing maps to Article 17 of the Interim Measures and requires reviewed applicability fields before checking filing status.
+- Deep synthesis confusion-risk labeling maps to Article 17 of the Deep Synthesis Provisions.
+- Deep synthesis face and voice editing consent is modeled separately under Article 14 of the Deep Synthesis Provisions.
+- Visible AIGC labeling is split into existence and prominence controls, and the Article 9 no-explicit-label exception path is represented as reviewable evidence rather than an automatic failure.
+- Metadata labeling checks underlying fields such as generated-content attribute, provider name or code, and content ID instead of relying only on an aggregate flag.
+
+`Reviewed` currently means internally reviewed by the researcher unless a qualified legal expert review is separately recorded. The mapping files distinguish `author_review_status` from `legal_expert_review_status`.
 
 ## Repository Structure
 

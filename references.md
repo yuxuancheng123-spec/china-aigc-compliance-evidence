@@ -2,6 +2,8 @@
 
 This research framework uses the following Chinese AI governance rules and standards as background context for legal-clause-to-control transformation. The project does not claim to implement these materials completely and does not provide legal advice.
 
+The current mappings use formal Chinese source text where included in the research corpus. English translations are working translations only. `Reviewed` in this repository means author-reviewed unless an independent qualified legal expert review is separately recorded.
+
 ## Laws, Regulations, And Rules
 
 - Cyberspace Administration of China and other departments, [Interim Measures for the Management of Generative Artificial Intelligence Services](https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm), 2023.
@@ -23,9 +25,11 @@ The framework maps selected themes from these materials into human-reviewed stru
 
 - consent and separate consent for sensitive or biometric-like information;
 - visible and machine-readable AIGC labeling;
-- model filing or applicability review;
-- content safety measures;
-- complaint and reporting mechanisms;
+- model filing or applicability review under Article 17 of the Interim Measures;
+- content safety principles under Article 4 of the Interim Measures;
+- complaint and reporting mechanisms under Article 15 of the Interim Measures;
+- deep synthesis face and voice editing consent under Article 14 of the Deep Synthesis Provisions;
+- deep synthesis confusion-risk labeling under Article 17 of the Deep Synthesis Provisions;
 - traceability between source clause, legal interpretation, evidence requirement, and executable test.
 
 The older synthetic evidence outputs are supplementary proof-of-concept artifacts rather than the main research contribution.

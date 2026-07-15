@@ -1,9 +1,16 @@
 norm_id: CN-PIPL-CONSENT-001
 source:
-  document: Personal Information Protection Law of the People's Republic of China
-  article: Article 29
+  source_id: PIPL-2021
+  document_title_zh: 中华人民共和国个人信息保护法
+  document_title_en: Personal Information Protection Law of the People's Republic of China
+  issuing_authority: 全国人民代表大会常务委员会
+  article: 第二十九条
+  source_text_zh: 处理敏感个人信息应当取得个人的单独同意；法律、行政法规规定处理敏感个人信息应当取得书面同意的，从其规定。
+  working_translation_en: Processing sensitive personal information should obtain the individual's separate consent; where laws or administrative regulations require written consent, those requirements apply.
+  source_url: https://www.npc.gov.cn/
+  promulgation_date: "2021-08-20"
   effective_date: "2021-11-01"
-  original_text: "Processing sensitive personal information requires separate consent unless another lawful basis applies."
+  retrieved_at: "2026-07-15"
 norm:
   regulated_actor: personal_information_processor
   modality: must
@@ -18,19 +25,21 @@ interpretation:
   control_objective: Synthetic actor face, voice, or biometric-like identifiers should not be processed unless separate consent evidence exists or a reviewed exception applies.
   automation_level: partially_automatable
   ambiguity_level: medium
-  reviewer_note: The system can check consent evidence only after a human-reviewed determination that the data category is sensitive personal information.
+  reviewer_note: The system can check consent evidence only after a reviewed determination that the data category is sensitive personal information.
 evidence:
   evidence_type: consent_record
   required_fields:
-    - actor_asset_id
     - separate_consent_present
-    - consent_scope
-    - checked_at
 test:
   expression: separate_consent_present == true
   pass_condition: Evidence confirms separate consent is present.
   fail_condition: Evidence confirms separate consent is absent and no exception applies.
   review_condition: Data category, exception, or consent scope requires legal review.
 review:
-  legal_review_status: reviewed
-  interpretation_version: "1.0"
+  author_review_status: reviewed
+  legal_expert_review_status: not_reviewed
+  reviewer_role: researcher
+  reviewer_name: null
+  review_date: "2026-07-15"
+  interpretation_version: "1.1"
+  review_notes: Reviewed currently means internally reviewed by the researcher; no independent qualified legal expert review has been recorded.

@@ -1,65 +1,105 @@
-- case_id: CASE-PASS-LABEL
-  description: Applicable AIGC output with visible and metadata labels.
+- case_id: CASE-REVIEW-LABEL-MACHINE-PASS
+  description: Explicit label exists, but the partially automatable control still requires human confirmation.
   evidence:
     output_is_ai_generated: true
     output_is_user_facing: true
+    output_matches_explicit_label_scenario: true
     visible_label_present: true
-    metadata_label_present: true
   expected:
-    CTRL-AIGC-VISIBLE-LABEL: pass
-    CTRL-AIGC-METADATA-LABEL: pass
+    CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: review
 
-- case_id: CASE-FAIL-LABEL
-  description: Applicable user-facing AIGC output without a visible label.
+- case_id: CASE-PASS-LABEL-AFTER-HUMAN-REVIEW
+  description: Explicit label exists and human confirmation is complete.
   evidence:
     output_is_ai_generated: true
     output_is_user_facing: true
+    output_matches_explicit_label_scenario: true
+    visible_label_present: true
+    human_review_completed: true
+    human_review_result: pass
+  expected:
+    CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: pass
+
+- case_id: CASE-FAIL-LABEL-NO-EXCEPTION
+  description: Applicable explicit-label scenario without visible label or complete exception evidence.
+  evidence:
+    output_is_ai_generated: true
+    output_is_user_facing: true
+    output_matches_explicit_label_scenario: true
     visible_label_present: false
   expected:
-    CTRL-AIGC-VISIBLE-LABEL: fail
+    CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: fail
 
-- case_id: CASE-REVIEW-LABEL-MISSING-EVIDENCE
-  description: Applicable user-facing AIGC output with missing label evidence.
+- case_id: CASE-PASS-LABEL-EXCEPTION
+  description: Explicit label is absent but the Article 9 exception path is complete.
   evidence:
     output_is_ai_generated: true
     output_is_user_facing: true
+    output_matches_explicit_label_scenario: true
+    visible_label_present: false
+    visible_label_exception_requested: true
+    user_labeling_obligation_disclosed: true
+    user_use_responsibility_disclosed: true
+    exception_log_retained: true
+    log_retention_period_months: 6
   expected:
-    CTRL-AIGC-VISIBLE-LABEL: review
+    CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: pass
+
+- case_id: CASE-FAIL-LABEL-EXCEPTION-INCOMPLETE
+  description: Explicit-label exception is requested but retention evidence is incomplete.
+  evidence:
+    output_is_ai_generated: true
+    output_is_user_facing: true
+    output_matches_explicit_label_scenario: true
+    visible_label_present: false
+    visible_label_exception_requested: true
+    user_labeling_obligation_disclosed: true
+    user_use_responsibility_disclosed: true
+    exception_log_retained: true
+    log_retention_period_months: 3
+  expected:
+    CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: fail
 
 - case_id: CASE-NOT-APPLICABLE-NON-AIGC
-  description: Non-AIGC output is outside AIGC label control scope.
+  description: Non-AIGC output is outside AIGC label and metadata control scope.
   evidence:
     output_is_ai_generated: false
     output_is_user_facing: true
+    output_matches_explicit_label_scenario: true
   expected:
-    CTRL-AIGC-VISIBLE-LABEL: not_applicable
+    CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: not_applicable
     CTRL-AIGC-METADATA-LABEL: not_applicable
 
-- case_id: CASE-PASS-METADATA
-  description: Metadata label exists for generated synthetic content.
+- case_id: CASE-PASS-METADATA-FIELDS
+  description: Metadata label has required underlying fields.
   evidence:
     output_is_ai_generated: true
-    metadata_label_present: true
+    generated_content_attribute: ai_generated
+    service_provider_name_or_code: synthetic-provider-001
+    content_id: CONTENT-001
   expected:
     CTRL-AIGC-METADATA-LABEL: pass
 
-- case_id: CASE-FAIL-METADATA
-  description: Metadata label is absent for generated synthetic content.
+- case_id: CASE-FAIL-METADATA-AGGREGATE-ONLY
+  description: Aggregate metadata_label_present is true but underlying required fields are missing.
   evidence:
     output_is_ai_generated: true
-    metadata_label_present: false
+    metadata_label_present: true
+    generated_content_attribute: ai_generated
+    service_provider_name_or_code: null
+    content_id: CONTENT-002
   expected:
     CTRL-AIGC-METADATA-LABEL: fail
 
-- case_id: CASE-PASS-CONSENT
-  description: Sensitive actor-like data has separate consent evidence.
+- case_id: CASE-REVIEW-PIPL-CONSENT-MACHINE-PASS
+  description: Sensitive actor-like data has separate consent evidence but still needs reviewed classification confirmation.
   evidence:
     processing_sensitive_personal_information: true
     separate_consent_present: true
   expected:
-    CTRL-PIPL-SEPARATE-CONSENT: pass
+    CTRL-PIPL-SEPARATE-CONSENT: review
 
-- case_id: CASE-FAIL-CONSENT
+- case_id: CASE-FAIL-PIPL-CONSENT
   description: Sensitive actor-like data lacks separate consent evidence.
   evidence:
     processing_sensitive_personal_information: true
@@ -67,35 +107,47 @@
   expected:
     CTRL-PIPL-SEPARATE-CONSENT: fail
 
-- case_id: CASE-NOT-APPLICABLE-CONSENT
-  description: No sensitive personal information is processed.
+- case_id: CASE-FAIL-DEEPSYN-FACE-VOICE-CONSENT
+  description: Deep synthesis face or voice editing feature lacks edited-person separate consent.
   evidence:
-    processing_sensitive_personal_information: false
+    deep_synthesis_face_or_voice_editing_feature: true
+    user_notified_to_inform_edited_person: true
+    edited_person_separate_consent_obtained: false
   expected:
-    CTRL-PIPL-SEPARATE-CONSENT: not_applicable
+    CTRL-DEEPSYN-FACE-VOICE-CONSENT: fail
 
-- case_id: CASE-REVIEW-BIOMETRIC
-  description: Biometric-like material triggers human review.
+- case_id: CASE-BOTH-PIPL-AND-DEEPSYN-SPECIAL-RULES-APPLY
+  description: PIPL general sensitive-information rule and Deep Synthesis Article 14 special rule both apply.
   evidence:
-    biometric_data_processed: true
-    biometric_classification_reviewed: true
+    processing_sensitive_personal_information: true
+    separate_consent_present: true
+    deep_synthesis_face_or_voice_editing_feature: true
+    user_notified_to_inform_edited_person: true
+    edited_person_separate_consent_obtained: true
+    human_review_completed: true
+    human_review_result: pass
   expected:
-    CTRL-PIPL-BIOMETRIC-CLASSIFICATION: review
+    CTRL-PIPL-SEPARATE-CONSENT: pass
+    CTRL-DEEPSYN-FACE-VOICE-CONSENT: pass
 
 - case_id: CASE-PASS-FILING
-  description: Filing is required and registered.
+  description: Filing is applicable, reviewed, required, and registered.
   evidence:
-    service_with_filing_obligation: true
+    service_is_public_facing: true
+    service_has_public_opinion_or_social_mobilization_capacity: true
     filing_applicability_reviewed: true
     filing_required: true
     filing_status: registered
+    human_review_completed: true
+    human_review_result: pass
   expected:
     CTRL-AIGC-MODEL-FILING: pass
 
 - case_id: CASE-FAIL-FILING
-  description: Filing is required but missing.
+  description: Filing is required but missing after applicability review.
   evidence:
-    service_with_filing_obligation: true
+    service_is_public_facing: true
+    service_has_public_opinion_or_social_mobilization_capacity: true
     filing_applicability_reviewed: true
     filing_required: true
     filing_status: missing
@@ -103,27 +155,41 @@
     CTRL-AIGC-MODEL-FILING: fail
 
 - case_id: CASE-NOT-APPLICABLE-FILING
-  description: Service is outside selected filing-control scope.
+  description: Service is not public-facing.
   evidence:
-    service_with_filing_obligation: false
+    service_is_public_facing: false
+    service_has_public_opinion_or_social_mobilization_capacity: true
   expected:
     CTRL-AIGC-MODEL-FILING: not_applicable
 
-- case_id: CASE-REVIEW-SAFETY
-  description: Effective content safety measures require human review.
+- case_id: CASE-REVIEW-FILING-APPLICABILITY-NOT-REVIEWED
+  description: Potentially covered service lacks filing applicability review evidence.
+  evidence:
+    service_is_public_facing: true
+    service_has_public_opinion_or_social_mobilization_capacity: true
+    filing_required: true
+    filing_status: registered
+  expected:
+    CTRL-AIGC-MODEL-FILING: review
+
+- case_id: CASE-REVIEW-SAFETY-PRINCIPLE
+  description: Article 4 content-safety principle requires human review.
   evidence:
     content_is_generated_for_user: true
-    safety_review_completed: true
-    human_safety_review_required: true
+    content_safety_human_review_completed: true
+    human_review_result: pass
   expected:
-    CTRL-AIGC-CONTENT-SAFETY: review
+    CTRL-AIGC-CONTENT-SAFETY-PRINCIPLE: pass
 
-- case_id: CASE-PASS-COMPLAINT
-  description: Complaint process is disclosed and complaint status is tracked.
+- case_id: CASE-PASS-COMPLAINT-AFTER-HUMAN-REVIEW
+  description: Complaint process is disclosed and human confirmation is complete.
   evidence:
     complaint_received: true
     complaint_process_disclosed: true
+    feedback_time_limit_disclosed: true
     complaint_status: acknowledged
+    human_review_completed: true
+    human_review_result: pass
   expected:
     CTRL-AIGC-COMPLAINT-MECHANISM: pass
 

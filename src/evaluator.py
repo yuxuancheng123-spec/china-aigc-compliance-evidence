@@ -21,11 +21,13 @@ def load_controls(path: Path | None = None) -> list[dict]:
 
 
 def _safe_eval(expression: str, evidence: dict[str, Any]) -> bool:
-    expression = expression.replace(" true", " True").replace(" false", " False")
+    expression = expression.replace(" true", " True").replace(" false", " False").replace(" null", " None")
     if expression.startswith("true"):
         expression = "True" + expression[4:]
     if expression.startswith("false"):
         expression = "False" + expression[5:]
+    if expression.startswith("null"):
+        expression = "None" + expression[4:]
     tree = ast.parse(expression, mode="eval")
     allowed_nodes = (
         ast.Expression,
@@ -37,6 +39,12 @@ def _safe_eval(expression: str, evidence: dict[str, Any]) -> bool:
         ast.Compare,
         ast.Eq,
         ast.NotEq,
+        ast.GtE,
+        ast.Gt,
+        ast.LtE,
+        ast.Lt,
+        ast.Is,
+        ast.IsNot,
         ast.Name,
         ast.Load,
         ast.Constant,
@@ -62,55 +70,111 @@ def _conditions_apply(conditions: dict[str, Any], evidence: dict[str, Any]) -> s
     return "applicable"
 
 
-def evaluate_control(control: dict, evidence: dict[str, Any]) -> dict:
-    applicability = _conditions_apply(control.get("applicability", {}).get("conditions", {}), evidence)
-    if applicability != "applicable":
-        return {
-            "control_id": control["control_id"],
-            "norm_id": control["norm_id"],
-            "status": applicability,
-            "automation_level": control["automation_level"],
-            "message": control["outcomes"][applicability],
-        }
-
-    missing = [field for field in control["evidence"]["required_fields"] if field not in evidence]
-    if missing:
-        return {
-            "control_id": control["control_id"],
-            "norm_id": control["norm_id"],
-            "status": "review",
-            "automation_level": control["automation_level"],
-            "message": f"Missing required evidence fields: {', '.join(missing)}",
-        }
-
-    if control["automation_level"] == "human_review_required":
-        return {
-            "control_id": control["control_id"],
-            "norm_id": control["norm_id"],
-            "status": "review",
-            "automation_level": control["automation_level"],
-            "message": control["outcomes"]["review"],
-        }
-
-    try:
-        passed = _safe_eval(control["test"]["expression"], evidence)
-    except KeyError as exc:
-        return {
-            "control_id": control["control_id"],
-            "norm_id": control["norm_id"],
-            "status": "review",
-            "automation_level": control["automation_level"],
-            "message": f"Expression references missing evidence field: {exc.args[0]}",
-        }
-
-    status = "pass" if passed else "fail"
+def _base_result(
+    control: dict,
+    status: str,
+    message: str,
+    machine_result: str | None = None,
+    requires_human_confirmation: bool = False,
+    review_reason: str | None = None,
+) -> dict:
     return {
         "control_id": control["control_id"],
         "norm_id": control["norm_id"],
         "status": status,
+        "final_status": status,
+        "machine_result": machine_result or status,
         "automation_level": control["automation_level"],
-        "message": control["outcomes"][status],
+        "requires_human_confirmation": requires_human_confirmation,
+        "review_reason": review_reason,
+        "message": message,
     }
+
+
+def _exception_applies(control: dict, evidence: dict[str, Any]) -> dict | None:
+    exception = control.get("exception_path")
+    if not exception:
+        return None
+    missing = [field for field in exception.get("required_fields", []) if field not in evidence]
+    if missing:
+        return None
+    try:
+        if _safe_eval(exception["expression"], evidence):
+            status = exception.get("outcome", "pass")
+            return _base_result(
+                control,
+                status,
+                exception.get("message", control["outcomes"][status]),
+                machine_result="pass",
+            )
+    except KeyError:
+        return None
+    return None
+
+
+def evaluate_control(control: dict, evidence: dict[str, Any]) -> dict:
+    applicability = _conditions_apply(control.get("applicability", {}).get("conditions", {}), evidence)
+    if applicability != "applicable":
+        return _base_result(control, applicability, control["outcomes"][applicability])
+
+    missing = [field for field in control["evidence"]["required_fields"] if field not in evidence]
+    if missing:
+        exception_result = _exception_applies(control, evidence)
+        if exception_result:
+            return exception_result
+        return _base_result(
+            control,
+            "review",
+            f"Missing required evidence fields: {', '.join(missing)}",
+            machine_result="review",
+            review_reason="missing required evidence",
+        )
+
+    if control["automation_level"] == "human_review_required":
+        if evidence.get("human_review_completed") is True or evidence.get("label_prominence_review_completed") is True or evidence.get("content_safety_human_review_completed") is True or evidence.get("biometric_classification_reviewed") is True:
+            human_result = evidence.get("human_review_result")
+            if human_result in {"pass", "fail"}:
+                return _base_result(control, human_result, control["outcomes"][human_result], machine_result="review")
+        return _base_result(
+            control,
+            "review",
+            control["outcomes"]["review"],
+            machine_result="review",
+            requires_human_confirmation=True,
+            review_reason="human review required",
+        )
+
+    try:
+        passed = _safe_eval(control["test"]["expression"], evidence)
+    except KeyError as exc:
+        return _base_result(
+            control,
+            "review",
+            f"Expression references missing evidence field: {exc.args[0]}",
+            machine_result="review",
+            review_reason="expression references missing evidence field",
+        )
+
+    if not passed:
+        exception_result = _exception_applies(control, evidence)
+        if exception_result:
+            return exception_result
+        return _base_result(control, "fail", control["outcomes"]["fail"], machine_result="fail")
+
+    if control["automation_level"] == "partially_automatable":
+        if evidence.get("human_review_completed") is True and evidence.get("human_review_result") in {"pass", "fail"}:
+            human_status = evidence["human_review_result"]
+            return _base_result(control, human_status, control["outcomes"][human_status], machine_result="pass")
+        return _base_result(
+            control,
+            "review",
+            control["outcomes"]["review"],
+            machine_result="pass",
+            requires_human_confirmation=True,
+            review_reason="machine-check passed but human confirmation is still required",
+        )
+
+    return _base_result(control, "pass", control["outcomes"]["pass"], machine_result="pass")
 
 
 def evaluate_case(evidence: dict[str, Any], controls: list[dict] | None = None) -> list[dict]:

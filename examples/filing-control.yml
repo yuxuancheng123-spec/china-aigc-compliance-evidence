@@ -1,37 +1,48 @@
 norm_id: CN-AIGC-FILING-001
 source:
-  document: Interim Measures for the Management of Generative AI Services
-  article: Article 7
+  source_id: GENAI-2023
+  document_title_zh: 生成式人工智能服务管理暂行办法
+  document_title_en: Interim Measures for the Management of Generative AI Services
+  issuing_authority: 国家互联网信息办公室等七部门
+  article: 第十七条
+  source_text_zh: 提供具有舆论属性或者社会动员能力的生成式人工智能服务的，应当按照国家有关规定开展安全评估，并按照《互联网信息服务算法推荐管理规定》履行算法备案和变更、注销备案手续。
+  working_translation_en: Providers of generative AI services with public opinion attributes or social mobilization capacity should conduct security assessment and complete algorithm filing, change, and cancellation procedures under relevant rules.
+  source_url: https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm
+  promulgation_date: "2023-07-10"
   effective_date: "2023-08-15"
-  original_text: "Providers should manage model and service obligations, including filing or disclosure where applicable."
+  retrieved_at: "2026-07-15"
 norm:
   regulated_actor: generative_ai_service_provider
   modality: must
-  action: confirm_model_filing_applicability
-  object: model_service
+  action: complete_security_assessment_and_algorithm_filing
+  object: public_facing_generative_ai_service
   trigger:
-    service_with_filing_obligation: true
+    service_is_public_facing: true
+    service_has_public_opinion_or_social_mobilization_capacity: true
   exceptions:
-    - filing_not_applicable_to_service
-  deadline_or_timing: before_deployment
+    - filing_not_required_after_review
+  deadline_or_timing: before_public_service_or_change
 interpretation:
-  control_objective: A model used for a covered AIGC service should have reviewed filing applicability and registered filing metadata where required.
+  control_objective: Covered model services should have reviewed filing applicability and registered filing metadata when filing is required.
   automation_level: partially_automatable
   ambiguity_level: medium
-  reviewer_note: Whether filing is required may depend on service scope and regulator guidance; registration metadata can be checked once applicability is established.
+  reviewer_note: The machine may check filing_status only after public-facing status, public-opinion/social-mobilization capacity, and filing_required have been reviewed.
 evidence:
   evidence_type: model_filing_record
   required_fields:
-    - model_id
     - filing_applicability_reviewed
     - filing_required
     - filing_status
-    - registration_ref
 test:
-  expression: filing_required == false or filing_status == 'registered'
-  pass_condition: Filing is not applicable or required filing metadata is registered.
+  expression: filing_applicability_reviewed == true and (filing_required == false or filing_status == 'registered')
+  pass_condition: Applicability is reviewed and filing is not required or required filing metadata is registered.
   fail_condition: Filing is required and registration metadata is missing.
   review_condition: Filing applicability has not been reviewed.
 review:
-  legal_review_status: reviewed
-  interpretation_version: "1.0"
+  author_review_status: reviewed
+  legal_expert_review_status: not_reviewed
+  reviewer_role: researcher
+  reviewer_name: null
+  review_date: "2026-07-15"
+  interpretation_version: "1.1"
+  review_notes: Reviewed currently means internally reviewed by the researcher; no independent qualified legal expert review has been recorded.

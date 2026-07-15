@@ -1,11 +1,11 @@
 # Interpretation Notes
 
-This project does not ask software to interpret law by itself. The machine-readable controls are based on human-reviewed structured interpretations of selected legal provisions.
+This project does not ask software to interpret law by itself. The machine-readable controls are based on author-reviewed structured interpretations of selected legal provisions. Independent qualified legal expert review has not yet been recorded.
 
 ## Transformation Chain
 
 ```text
-Original legal provision
+Formal Chinese legal provision
 -> Normative sentence identification
 -> Legal semantic decomposition
 -> Human interpretation
@@ -27,3 +27,6 @@ Original legal provision
 - Filing applicability can depend on service type, deployment mode, and regulator guidance.
 - Consent records can be checked mechanically only after a human-reviewed interpretation of the required consent type.
 - Content safety and "effective measures" obligations should not be collapsed into a single Boolean result.
+- Complaint handling is mapped to Article 15 of the Interim Measures, not Article 17.
+- Model filing is mapped to Article 17 of the Interim Measures and requires reviewed applicability fields before filing status is checked.
+- Deep synthesis confusion-risk labeling is mapped to Article 17 of the Deep Synthesis Provisions; Article 14 is separately modeled for face and voice editing consent.

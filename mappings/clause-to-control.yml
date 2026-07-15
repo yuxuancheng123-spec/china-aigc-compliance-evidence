@@ -1,10 +1,23 @@
-- control_id: CTRL-AIGC-VISIBLE-LABEL
+- control_id: CTRL-AIGC-VISIBLE-LABEL-EXISTENCE
   norm_id: CN-AIGC-LABEL-001
-  control_objective: User-facing generated content should carry a visible AIGC disclosure label before publication.
+  control_objective: Explicit AIGC labels should exist for user-facing generated synthetic content only when the output falls within a reviewed explicit-label scenario, unless a documented Article 9 exception path applies.
   applicability:
     conditions:
       output_is_ai_generated: true
       output_is_user_facing: true
+      output_matches_explicit_label_scenario: true
+    human_confirmed_fields:
+      - output_matches_explicit_label_scenario
+  exception_path:
+    expression: visible_label_exception_requested == true and user_labeling_obligation_disclosed == true and user_use_responsibility_disclosed == true and exception_log_retained == true and log_retention_period_months >= 6
+    required_fields:
+      - visible_label_exception_requested
+      - user_labeling_obligation_disclosed
+      - user_use_responsibility_disclosed
+      - exception_log_retained
+      - log_retention_period_months
+    outcome: pass
+    message: Explicit label is absent but the documented Article 9 exception path is complete.
   evidence:
     evidence_type: labeling_check
     required_fields:
@@ -12,46 +25,99 @@
   test:
     expression: visible_label_present == true
   outcomes:
-    pass: Visible label evidence is present.
-    fail: Visible label evidence confirms absence.
-    review: Evidence is missing or label prominence requires human review.
-    not_applicable: The output is not AI-generated or is not user-facing.
+    pass: Visible label existence evidence is present or the documented exception path is complete.
+    fail: Visible label is absent and no complete exception path applies.
+    review: Evidence is missing or explicit-label scenario classification requires human review.
+    not_applicable: The output is not AI-generated, not user-facing, or is outside reviewed explicit-label scenarios.
   automation_level: partially_automatable
   traceability:
-    source_document: "Measures for the Labeling of AI-Generated Synthetic Content"
-    article: Article 4
-    normative_fragment: publicly provided AI-generated synthetic content should carry explicit labels
-    interpretation_version: "1.0"
-    legal_review_status: reviewed
+    source_id: LABEL-2025
+    document_title_zh: 人工智能生成合成内容标识办法
+    document_title_en: Measures for the Labeling of AI-Generated Synthetic Content
+    article: 第四条 / 第九条
+    effective_date: "2025-09-01"
+    source_url: https://www.cac.gov.cn/2025-03/14/c_1743654684782215.htm
+    normative_fragment: 服务提供者提供的生成合成服务属于深度合成规定第十七条第一款情形的应当添加显式标识；第九条允许经用户协议明确义务和责任并留存不少于六个月日志的例外路径。
+    interpretation_version: "1.1"
+  review: &default_review
+    author_review_status: reviewed
+    legal_expert_review_status: not_reviewed
+    reviewer_role: researcher
+    reviewer_name: null
+    review_date: "2026-07-15"
+    interpretation_version: "1.1"
+    review_notes: Reviewed here means internally reviewed by the researcher; no independent qualified legal expert review has been recorded.
+
+- control_id: CTRL-AIGC-VISIBLE-LABEL-PROMINENCE
+  norm_id: CN-AIGC-LABEL-PROMINENCE-001
+  control_objective: The prominence, position, and perceptibility of an explicit AIGC label should be reviewed when explicit labeling applies.
+  applicability:
+    conditions:
+      output_is_ai_generated: true
+      output_is_user_facing: true
+      output_matches_explicit_label_scenario: true
+      visible_label_present: true
+    human_confirmed_fields:
+      - output_matches_explicit_label_scenario
+      - label_prominence_review_completed
+  evidence:
+    evidence_type: human_label_review
+    required_fields:
+      - label_prominence_review_completed
+      - human_review_result
+  test:
+    expression: label_prominence_review_completed == true and human_review_result == 'pass'
+  outcomes:
+    pass: Human review confirms the label is prominent and reasonably perceptible.
+    fail: Human review finds label prominence inadequate.
+    review: Label prominence cannot be finally determined without human review.
+    not_applicable: Explicit labeling does not apply or no visible label exists to review.
+  automation_level: human_review_required
+  traceability:
+    source_id: LABEL-2025
+    document_title_zh: 人工智能生成合成内容标识办法
+    document_title_en: Measures for the Labeling of AI-Generated Synthetic Content
+    article: 第四条
+    effective_date: "2025-09-01"
+    source_url: https://www.cac.gov.cn/2025-03/14/c_1743654684782215.htm
+    normative_fragment: 显式标识以文字、声音、图形等方式呈现并可以被用户明显感知，相关场景应添加显著提示标识。
+    interpretation_version: "1.1"
+  review: *default_review
 
 - control_id: CTRL-AIGC-METADATA-LABEL
   norm_id: CN-AIGC-META-001
-  control_objective: Generated synthetic content should include machine-readable label metadata where applicable.
+  control_objective: Generated synthetic content metadata should include underlying machine-readable label fields, not only an aggregate metadata-present flag.
   applicability:
     conditions:
       output_is_ai_generated: true
   evidence:
     evidence_type: label_metadata
     required_fields:
-      - metadata_label_present
+      - generated_content_attribute
+      - service_provider_name_or_code
+      - content_id
   test:
-    expression: metadata_label_present == true
+    expression: generated_content_attribute is not null and service_provider_name_or_code is not null and content_id is not null
   outcomes:
-    pass: Machine-readable metadata label is present.
-    fail: Machine-readable metadata label is absent.
+    pass: Required underlying metadata label fields are populated.
+    fail: One or more required underlying metadata label fields are absent.
     review: Metadata evidence is missing or cannot be parsed.
     not_applicable: The output is not AI-generated.
   automation_level: fully_automatable
   traceability:
-    source_document: "Measures for the Labeling of AI-Generated Synthetic Content"
-    article: Article 5
-    normative_fragment: AI-generated synthetic content should carry implicit or metadata identifiers
-    interpretation_version: "1.0"
-    legal_review_status: reviewed
+    source_id: LABEL-2025
+    document_title_zh: 人工智能生成合成内容标识办法
+    document_title_en: Measures for the Labeling of AI-Generated Synthetic Content
+    article: 第五条
+    effective_date: "2025-09-01"
+    source_url: https://www.cac.gov.cn/2025-03/14/c_1743654684782215.htm
+    normative_fragment: 隐式标识包含生成合成内容属性信息、服务提供者名称或者编码、内容编号等制作要素信息。
+    interpretation_version: "1.1"
+  review: *default_review
 
 - control_id: CTRL-GB-METADATA-FIELDS
   norm_id: CN-GB-META-001
-  control_objective: Synthetic-content files that support metadata should include required machine-readable label fields.
+  control_objective: Synthetic-content files that support metadata should include the selected technical metadata fields used by the prototype mapping.
   applicability:
     conditions:
       output_is_ai_generated: true
@@ -59,9 +125,14 @@
   evidence:
     evidence_type: metadata_inspection
     required_fields:
-      - required_metadata_fields_present
+      - generated_content_attribute
+      - service_provider_name_or_code
+      - content_id
+      - content_production_elements
+      - dissemination_service_provider_code
+      - dissemination_content_id
   test:
-    expression: required_metadata_fields_present == true
+    expression: generated_content_attribute is not null and service_provider_name_or_code is not null and content_id is not null and content_production_elements is not null
   outcomes:
     pass: Required metadata fields are present.
     fail: Required metadata fields are absent.
@@ -69,11 +140,15 @@
     not_applicable: The file does not support metadata or output is not AI-generated.
   automation_level: fully_automatable
   traceability:
-    source_document: "GB 45438-2025 Cybersecurity Technology: Labeling Method for AI-Generated Synthetic Content"
-    article: Section 6
-    normative_fragment: generated synthetic-content files include required metadata label fields
-    interpretation_version: "1.0"
-    legal_review_status: reviewed
+    source_id: GB45438-2025
+    document_title_zh: GB 45438-2025 网络安全技术 人工智能生成合成内容标识方法
+    document_title_en: "GB 45438-2025 Cybersecurity Technology: Labeling Method for AI-Generated Synthetic Content"
+    article: Metadata field method
+    effective_date: "2025-09-01"
+    source_url: https://openstd.samr.gov.cn/
+    normative_fragment: 技术方法背景用于映射生成合成内容属性、服务提供者编码、内容编号及传播要素字段。
+    interpretation_version: "1.1"
+  review: *default_review
 
 - control_id: CTRL-PIPL-SEPARATE-CONSENT
   norm_id: CN-PIPL-CONSENT-001
@@ -81,6 +156,8 @@
   applicability:
     conditions:
       processing_sensitive_personal_information: true
+    human_confirmed_fields:
+      - processing_sensitive_personal_information
   evidence:
     evidence_type: consent_record
     required_fields:
@@ -88,21 +165,25 @@
   test:
     expression: separate_consent_present == true
   outcomes:
-    pass: Separate consent evidence is present.
+    pass: Separate consent evidence is present and any required human confirmation is complete.
     fail: Separate consent evidence is absent and no exception applies.
     review: Sensitivity classification, scope, or exception requires legal review.
     not_applicable: No sensitive personal information is processed.
   automation_level: partially_automatable
   traceability:
-    source_document: "Personal Information Protection Law of the People's Republic of China"
-    article: Article 29
-    normative_fragment: processing sensitive personal information requires separate consent
-    interpretation_version: "1.0"
-    legal_review_status: reviewed
+    source_id: PIPL-2021
+    document_title_zh: 中华人民共和国个人信息保护法
+    document_title_en: Personal Information Protection Law of the People's Republic of China
+    article: 第二十九条
+    effective_date: "2021-11-01"
+    source_url: https://www.npc.gov.cn/
+    normative_fragment: 处理敏感个人信息应当取得个人的单独同意。
+    interpretation_version: "1.1"
+  review: *default_review
 
 - control_id: CTRL-PIPL-BIOMETRIC-CLASSIFICATION
   norm_id: CN-PIPL-BIOMETRIC-001
-  control_objective: Face, voice, or biometric-like actor materials should be classified and protected before processing.
+  control_objective: Face, voice, or biometric-like actor materials should be classified before processing because biometric identifiers are sensitive personal information.
   applicability:
     conditions:
       biometric_data_processed: true
@@ -110,27 +191,67 @@
     evidence_type: legal_review_record
     required_fields:
       - biometric_classification_reviewed
+      - human_review_result
   test:
-    expression: biometric_classification_reviewed == true
+    expression: biometric_classification_reviewed == true and human_review_result == 'pass'
   outcomes:
     pass: Human-reviewed classification is recorded.
-    fail: Biometric-like data is processed without classification review.
+    fail: Human review rejects the classification or finds processing unsupported.
     review: Classification requires legal review.
     not_applicable: No biometric-like data is processed.
   automation_level: human_review_required
   traceability:
-    source_document: "Personal Information Protection Law of the People's Republic of China"
-    article: Article 28
-    normative_fragment: biometric identifiers are sensitive personal information requiring specific protection
-    interpretation_version: "1.0"
-    legal_review_status: reviewed
+    source_id: PIPL-2021
+    document_title_zh: 中华人民共和国个人信息保护法
+    document_title_en: Personal Information Protection Law of the People's Republic of China
+    article: 第二十八条
+    effective_date: "2021-11-01"
+    source_url: https://www.npc.gov.cn/
+    normative_fragment: 敏感个人信息包括生物识别等信息。
+    interpretation_version: "1.1"
+  review: *default_review
+
+- control_id: CTRL-DEEPSYN-FACE-VOICE-CONSENT
+  norm_id: CN-DEEPSYN-CONSENT-001
+  control_objective: Face or voice editing features should prompt users to notify the edited individual and obtain separate consent.
+  applicability:
+    conditions:
+      deep_synthesis_face_or_voice_editing_feature: true
+  evidence:
+    evidence_type: consent_prompt_record
+    required_fields:
+      - user_notified_to_inform_edited_person
+      - edited_person_separate_consent_obtained
+  test:
+    expression: user_notified_to_inform_edited_person == true and edited_person_separate_consent_obtained == true
+  outcomes:
+    pass: User prompt and edited-person separate consent evidence are present.
+    fail: Face or voice editing is offered without required prompt or separate consent evidence.
+    review: Whether the feature edits face or voice biometric information requires review.
+    not_applicable: No face or voice editing feature is provided.
+  automation_level: partially_automatable
+  traceability:
+    source_id: DEEPSYN-2023
+    document_title_zh: 互联网信息服务深度合成管理规定
+    document_title_en: Provisions on the Administration of Deep Synthesis Internet Information Services
+    article: 第十四条
+    effective_date: "2023-01-10"
+    source_url: https://www.cac.gov.cn/2022-12/11/c_1672221949354811.htm
+    normative_fragment: 提供人脸、人声等生物识别信息编辑功能的应提示使用者依法告知被编辑个人并取得其单独同意。
+    interpretation_version: "1.1"
+  review: *default_review
 
 - control_id: CTRL-AIGC-MODEL-FILING
   norm_id: CN-AIGC-FILING-001
-  control_objective: Covered model services should have reviewed filing applicability and registered filing metadata when required.
+  control_objective: Public-facing generative AI services with public opinion attributes or social mobilization capacity should have reviewed filing applicability and registered filing metadata when filing is required.
   applicability:
     conditions:
-      service_with_filing_obligation: true
+      service_is_public_facing: true
+      service_has_public_opinion_or_social_mobilization_capacity: true
+    human_confirmed_fields:
+      - service_has_public_opinion_or_social_mobilization_capacity
+      - filing_applicability_reviewed
+      - filing_required
   evidence:
     evidence_type: model_filing_record
     required_fields:
@@ -138,49 +259,57 @@
       - filing_required
       - filing_status
   test:
-    expression: filing_required == false or filing_status == 'registered'
+    expression: filing_applicability_reviewed == true and (filing_required == false or filing_status == 'registered')
   outcomes:
-    pass: Filing is not applicable or required filing metadata is registered.
+    pass: Filing applicability has been reviewed and required filing metadata is registered or filing is not required.
     fail: Filing is required and registration metadata is missing.
-    review: Filing applicability has not been reviewed.
-    not_applicable: Service is outside the selected filing-control scope.
+    review: Filing applicability or public-opinion/social-mobilization capacity has not been reviewed.
+    not_applicable: Service is not public-facing or lacks reviewed public opinion/social mobilization capacity.
   automation_level: partially_automatable
   traceability:
-    source_document: "Interim Measures for the Management of Generative AI Services"
-    article: Article 7
-    normative_fragment: provider obligations may include required filing or disclosure where applicable
-    interpretation_version: "1.0"
-    legal_review_status: reviewed
+    source_id: GENAI-2023
+    document_title_zh: 生成式人工智能服务管理暂行办法
+    document_title_en: Interim Measures for the Management of Generative AI Services
+    article: 第十七条
+    effective_date: "2023-08-15"
+    source_url: https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm
+    normative_fragment: 提供具有舆论属性或者社会动员能力的生成式人工智能服务的应开展安全评估并履行算法备案和变更、注销备案手续。
+    interpretation_version: "1.1"
+  review: *default_review
 
-- control_id: CTRL-AIGC-CONTENT-SAFETY
+- control_id: CTRL-AIGC-CONTENT-SAFETY-PRINCIPLE
   norm_id: CN-AIGC-SAFETY-001
-  control_objective: Generated content should be subject to safety measures before release.
+  control_objective: Article 4 content safety is treated as a principle and prohibited-content norm requiring human review, not as proof that a Boolean pre-release check is legally adequate.
   applicability:
     conditions:
       content_is_generated_for_user: true
   evidence:
     evidence_type: safety_review_record
     required_fields:
-      - safety_review_completed
-      - human_safety_review_required
+      - content_safety_human_review_completed
+      - human_review_result
   test:
-    expression: safety_review_completed == true
+    expression: content_safety_human_review_completed == true and human_review_result == 'pass'
   outcomes:
-    pass: Safety review evidence is complete for a low-risk case.
-    fail: Safety review evidence is absent for an applicable output.
-    review: The adequacy of effective measures requires human review.
+    pass: Human review concludes the selected content-safety principle is satisfied for this synthetic case.
+    fail: Human review concludes prohibited or illegal content obligations are not satisfied.
+    review: Adequacy of effective measures and content legality requires human review.
     not_applicable: Content is not generated for a user-facing service.
   automation_level: human_review_required
   traceability:
-    source_document: "Interim Measures for the Management of Generative AI Services"
-    article: Article 4
-    normative_fragment: take effective measures to prevent illegal or harmful generated content
-    interpretation_version: "1.0"
-    legal_review_status: reviewed
+    source_id: GENAI-2023
+    document_title_zh: 生成式人工智能服务管理暂行办法
+    document_title_en: Interim Measures for the Management of Generative AI Services
+    article: 第四条
+    effective_date: "2023-08-15"
+    source_url: https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm
+    normative_fragment: 提供和使用生成式人工智能服务应遵守法律、行政法规和伦理道德，不得生成法律、行政法规禁止的内容。
+    interpretation_version: "1.1"
+  review: *default_review
 
 - control_id: CTRL-AIGC-COMPLAINT-MECHANISM
   norm_id: CN-AIGC-COMPLAINT-001
-  control_objective: Complaints should be linked to a disclosed handling process and tracked for timely handling.
+  control_objective: Complaints should be linked to a disclosed handling process, feedback time limit, and tracked handling result.
   applicability:
     conditions:
       complaint_received: true
@@ -188,44 +317,57 @@
     evidence_type: complaint_record
     required_fields:
       - complaint_process_disclosed
+      - feedback_time_limit_disclosed
       - complaint_status
   test:
-    expression: complaint_process_disclosed == true and complaint_status != 'missing'
+    expression: complaint_process_disclosed == true and feedback_time_limit_disclosed == true and complaint_status != 'missing'
   outcomes:
-    pass: Complaint process and complaint status are recorded.
-    fail: Complaint process is not disclosed or status is missing.
+    pass: Complaint process, feedback time limit, and complaint status are recorded.
+    fail: Complaint process or feedback time limit is not disclosed, or status is missing.
     review: Timeliness or substantive adequacy requires human review.
     not_applicable: No complaint was received.
   automation_level: partially_automatable
   traceability:
-    source_document: "Interim Measures for the Management of Generative AI Services"
-    article: Article 17
-    normative_fragment: establish complaint and reporting mechanisms and process complaints in a timely manner
-    interpretation_version: "1.0"
-    legal_review_status: reviewed
+    source_id: GENAI-2023
+    document_title_zh: 生成式人工智能服务管理暂行办法
+    document_title_en: Interim Measures for the Management of Generative AI Services
+    article: 第十五条
+    effective_date: "2023-08-15"
+    source_url: https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm
+    normative_fragment: 提供者应建立健全投诉、举报机制，设置便捷入口，公布处理流程和反馈时限，及时受理、处理并反馈结果。
+    interpretation_version: "1.1"
+  review: *default_review
 
 - control_id: CTRL-DEEPSYN-CONFUSION-LABEL
   norm_id: CN-DEEPSYN-LABEL-001
-  control_objective: Deep synthesis content that may cause public confusion should carry a visible label.
+  control_objective: Deep synthesis content that may cause public confusion or misidentification should carry a prominent label in a reasonable position or area.
   applicability:
     conditions:
       deep_synthesis_content: true
       content_may_confuse_public: true
+    human_confirmed_fields:
+      - content_may_confuse_public
   evidence:
     evidence_type: labeling_check
     required_fields:
       - visible_label_present
+      - label_prominence_review_completed
+      - human_review_result
   test:
-    expression: visible_label_present == true
+    expression: visible_label_present == true and label_prominence_review_completed == true and human_review_result == 'pass'
   outcomes:
-    pass: Visible label evidence is present for confusion-risk content.
-    fail: Visible label evidence is absent for confusion-risk content.
-    review: Whether the content may cause public confusion requires human review.
-    not_applicable: Content is not deep synthesis content or does not create confusion risk.
-  automation_level: partially_automatable
+    pass: Human review confirms prominent label evidence for confusion-risk deep synthesis content.
+    fail: Label evidence is absent or human review finds the label inadequate.
+    review: Whether content may confuse the public or whether the label is prominent requires human review.
+    not_applicable: Content is not deep synthesis content or does not create reviewed confusion risk.
+  automation_level: human_review_required
   traceability:
-    source_document: "Provisions on the Administration of Deep Synthesis Internet Information Services"
-    article: Article 14
-    normative_fragment: add labels where generated or edited information may cause confusion
-    interpretation_version: "1.0"
-    legal_review_status: reviewed
+    source_id: DEEPSYN-2023
+    document_title_zh: 互联网信息服务深度合成管理规定
+    document_title_en: Provisions on the Administration of Deep Synthesis Internet Information Services
+    article: 第十七条
+    effective_date: "2023-01-10"
+    source_url: https://www.cac.gov.cn/2022-12/11/c_1672221949354811.htm
+    normative_fragment: 可能导致公众混淆或者误认的深度合成服务应在合理位置、区域进行显著标识。
+    interpretation_version: "1.1"
+  review: *default_review

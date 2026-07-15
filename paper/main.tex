@@ -54,9 +54,17 @@ The research questions are:
 
 \section{Related Work}
 
-Prior work on AI governance, model documentation, and risk management provides useful scaffolding for this project. Model Cards and Datasheets improve structured transparency, while the NIST AI Risk Management Framework provides vocabulary for governance and risk processes. Compliance-as-code research shows that policy requirements can sometimes be represented as executable controls. Legal informatics and machine-readable regulation research also emphasize that legal text must be interpreted before it can be operationalized.
+Prior work on AI governance, model documentation, and risk management provides useful scaffolding for this project. Model Cards and Datasheets improve structured transparency, while the NIST AI Risk Management Framework provides vocabulary for governance and risk processes. OSCAL shows how security controls and assessment artifacts can be represented in machine-readable form. Compliance-as-code work demonstrates that operational requirements can sometimes be converted into executable checks. Rules-as-Code and computational-law projects study how public rules can be represented for digital administration. Legal ontology research formalizes legal concepts and relations at a higher semantic level.
 
-This paper contributes a narrow method for China-facing AIGC governance. It does not propose a complete legal ontology. Instead, it defines a practical transformation chain for selected provisions where human-reviewed legal interpretation is preserved as part of the rule artifact.
+This paper is narrower than those traditions. It does not propose a full ontology, a regulator-grade rule engine, or a replacement for legal interpretation. It focuses on the transformation step that often remains implicit: a natural-language Chinese AIGC clause is selected, interpreted by a human reviewer, decomposed into a structured norm, and then translated into an executable control. The contribution therefore sits between legal text and control execution:
+
+\begin{lstlisting}
+Natural-language legal clause
+-> human-reviewed structured norm
+-> executable control
+\end{lstlisting}
+
+Machine-readable AI compliance evidence projects often begin with a control catalog and then produce assessment artifacts. This project asks an upstream question: where did the control come from, and can that derivation remain reviewable?
 
 \section{Research Gap}
 
@@ -68,14 +76,16 @@ The gap is therefore not only evidence generation. It is traceable rule producti
 
 The project uses a small representative corpus rather than attempting full coverage of Chinese AI law. The selected sources include the Interim Measures for the Management of Generative AI Services, the Provisions on the Administration of Deep Synthesis Internet Information Services, the Measures for the Labeling of AI-Generated Synthetic Content, GB 45438--2025, and selected provisions from the Personal Information Protection Law.
 
-The corpus focuses on clauses relevant to synthetic actor and digital human use cases: separate consent, sensitive or biometric-like information, visible labels, machine-readable metadata labels, model filing or applicability review, content safety, and complaint mechanisms. The clause summaries are research annotations, not official translations.
+These sources were selected because together they cover the main governance interfaces for China-facing AIGC actor and digital human services: public-facing generative AI services, deep synthesis services, explicit labels, metadata labels, filing triggers, complaint mechanisms, sensitive personal information, and face or voice editing. Clauses were included when they could be represented with a traceable source, actor, modality, action, object, trigger, exception, evidence requirement, automation level, and review status. Clauses were excluded when they were sector-specific, too broad for this prototype, unrelated to synthetic actor services, or dependent on extensive regulator practice not modeled here.
+
+The corpus also preserves overlaps between general and special rules. For example, PIPL Article 29 is retained as a general sensitive-personal-information separate-consent rule, while Article 14 of the Deep Synthesis Provisions is retained as a special rule for face and voice editing functions. This avoids collapsing distinct legal sources into a single generic consent control.
 
 \section{Legal-Clause-to-Control Transformation Method}
 
 The transformation method follows a fixed chain:
 
 \begin{lstlisting}
-Original legal provision
+Formal Chinese legal provision
 -> Normative sentence identification
 -> Legal semantic decomposition
 -> Human interpretation
@@ -85,7 +95,9 @@ Original legal provision
 -> Review status and traceability
 \end{lstlisting}
 
-Each selected clause is decomposed into fields such as source document, article number, original clause summary, normative fragment, regulated actor, modality, required action, regulated object, trigger condition, exception, deadline or timing, required evidence, control objective, test logic, automation level, ambiguity level, reviewer note, source effective date, interpretation version, and legal review status.
+Each selected clause is decomposed using an annotation protocol. The required fields include formal Chinese source text, working English translation, official source URL, source document, article number, normative fragment, regulated actor, modality, action, object, trigger, exception, timing, required evidence, control objective, test logic, automation level, ambiguity level, review note, source effective date, author review status, legal expert review status, and interpretation version.
+
+The protocol treats the Chinese source text as authoritative for the research artifact. English text is recorded only as a working translation. The schema no longer labels an English summary as original text. This distinction matters because a control should remain traceable to the formal legal source rather than to an informal summary.
 
 Table~\ref{tab:semantic-fields} summarizes the main semantic elements.
 
@@ -105,33 +117,38 @@ Trigger, exception, timing & Identify when the rule applies, when it does not ap
 Evidence requirement & Define the records needed before any machine-readable test can run. \\
 Test logic & Attach an executable condition only after human interpretation. \\
 Automation and ambiguity level & Prevent overclaiming by routing vague duties to review. \\
-Review status & Make clear whether the interpretation is draft, reviewed, or still needs legal review. \\
+Review status & Distinguish author review from independent legal expert review. \\
 \bottomrule
 \end{tabularx}
 \end{table*}
 
 \section{Machine-Readable Schema}
 
-The repository contains two schemas. The legal norm schema represents the human-reviewed interpretation of a clause. The control schema represents the executable control derived from that norm. Both require source traceability, evidence requirements, test logic, automation level, and review status.
+The repository contains two schemas. The legal norm schema represents the human-reviewed interpretation of a clause. The control schema represents the executable control derived from that norm. Both require source traceability, evidence requirements, test logic, automation level, and review status. The source block includes Chinese title, English title, issuing authority, article, formal Chinese source text, working English translation, official source URL, promulgation date, effective date, and retrieval date.
 
 \begin{lstlisting}
 norm_id: CN-AIGC-LABEL-001
 source:
-  document: Measures for the Labeling of AI-Generated Synthetic Content
-  article: Article 4
+  document_title_zh: 人工智能生成合成内容标识办法
+  document_title_en: Measures for the Labeling of AI-Generated Synthetic Content
+  article: 第四条 / 第九条
+  source_text_zh: ...
+  working_translation_en: ...
 norm:
   regulated_actor: generative_ai_service_provider
   modality: must
-  action: add_explicit_label
+  action: add_or_document_explicit_label
   object: user_facing_generated_content
 interpretation:
   automation_level: partially_automatable
 evidence:
   required_fields:
-    - output_id
     - visible_label_present
 test:
   expression: visible_label_present == true
+review:
+  author_review_status: reviewed
+  legal_expert_review_status: not_reviewed
 \end{lstlisting}
 
 The schema is intentionally modest. It does not encode all legal meaning. It checks whether a proposed rule contains the minimum information needed for traceability and execution.
@@ -140,11 +157,13 @@ The schema is intentionally modest. It does not encode all legal meaning. It che
 
 The framework explicitly rejects the idea that machine-readable means machine-interpreted. The machine executes a reviewed representation. Human review remains necessary for selecting clauses, identifying normative fragments, interpreting ambiguous obligations, determining applicability, and deciding whether evidence is legally sufficient.
 
-Rules are classified into three automation levels. Metadata field presence may be fully automatable. Visible-label existence may be partially automatable because prominence and user comprehension often require review. Obligations to take "effective measures" for content safety are routed to human review because legal adequacy cannot be reduced to a Boolean evidence field.
+The initial interpretation in this prototype is performed by the author as a research exercise. The repository therefore separates \texttt{author\_review\_status} from \texttt{legal\_expert\_review\_status}. A status of ``reviewed'' currently means internally reviewed by the researcher unless a qualified legal expert review is separately recorded. Expert review is especially important for public-opinion or social-mobilization capacity, sensitive personal information classification, label prominence, and obligations that use open-textured terms such as effective measures.
+
+Rules are classified into three automation levels. Metadata field presence may be fully automatable. Visible-label existence may be partially automatable because scenario classification and exception handling require review. Label prominence, confusion risk, and content-safety adequacy are routed to human review because legal adequacy cannot be reduced to a single Boolean field.
 
 \section{Case Study: Synthetic Actor and Digital Human Rules}
 
-The case study includes controls for visible AIGC labels, metadata labels, GB metadata fields, separate consent, biometric-like classification, model filing applicability, content safety measures, complaint mechanisms, and deep synthesis confusion-risk labeling.
+The case study includes controls for visible AIGC label existence, visible-label prominence, metadata labels, GB metadata fields, PIPL separate consent, biometric-like classification, deep synthesis face and voice editing consent, model filing applicability, content-safety principles, complaint mechanisms, and deep synthesis confusion-risk labeling.
 
 Table~\ref{tab:control-types} shows representative controls.
 
@@ -157,19 +176,24 @@ Table~\ref{tab:control-types} shows representative controls.
 \toprule
 \textbf{Norm} & \textbf{Control} & \textbf{Evidence} & \textbf{Automation} \\
 \midrule
-Visible AIGC label & Visible disclosure label before publication & labeling check & partially automatable \\
-Metadata label & Machine-readable label metadata exists & label metadata & fully automatable \\
+Visible AIGC label & Label existence and Article 9 exception evidence & labeling check & partially automatable \\
+Label prominence & Prominent placement and perceptibility & human label review & human review required \\
+Metadata label & Underlying metadata fields exist & label metadata & fully automatable \\
 Separate consent & Sensitive actor-like data has separate consent & consent record & partially automatable \\
-Biometric classification & Face or voice material receives legal classification review & legal review record & human review required \\
+Face and voice editing & User notice and edited-person separate consent & consent prompt record & partially automatable \\
 Model filing & Filing applicability and registered metadata are checked & model filing record & partially automatable \\
-Content safety & Effective safety measures are reviewed before release & safety review record & human review required \\
+Content safety & Article 4 principle and prohibited-content review & safety review record & human review required \\
 \bottomrule
 \end{tabularx}
 \end{table*}
 
 \section{Prototype Validation}
 
-Validation is intentionally small and explainable. The repository includes a compact set of validation cases covering applicable evidence, missing evidence, clear failures, non-applicability, human-review-required obligations, and multiple applicable controls. The goal is not to report a pass/fail distribution. The goal is to test whether clauses can be consistently structured, controls can be traced to source provisions, machines can execute clear conditions, ambiguous duties are routed to review, and schemas detect incomplete rule definitions.
+Validation is intentionally small and explainable. The repository includes a compact set of validation cases covering applicable evidence, missing evidence, clear failures, non-applicability, human-review-required obligations, explicit-label exceptions, filing non-applicability, unreviewed filing applicability, simultaneous PIPL and deep synthesis consent duties, and metadata aggregate flags that mask missing underlying fields. The goal is not to report a pass/fail distribution. The goal is to test whether clauses can be consistently structured, controls can be traced to source provisions, machines can execute clear conditions, ambiguous duties are routed to review, and schemas detect incomplete rule definitions.
+
+The validation method has five layers. First, schema completeness checks whether norm and control artifacts contain source, review, evidence, and test fields. Second, source traceability checks whether each control can be linked back to a source identifier, official URL, article, and effective date. Third, cross-file consistency checks whether source index, clause decomposition, traceability matrix, mapping, and examples agree on norm identifiers, article numbers, titles, dates, automation level, and interpretation version. Fourth, executable coverage checks whether expression variables are declared in evidence, applicability, or exception fields. Fifth, review-routing accuracy checks whether partially automatable and human-review-required controls avoid premature final pass results.
+
+Error analysis is part of the method. The validation set includes cases for incorrect source mapping, missing source text, undeclared expression variables, incomplete explicit-label exception evidence, unreviewed filing applicability, and metadata controls where \texttt{metadata\_label\_present} is true but required underlying fields are missing.
 
 The previous 1,000-request synthetic pipeline remains as supplementary proof of concept. It demonstrates that structured controls can be read and exercised against synthetic operational records, but it is no longer the central result of the paper.
 

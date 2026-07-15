@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Traceable machine-readable control derived from a legal norm",
   "type": "object",
-  "required": ["control_id", "norm_id", "control_objective", "applicability", "evidence", "test", "outcomes", "automation_level", "traceability"],
+  "required": ["control_id", "norm_id", "control_objective", "applicability", "evidence", "test", "outcomes", "automation_level", "traceability", "review"],
   "properties": {
     "control_id": { "type": "string" },
     "norm_id": { "type": "string" },
@@ -12,7 +12,24 @@
       "required": ["conditions"],
       "properties": {
         "conditions": { "type": "object" },
-        "not_applicable_when": { "type": "object" }
+        "not_applicable_when": { "type": "object" },
+        "human_confirmed_fields": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "exception_path": {
+      "type": "object",
+      "required": ["expression", "required_fields", "outcome"],
+      "properties": {
+        "expression": { "type": "string" },
+        "required_fields": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "outcome": { "enum": ["pass", "review", "not_applicable"] },
+        "message": { "type": "string" }
       }
     },
     "evidence": {
@@ -49,13 +66,50 @@
     },
     "traceability": {
       "type": "object",
-      "required": ["source_document", "article", "normative_fragment", "interpretation_version", "legal_review_status"],
+      "required": [
+        "source_id",
+        "document_title_zh",
+        "document_title_en",
+        "article",
+        "effective_date",
+        "source_url",
+        "normative_fragment",
+        "interpretation_version"
+      ],
       "properties": {
-        "source_document": { "type": "string" },
+        "source_id": { "type": "string" },
+        "document_title_zh": { "type": "string" },
+        "document_title_en": { "type": "string" },
         "article": { "type": "string" },
+        "effective_date": { "type": "string" },
+        "source_url": { "type": "string", "format": "uri" },
         "normative_fragment": { "type": "string" },
+        "interpretation_version": { "type": "string" }
+      }
+    },
+    "review": {
+      "type": "object",
+      "required": [
+        "author_review_status",
+        "legal_expert_review_status",
+        "reviewer_role",
+        "reviewer_name",
+        "review_date",
+        "interpretation_version",
+        "review_notes"
+      ],
+      "properties": {
+        "author_review_status": {
+          "enum": ["not_reviewed", "under_review", "reviewed", "disputed", "superseded"]
+        },
+        "legal_expert_review_status": {
+          "enum": ["not_reviewed", "under_review", "reviewed", "disputed", "superseded"]
+        },
+        "reviewer_role": { "type": "string" },
+        "reviewer_name": { "type": ["string", "null"] },
+        "review_date": { "type": "string" },
         "interpretation_version": { "type": "string" },
-        "legal_review_status": { "enum": ["draft", "reviewed", "needs_legal_review"] }
+        "review_notes": { "type": "string" }
       }
     }
   }

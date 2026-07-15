@@ -1,35 +1,47 @@
 norm_id: CN-AIGC-LABEL-001
 source:
-  document: Measures for the Labeling of AI-Generated Synthetic Content
-  article: Article 4
+  source_id: LABEL-2025
+  document_title_zh: 人工智能生成合成内容标识办法
+  document_title_en: Measures for the Labeling of AI-Generated Synthetic Content
+  issuing_authority: 国家互联网信息办公室 工业和信息化部 公安部 国家广播电视总局
+  article: 第四条 / 第九条
+  source_text_zh: 服务提供者提供的生成合成服务属于《互联网信息服务深度合成管理规定》第十七条第一款情形的，应当按照下列要求对生成合成内容添加显式标识。用户申请服务提供者提供没有添加显式标识的生成合成内容的，服务提供者可以在通过用户协议明确用户的标识义务和使用责任后，提供不含显式标识的生成合成内容，并依法留存提供对象信息等相关日志不少于六个月。
+  working_translation_en: Where generated synthetic services fall within Article 17 paragraph 1 of the Deep Synthesis Provisions, providers should add explicit labels. If a user requests generated synthetic content without an explicit label, the provider may provide it after clarifying user labeling obligations and use responsibility through an agreement and retaining relevant logs for at least six months.
+  source_url: https://www.cac.gov.cn/2025-03/14/c_1743654684782215.htm
+  promulgation_date: "2025-03-07"
   effective_date: "2025-09-01"
-  original_text: "Public-facing AI-generated synthetic content should carry explicit labels where required."
+  retrieved_at: "2026-07-15"
 norm:
   regulated_actor: generative_ai_service_provider
   modality: must
-  action: add_explicit_label
-  object: user_facing_generated_content
+  action: add_or_document_explicit_label
+  object: user_facing_generated_synthetic_content
   trigger:
     output_is_user_facing: true
     output_is_ai_generated: true
-  exceptions: []
-  deadline_or_timing: before_publication
+    output_matches_explicit_label_scenario: true
+  exceptions:
+    - documented_article_9_exception
+  deadline_or_timing: before_download_copy_export_or_publication
 interpretation:
-  control_objective: User-facing generated content should carry a visible AIGC disclosure label before publication.
+  control_objective: Explicit AIGC labels should exist for reviewed explicit-label scenarios unless the Article 9 exception path is documented.
   automation_level: partially_automatable
   ambiguity_level: medium
-  reviewer_note: A Boolean evidence field can confirm whether a label exists, but label prominence may require interface or media review.
+  reviewer_note: A machine check can confirm visible-label evidence or Article 9 exception evidence, but scenario classification and prominence remain review-dependent.
 evidence:
   evidence_type: labeling_check
   required_fields:
-    - output_id
     - visible_label_present
-    - checked_at
 test:
   expression: visible_label_present == true
-  pass_condition: Evidence confirms the visible label is present.
-  fail_condition: Evidence confirms the visible label is absent.
-  review_condition: Evidence is missing or visibility cannot be reliably verified.
+  pass_condition: Evidence confirms the visible label exists, or a separate exception-path control confirms Article 9 evidence.
+  fail_condition: Evidence confirms the visible label is absent and no complete exception path applies.
+  review_condition: Evidence is missing or explicit-label scenario classification requires human review.
 review:
-  legal_review_status: reviewed
-  interpretation_version: "1.0"
+  author_review_status: reviewed
+  legal_expert_review_status: not_reviewed
+  reviewer_role: researcher
+  reviewer_name: null
+  review_date: "2026-07-15"
+  interpretation_version: "1.1"
+  review_notes: Reviewed currently means internally reviewed by the researcher; no independent qualified legal expert review has been recorded.

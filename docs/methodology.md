@@ -7,7 +7,7 @@ This repository now centers on legal-clause-to-control transformation. The main 
 The transformation chain is:
 
 ```text
-Original legal provision
+Formal Chinese legal provision
 -> Normative sentence identification
 -> Legal semantic decomposition
 -> Human interpretation
@@ -17,7 +17,7 @@ Original legal provision
 -> Review status and traceability
 ```
 
-## Clause Selection
+## Regulatory Corpus Selection
 
 The corpus is intentionally small. It selects provisions that are directly relevant to synthetic actor, digital human, and AIGC content-generation scenarios:
 
@@ -30,14 +30,18 @@ The corpus is intentionally small. It selects provisions that are directly relev
 - complaint and reporting mechanisms;
 - model filing or applicability review.
 
-The project does not attempt full coverage of Chinese AI law.
+The selected sources are representative rather than exhaustive. They were chosen because they cover the main legal-to-technical boundary in China-facing AIGC services: service-provider duties, deep synthesis scenarios, generated-content labeling, technical metadata labels, model filing triggers, complaint handling, and personal information protection. Clauses are included when they can be decomposed into a source, actor, modality, action, object, trigger, exception, evidence requirement, automation level, and review status. Clauses are excluded when they are too broad for this prototype, sector-specific, unrelated to synthetic actor or digital human services, or impossible to represent without extensive legal interpretation.
+
+Where a general rule and a special rule overlap, both are preserved. For example, PIPL Article 29 is retained as a general sensitive-personal-information separate-consent rule, while Article 14 of the Deep Synthesis Provisions is retained as a special rule for face and voice editing functions.
 
 ## Semantic Decomposition
 
 Each selected clause is decomposed into fields such as:
 
 - source document and article;
-- original clause summary;
+- formal Chinese source text;
+- working English translation;
+- official source URL;
 - normative fragment;
 - regulated actor;
 - modality;
@@ -54,17 +58,30 @@ Each selected clause is decomposed into fields such as:
 - reviewer note;
 - source effective date;
 - interpretation version;
-- legal review status.
+- author review status;
+- legal expert review status.
 
 These fields are stored in `annotations/clause-decomposition.csv` and reflected in the schemas and mappings.
 
-## Human Interpretation
+## Interpretation Protocol
 
-Machine-readable does not mean machine-interpreted. The repository assumes a human reviewer has selected the clause, identified the normative fragment, interpreted the legal meaning, and classified the automation level. The evaluator executes only that reviewed representation.
+Machine-readable does not mean machine-interpreted. The repository assumes that a human researcher first selects the clause, identifies the normative fragment, records a working translation, interprets the legal meaning, defines the control objective, and classifies the automation level. The evaluator executes only that reviewed representation.
+
+The initial interpretation is performed by the project author as a research exercise. The interpretation record must identify the source, article, source text, working translation, control objective, evidence requirement, ambiguity level, automation level, and interpretation version. A legal expert review should be required when a clause depends on open-textured terms, sector-specific regulator practice, sensitive personal information classification, public-opinion or social-mobilization capacity, label prominence, or the adequacy of "effective measures."
+
+`Reviewed` currently means internally reviewed by the researcher unless a qualified legal expert review is separately recorded. The schemas therefore distinguish `author_review_status` from `legal_expert_review_status`. Conflicting interpretations should be represented by a new interpretation version or marked as `disputed`; superseded interpretations should remain traceable rather than silently overwritten.
 
 ## Schema Validation
 
-`schema/legal-norm-schema.json` validates the structure of human-reviewed legal norms. `schema/control-schema.json` validates executable controls derived from those norms. The validator checks required fields, source traceability, test logic, automation-level declaration, and legal review status.
+`schema/legal-norm-schema.json` validates the structure of human-reviewed legal norms. It requires Chinese source text, working English translation, official source URL, promulgation date, effective date, and retrieval date. `schema/control-schema.json` validates executable controls derived from those norms. The validator checks required fields, source traceability, test logic, automation-level declaration, and separated author/legal-expert review status.
+
+The validator now reports three top-level layers:
+
+- `schema_valid`;
+- `cross_file_valid`;
+- `legal_source_metadata_complete`.
+
+Cross-file checks compare `legal-corpus/source-index.csv`, `annotations/clause-decomposition.csv`, `mappings/traceability-matrix.csv`, `mappings/clause-to-control.yml`, and the example YAML files.
 
 ## Control Evaluation
 
@@ -75,7 +92,7 @@ Machine-readable does not mean machine-interpreted. The repository assumes a hum
 - `review`;
 - `not_applicable`.
 
-Controls marked `human_review_required` are routed to review when applicable. Missing evidence also routes to review. Trigger conditions determine whether a control is applicable.
+Fully automatable controls can reach final `pass` or `fail` directly when evidence is complete. Partially automatable controls return both a machine result and a final status: a machine expression may pass, but final status remains `review` unless required human confirmation is provided. Human-review-required controls default to `review` unless an explicit human review result is supplied. This prevents evidence fields such as `visible_label_present == true` from being treated as a complete legal conclusion about label prominence or statutory sufficiency.
 
 ## Validation Set
 
@@ -87,8 +104,15 @@ Controls marked `human_review_required` are routed to review when applicable. Mi
 - non-applicable rules;
 - human-review-required obligations;
 - multiple rules applying to the same use case.
+- incorrect source mappings;
+- missing source text;
+- undeclared expression fields;
+- explicit-label exception paths;
+- model filing non-applicability and unreviewed applicability;
+- simultaneous application of PIPL and Deep Synthesis consent rules;
+- metadata aggregate flags that are true while required underlying fields are missing.
 
-The validation focus is methodological consistency, not a statistical pass/fail distribution.
+The validation focus is methodological consistency, not a statistical pass/fail distribution. The method checks schema completeness, source traceability, cross-file consistency, executable coverage, review-routing accuracy, and error behavior.
 
 ## Supplementary Proof of Concept
 
