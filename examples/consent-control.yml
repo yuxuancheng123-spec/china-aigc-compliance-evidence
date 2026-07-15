@@ -7,10 +7,16 @@ source:
   article: 第二十九条
   source_text_zh: 处理敏感个人信息应当取得个人的单独同意；法律、行政法规规定处理敏感个人信息应当取得书面同意的，从其规定。
   working_translation_en: Processing sensitive personal information should obtain the individual's separate consent; where laws or administrative regulations require written consent, those requirements apply.
-  source_url: https://www.npc.gov.cn/
+  source_url: https://www.npc.gov.cn/WZWSREL25wYy9jMi9jMzA4MzQvMjAyMTA4L3QyMDIxMDgyMF8zMTMwODguaHRtbD9yZWY9aW1i
+  source_url_specificity: article_page
   promulgation_date: "2021-08-20"
   effective_date: "2021-11-01"
   retrieved_at: "2026-07-15"
+  source_snapshot:
+    retrieved_at: "2026-07-15"
+    source_excerpt_sha256: metadata-only-consent-example
+    source_document_sha256: null
+    verification_status: metadata_only
 norm:
   regulated_actor: personal_information_processor
   modality: must

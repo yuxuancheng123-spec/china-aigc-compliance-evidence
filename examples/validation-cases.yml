@@ -1,37 +1,56 @@
-- case_id: CASE-REVIEW-LABEL-MACHINE-PASS
-  description: Explicit label exists, but the partially automatable control still requires human confirmation.
+- case_id: CASE-REVIEW-MISSING-HUMAN-CONFIRMATION
+  description: A plain applicability Boolean is not a human confirmation record.
+  evidence: {output_is_ai_generated: true, output_is_user_facing: true, output_matches_explicit_label_scenario: true, visible_label_present: true}
+  expected: {CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: review}
+
+- case_id: CASE-REVIEW-CONFIRMATION-CONFLICT
+  description: A reviewer confirmation that conflicts with business evidence routes the control to review.
   evidence:
     output_is_ai_generated: true
     output_is_user_facing: true
     output_matches_explicit_label_scenario: true
     visible_label_present: true
-  expected:
-    CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: review
+    human_confirmations:
+      output_matches_explicit_label_scenario: {confirmed: true, value: false, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: review}
 
-- case_id: CASE-PASS-LABEL-AFTER-HUMAN-REVIEW
-  description: Explicit label exists and human confirmation is complete.
+- case_id: CASE-PASS-LABEL-EXISTENCE-CONFIRMED
+  description: A complete human confirmation enables the automated existence check.
   evidence:
     output_is_ai_generated: true
     output_is_user_facing: true
     output_matches_explicit_label_scenario: true
     visible_label_present: true
-    human_review_completed: true
-    human_review_result: pass
-  expected:
-    CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: pass
+    human_confirmations:
+      output_matches_explicit_label_scenario: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: pass}
 
-- case_id: CASE-FAIL-LABEL-NO-EXCEPTION
-  description: Applicable explicit-label scenario without visible label or complete exception evidence.
+- case_id: CASE-REVIEW-LABEL-PROMINENCE
+  description: Label existence does not replace a required prominence review.
   evidence:
     output_is_ai_generated: true
     output_is_user_facing: true
     output_matches_explicit_label_scenario: true
-    visible_label_present: false
-  expected:
-    CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: fail
+    visible_label_present: true
+    human_confirmations:
+      output_matches_explicit_label_scenario: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-AIGC-VISIBLE-LABEL-PROMINENCE: review}
 
-- case_id: CASE-PASS-LABEL-EXCEPTION
-  description: Explicit label is absent but the Article 9 exception path is complete.
+- case_id: CASE-PASS-LABEL-PROMINENCE-AFTER-REVIEW
+  description: A keyed prominence review may complete the final conclusion.
+  evidence:
+    output_is_ai_generated: true
+    output_is_user_facing: true
+    output_matches_explicit_label_scenario: true
+    visible_label_present: true
+    human_confirmations:
+      output_matches_explicit_label_scenario: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+    human_reviews:
+      label_prominence: {completed: true, result: pass, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-AIGC-VISIBLE-LABEL-PROMINENCE: pass}
+
+- case_id: CASE-PASS-LABEL-ARTICLE-9-PROVIDER-DELIVERY
+  description: Complete Article 9 evidence passes only in the declared provider-delivery scope.
   evidence:
     output_is_ai_generated: true
     output_is_user_facing: true
@@ -42,11 +61,12 @@
     user_use_responsibility_disclosed: true
     exception_log_retained: true
     log_retention_period_months: 6
-  expected:
-    CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: pass
+    human_confirmations:
+      output_matches_explicit_label_scenario: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: pass}
 
-- case_id: CASE-FAIL-LABEL-EXCEPTION-INCOMPLETE
-  description: Explicit-label exception is requested but retention evidence is incomplete.
+- case_id: CASE-FAIL-LABEL-ARTICLE-9-INCOMPLETE
+  description: An incomplete Article 9 record does not override the missing label.
   evidence:
     output_is_ai_generated: true
     output_is_user_facing: true
@@ -57,145 +77,123 @@
     user_use_responsibility_disclosed: true
     exception_log_retained: true
     log_retention_period_months: 3
-  expected:
-    CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: fail
+    human_confirmations:
+      output_matches_explicit_label_scenario: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: fail}
 
 - case_id: CASE-NOT-APPLICABLE-NON-AIGC
-  description: Non-AIGC output is outside AIGC label and metadata control scope.
-  evidence:
-    output_is_ai_generated: false
-    output_is_user_facing: true
-    output_matches_explicit_label_scenario: true
-  expected:
-    CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: not_applicable
-    CTRL-AIGC-METADATA-LABEL: not_applicable
+  description: A non-AIGC output is outside explicit and metadata label scope.
+  evidence: {output_is_ai_generated: false, output_is_user_facing: true}
+  expected: {CTRL-AIGC-VISIBLE-LABEL-EXISTENCE: not_applicable, CTRL-AIGC-METADATA-LABEL: not_applicable}
 
 - case_id: CASE-PASS-METADATA-FIELDS
-  description: Metadata label has required underlying fields.
-  evidence:
-    output_is_ai_generated: true
-    generated_content_attribute: ai_generated
-    service_provider_name_or_code: synthetic-provider-001
-    content_id: CONTENT-001
-  expected:
-    CTRL-AIGC-METADATA-LABEL: pass
+  description: Underlying implicit-label fields support an automated metadata result.
+  evidence: {output_is_ai_generated: true, generated_content_attribute: ai_generated, service_provider_name_or_code: synthetic-provider-001, content_id: CONTENT-001}
+  expected: {CTRL-AIGC-METADATA-LABEL: pass}
 
 - case_id: CASE-FAIL-METADATA-AGGREGATE-ONLY
-  description: Aggregate metadata_label_present is true but underlying required fields are missing.
-  evidence:
-    output_is_ai_generated: true
-    metadata_label_present: true
-    generated_content_attribute: ai_generated
-    service_provider_name_or_code: null
-    content_id: CONTENT-002
-  expected:
-    CTRL-AIGC-METADATA-LABEL: fail
+  description: An aggregate metadata flag cannot replace a required underlying field.
+  evidence: {output_is_ai_generated: true, metadata_label_present: true, generated_content_attribute: ai_generated, service_provider_name_or_code: null, content_id: CONTENT-002}
+  expected: {CTRL-AIGC-METADATA-LABEL: fail}
 
-- case_id: CASE-REVIEW-PIPL-CONSENT-MACHINE-PASS
-  description: Sensitive actor-like data has separate consent evidence but still needs reviewed classification confirmation.
+- case_id: CASE-REVIEW-PIPL-CONSENT-MISSING-CONFIRMATION
+  description: Sensitive-information classification requires a confirmation record.
+  evidence: {processing_sensitive_personal_information: true, separate_consent_present: true}
+  expected: {CTRL-PIPL-SEPARATE-CONSENT: review}
+
+- case_id: CASE-PASS-PIPL-CONSENT-AFTER-REVIEW
+  description: Confirmed sensitive-information scope and review can complete the assurance conclusion.
   evidence:
     processing_sensitive_personal_information: true
     separate_consent_present: true
-  expected:
-    CTRL-PIPL-SEPARATE-CONSENT: review
+    human_confirmations:
+      processing_sensitive_personal_information: {confirmed: true, value: true, reviewer_role: privacy_reviewer, reviewed_at: '2026-07-15'}
+    human_reviews:
+      sensitive_information_scope: {completed: true, result: pass, reviewer_role: privacy_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-PIPL-SEPARATE-CONSENT: pass}
 
 - case_id: CASE-FAIL-PIPL-CONSENT
-  description: Sensitive actor-like data lacks separate consent evidence.
+  description: Missing separate consent fails once the sensitive-data scope is confirmed.
   evidence:
     processing_sensitive_personal_information: true
     separate_consent_present: false
-  expected:
-    CTRL-PIPL-SEPARATE-CONSENT: fail
+    human_confirmations:
+      processing_sensitive_personal_information: {confirmed: true, value: true, reviewer_role: privacy_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-PIPL-SEPARATE-CONSENT: fail}
 
-- case_id: CASE-FAIL-DEEPSYN-FACE-VOICE-CONSENT
-  description: Deep synthesis face or voice editing feature lacks edited-person separate consent.
+- case_id: CASE-PROMPT-PASS-ASSURANCE-REVIEW
+  description: Direct Article 14 prompt evidence can pass while derived consent assurance remains unresolved.
   evidence:
     deep_synthesis_face_or_voice_editing_feature: true
     user_notified_to_inform_edited_person: true
-    edited_person_separate_consent_obtained: false
-  expected:
-    CTRL-DEEPSYN-FACE-VOICE-CONSENT: fail
+    user_prompt_timestamp: '2026-07-15T10:00:00Z'
+    human_reviews:
+      face_voice_feature_scope: {completed: true, result: pass, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-DEEPSYN-FACE-VOICE-USER-PROMPT: pass, CTRL-DEEPSYN-FACE-VOICE-CONSENT-ASSURANCE: review}
 
-- case_id: CASE-BOTH-PIPL-AND-DEEPSYN-SPECIAL-RULES-APPLY
-  description: PIPL general sensitive-information rule and Deep Synthesis Article 14 special rule both apply.
+- case_id: CASE-FAIL-DERIVED-CONSENT-ASSURANCE
+  description: A derived assurance record with explicit missing evidence fails.
   evidence:
-    processing_sensitive_personal_information: true
-    separate_consent_present: true
     deep_synthesis_face_or_voice_editing_feature: true
-    user_notified_to_inform_edited_person: true
-    edited_person_separate_consent_obtained: true
-    human_review_completed: true
-    human_review_result: pass
-  expected:
-    CTRL-PIPL-SEPARATE-CONSENT: pass
-    CTRL-DEEPSYN-FACE-VOICE-CONSENT: pass
+    edited_person_separate_consent_evidence_present: false
+    consent_scope_reviewed: false
+  expected: {CTRL-DEEPSYN-FACE-VOICE-CONSENT-ASSURANCE: fail}
+
+- case_id: CASE-REVIEW-FILING-APPLICABILITY-NOT-CONFIRMED
+  description: Filing applicability is not established by ordinary Booleans alone.
+  evidence: {service_is_public_facing: true, service_has_public_opinion_or_social_mobilization_capacity: true, filing_applicability_reviewed: true, filing_required: true, filing_status: registered}
+  expected: {CTRL-AIGC-MODEL-FILING: review}
 
 - case_id: CASE-PASS-FILING
-  description: Filing is applicable, reviewed, required, and registered.
+  description: Confirmed applicability, registered filing, and keyed review produce a final pass.
   evidence:
     service_is_public_facing: true
     service_has_public_opinion_or_social_mobilization_capacity: true
     filing_applicability_reviewed: true
     filing_required: true
     filing_status: registered
-    human_review_completed: true
-    human_review_result: pass
-  expected:
-    CTRL-AIGC-MODEL-FILING: pass
+    human_confirmations:
+      service_has_public_opinion_or_social_mobilization_capacity: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+      filing_applicability_reviewed: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+      filing_required: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+    human_reviews:
+      filing_applicability: {completed: true, result: pass, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-AIGC-MODEL-FILING: pass}
 
 - case_id: CASE-FAIL-FILING
-  description: Filing is required but missing after applicability review.
+  description: Required filing that is missing fails after confirmed applicability.
   evidence:
     service_is_public_facing: true
     service_has_public_opinion_or_social_mobilization_capacity: true
     filing_applicability_reviewed: true
     filing_required: true
     filing_status: missing
-  expected:
-    CTRL-AIGC-MODEL-FILING: fail
+    human_confirmations:
+      service_has_public_opinion_or_social_mobilization_capacity: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+      filing_applicability_reviewed: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+      filing_required: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-AIGC-MODEL-FILING: fail}
 
-- case_id: CASE-NOT-APPLICABLE-FILING
-  description: Service is not public-facing.
-  evidence:
-    service_is_public_facing: false
-    service_has_public_opinion_or_social_mobilization_capacity: true
-  expected:
-    CTRL-AIGC-MODEL-FILING: not_applicable
-
-- case_id: CASE-REVIEW-FILING-APPLICABILITY-NOT-REVIEWED
-  description: Potentially covered service lacks filing applicability review evidence.
-  evidence:
-    service_is_public_facing: true
-    service_has_public_opinion_or_social_mobilization_capacity: true
-    filing_required: true
-    filing_status: registered
-  expected:
-    CTRL-AIGC-MODEL-FILING: review
-
-- case_id: CASE-REVIEW-SAFETY-PRINCIPLE
-  description: Article 4 content-safety principle requires human review.
+- case_id: CASE-PASS-SAFETY-KEYED-REVIEW
+  description: Generic keyed human review replaces control-specific completed flags.
   evidence:
     content_is_generated_for_user: true
-    content_safety_human_review_completed: true
-    human_review_result: pass
-  expected:
-    CTRL-AIGC-CONTENT-SAFETY-PRINCIPLE: pass
+    human_reviews:
+      content_safety: {completed: true, result: pass, reviewer_role: safety_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-AIGC-CONTENT-SAFETY-PRINCIPLE: pass}
 
-- case_id: CASE-PASS-COMPLAINT-AFTER-HUMAN-REVIEW
-  description: Complaint process is disclosed and human confirmation is complete.
+- case_id: CASE-PASS-COMPLAINT-AFTER-REVIEW
+  description: Complaint disclosures and a timeliness review support a final result.
   evidence:
     complaint_received: true
     complaint_process_disclosed: true
     feedback_time_limit_disclosed: true
     complaint_status: acknowledged
-    human_review_completed: true
-    human_review_result: pass
-  expected:
-    CTRL-AIGC-COMPLAINT-MECHANISM: pass
+    human_reviews:
+      complaint_timeliness: {completed: true, result: pass, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-AIGC-COMPLAINT-MECHANISM: pass}
 
 - case_id: CASE-NOT-APPLICABLE-COMPLAINT
-  description: No complaint was received.
-  evidence:
-    complaint_received: false
-  expected:
-    CTRL-AIGC-COMPLAINT-MECHANISM: not_applicable
+  description: No complaint is outside complaint-record scope.
+  evidence: {complaint_received: false}
+  expected: {CTRL-AIGC-COMPLAINT-MECHANISM: not_applicable}

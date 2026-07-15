@@ -11,6 +11,7 @@ from jsonschema import Draft202012Validator
 
 
 ROOT = Path(__file__).resolve().parents[1]
+DERIVATION_TYPES = {"direct_legal_requirement", "derived_organizational_control", "technical_implementation_control"}
 
 
 def load_yaml(path: Path) -> Any:
@@ -27,18 +28,8 @@ def load_csv(path: Path) -> list[dict[str, str]]:
 
 
 def validate_instance(instance: Any, schema_path: Path) -> dict:
-    validator = Draft202012Validator(load_schema(schema_path))
-    errors = sorted(validator.iter_errors(instance), key=lambda error: list(error.path))
-    return {
-        "valid": not errors,
-        "errors": [
-            {
-                "path": ".".join(str(part) for part in error.path),
-                "message": error.message,
-            }
-            for error in errors
-        ],
-    }
+    errors = sorted(Draft202012Validator(load_schema(schema_path)).iter_errors(instance), key=lambda error: list(error.path))
+    return {"valid": not errors, "errors": [{"path": ".".join(str(part) for part in error.path), "message": error.message} for error in errors]}
 
 
 def validate_legal_norm(norm: dict) -> dict:
@@ -49,15 +40,24 @@ def validate_control(control: dict) -> dict:
     return validate_instance(control, ROOT / "schema" / "control-schema.json")
 
 
+def load_norm_artifacts() -> dict[str, dict]:
+    norms: dict[str, dict] = {}
+    for path in sorted((ROOT / "norms").glob("*.yml")):
+        norm = load_yaml(path)
+        norms[norm["norm_id"]] = norm
+    return norms
+
+
+def _normalise_expression(expression: str) -> str:
+    for source, replacement in (("true", "True"), ("false", "False"), ("null", "None")):
+        expression = expression.replace(f" {source}", f" {replacement}")
+        if expression.startswith(source):
+            expression = replacement + expression[len(source) :]
+    return expression
+
+
 def _expression_names(expression: str) -> set[str]:
-    expression = expression.replace(" true", " True").replace(" false", " False").replace(" null", " None")
-    if expression.startswith("true"):
-        expression = "True" + expression[4:]
-    if expression.startswith("false"):
-        expression = "False" + expression[5:]
-    if expression.startswith("null"):
-        expression = "None" + expression[4:]
-    tree = ast.parse(expression, mode="eval")
+    tree = ast.parse(_normalise_expression(expression), mode="eval")
     return {node.id for node in ast.walk(tree) if isinstance(node, ast.Name) and node.id not in {"True", "False", "None"}}
 
 
@@ -65,171 +65,155 @@ def _row_by(rows: list[dict[str, str]], key: str) -> dict[str, dict[str, str]]:
     return {row[key]: row for row in rows}
 
 
-def _append_error(errors: list[dict[str, str]], item_id: str, message: str, path: str = "cross_file") -> None:
-    errors.append({"id": item_id, "path": path, "message": message})
+def _append(items: list[dict[str, str]], item_id: str, message: str, path: str = "cross_file") -> None:
+    items.append({"id": item_id, "path": path, "message": message})
 
 
 def validate_control_mapping(path: Path | None = None) -> dict:
-    mapping_path = path or ROOT / "mappings" / "clause-to-control.yml"
-    controls = load_yaml(mapping_path)
+    controls = load_yaml(path or ROOT / "mappings" / "clause-to-control.yml")
+    results = [{"control_id": control.get("control_id"), **validate_control(control)} for control in controls]
+    return {"valid": all(item["valid"] for item in results), "controls_checked": len(results), "results": results}
+
+
+def validate_norm_artifacts() -> dict:
     results = []
-    for control in controls:
-        result = validate_control(control)
-        results.append({"control_id": control.get("control_id"), **result})
-    return {
-        "valid": all(item["valid"] for item in results),
-        "controls_checked": len(results),
-        "results": results,
-    }
+    for path in sorted((ROOT / "norms").glob("*.yml")):
+        result = validate_legal_norm(load_yaml(path))
+        results.append({"path": str(path.relative_to(ROOT)), **result})
+    return {"valid": bool(results) and all(item["valid"] for item in results), "norms_checked": len(results), "results": results}
 
 
 def validate_example_norms() -> dict:
     results = []
     for path in sorted((ROOT / "examples").glob("*-control.yml")):
-        norm = load_yaml(path)
-        result = validate_legal_norm(norm)
+        result = validate_legal_norm(load_yaml(path))
         results.append({"path": str(path.relative_to(ROOT)), **result})
-    return {
-        "valid": all(item["valid"] for item in results),
-        "examples_checked": len(results),
-        "results": results,
-    }
+    return {"valid": all(item["valid"] for item in results), "examples_checked": len(results), "results": results}
 
 
 def validate_cross_file_integrity() -> dict:
     controls = load_yaml(ROOT / "mappings" / "clause-to-control.yml")
+    norms = load_norm_artifacts()
     source_index = _row_by(load_csv(ROOT / "legal-corpus" / "source-index.csv"), "source_id")
     decompositions = _row_by(load_csv(ROOT / "annotations" / "clause-decomposition.csv"), "norm_id")
     traceability_rows = load_csv(ROOT / "mappings" / "traceability-matrix.csv")
     traceability_by_control = _row_by(traceability_rows, "control_id")
-    examples = {
-        yaml.safe_load(path.read_text(encoding="utf-8"))["norm_id"]: yaml.safe_load(path.read_text(encoding="utf-8"))
-        for path in sorted((ROOT / "examples").glob("*-control.yml"))
-    }
-
     errors: list[dict[str, str]] = []
+    warnings: list[dict[str, str]] = []
+    referenced_norms: set[str] = set()
     seen_control_ids: set[str] = set()
-    objective_by_norm: dict[str, str] = {}
-    expression_by_norm: dict[str, str] = {}
+    controls_by_norm: dict[str, list[dict]] = {}
 
     for control in controls:
-        control_id = control["control_id"]
-        norm_id = control["norm_id"]
-        trace = control["traceability"]
-        review = control["review"]
-
+        control_id, norm_id = control["control_id"], control["norm_id"]
+        referenced_norms.add(norm_id)
+        controls_by_norm.setdefault(norm_id, []).append(control)
         if control_id in seen_control_ids:
-            _append_error(errors, control_id, "control_id is duplicated")
+            _append(errors, control_id, "control_id is duplicated")
         seen_control_ids.add(control_id)
-
+        if control.get("control_derivation_type") not in DERIVATION_TYPES:
+            _append(errors, control_id, "control_derivation_type is invalid")
+        if not control.get("control_component"):
+            _append(errors, control_id, "control_component is required")
+        if norm_id not in norms:
+            _append(errors, control_id, "mapping references a missing norm artifact")
+            continue
         if norm_id not in decompositions:
-            _append_error(errors, control_id, "norm_id is missing from clause-decomposition.csv")
-            continue
+            _append(errors, control_id, "norm_id is missing from clause-decomposition.csv")
         if control_id not in traceability_by_control:
-            _append_error(errors, control_id, "control_id is missing from traceability-matrix.csv")
-            continue
+            _append(errors, control_id, "control_id is missing from traceability-matrix.csv")
+        trace, norm = control["traceability"], norms[norm_id]
+        source = norm["source"]
         if trace["source_id"] not in source_index:
-            _append_error(errors, control_id, "source_id is missing from legal-corpus/source-index.csv")
+            _append(errors, control_id, "source_id is missing from legal-corpus/source-index.csv")
             continue
+        index = source_index[trace["source_id"]]
+        decomposition = decompositions.get(norm_id)
+        row = traceability_by_control.get(control_id)
+        for field in ("source_id", "document_title_zh", "document_title_en", "article", "effective_date", "source_url", "source_url_specificity"):
+            expected = source.get(field)
+            if trace.get(field) != expected:
+                _append(errors, control_id, f"{field} is inconsistent between mapping and norm artifact")
+            if index.get(field) not in {None, ""} and index.get(field) != expected:
+                _append(errors, control_id, f"{field} is inconsistent between norm artifact and source index")
+            if decomposition and field in decomposition and decomposition[field] and decomposition[field] != expected:
+                _append(errors, control_id, f"{field} is inconsistent between norm artifact and clause decomposition")
+            if row and field in row and row[field] and row[field] != expected:
+                _append(errors, control_id, f"{field} is inconsistent between norm artifact and traceability matrix")
+        if control["automation_level"] != norm["interpretation"]["automation_level"]:
+            _append(errors, control_id, "automation_level is inconsistent between mapping and norm artifact")
+        if control["review"]["interpretation_version"] != norm["review"]["interpretation_version"] or trace["interpretation_version"] != norm["review"]["interpretation_version"]:
+            _append(errors, control_id, "interpretation_version is inconsistent between mapping and norm artifact")
+        if control["review"]["legal_expert_review_status"] == "reviewed" and (not control["review"].get("reviewer_name") or not control["review"].get("review_date")):
+            _append(errors, control_id, "legal expert reviewed status requires reviewer identity and review date")
+        if trace["source_url_specificity"] == "institution_homepage":
+            _append(warnings, control_id, "source URL uses low-specificity institution_homepage")
+        declared = set(control["evidence"]["required_fields"])
+        declared.update(control.get("applicability", {}).get("conditions", {}).keys())
+        declared.update(control.get("applicability", {}).get("human_confirmed_fields", []))
+        declared.update(control.get("exception_path", {}).get("required_fields", []))
+        for expression_name, expression in [("test", control["test"]["expression"]), ("exception", control.get("exception_path", {}).get("expression"))]:
+            if expression:
+                undeclared = _expression_names(expression) - declared
+                if undeclared:
+                    _append(errors, control_id, f"{expression_name} expression references undeclared fields: {', '.join(sorted(undeclared))}")
+        if control.get("exception_path", {}).get("outcome") == "pass" and not control["exception_path"].get("control_scope"):
+            _append(errors, control_id, "pass exception path must declare control_scope")
+        if control.get("applicability", {}).get("human_confirmed_fields") and not isinstance(control.get("applicability", {}).get("human_confirmed_fields"), list):
+            _append(errors, control_id, "human_confirmed_fields must declare confirmation requirements")
+        if control["control_derivation_type"] == "direct_legal_requirement" and any(word in control["control_objective"].lower() for word in ("retain consent", "organizational assurance")):
+            _append(errors, control_id, "direct legal requirement appears to contain an unlabelled derived assurance duty")
 
-        source = source_index[trace["source_id"]]
-        decomposition = decompositions[norm_id]
-        trace_row = traceability_by_control[control_id]
-
-        for field in ("document_title_zh", "document_title_en", "effective_date"):
-            values = {trace[field], source[field], decomposition[field], trace_row[field]}
-            if len(values) != 1:
-                _append_error(errors, control_id, f"{field} is inconsistent across files")
-        if trace["article"] != decomposition["article"] or trace["article"] != trace_row["article"]:
-            _append_error(errors, control_id, "article is inconsistent across mapping, decomposition, and traceability matrix")
-        if trace["source_url"] != source["source_url"] or trace["source_url"] != trace_row["source_url"]:
-            _append_error(errors, control_id, "source_url is inconsistent across files")
-        if control["automation_level"] != decomposition["automation_level"] or control["automation_level"] != trace_row["automation_level"]:
-            _append_error(errors, control_id, "automation_level is inconsistent across files")
-        if review["interpretation_version"] != trace["interpretation_version"] or review["interpretation_version"] != decomposition["interpretation_version"] or review["interpretation_version"] != trace_row["interpretation_version"]:
-            _append_error(errors, control_id, "interpretation_version is inconsistent across files")
-
-        declared_fields = set(control["evidence"]["required_fields"])
-        declared_fields.update(control.get("applicability", {}).get("conditions", {}).keys())
-        declared_fields.update(control.get("exception_path", {}).get("required_fields", []))
-        undeclared = _expression_names(control["test"]["expression"]) - declared_fields
-        if undeclared:
-            _append_error(errors, control_id, f"test expression references undeclared fields: {', '.join(sorted(undeclared))}")
-        if control.get("exception_path"):
-            undeclared_exception = _expression_names(control["exception_path"]["expression"]) - declared_fields
-            if undeclared_exception:
-                _append_error(errors, control_id, f"exception expression references undeclared fields: {', '.join(sorted(undeclared_exception))}")
-
-        if norm_id in examples:
-            example_fields = set(examples[norm_id]["evidence"]["required_fields"])
-            if example_fields != set(control["evidence"]["required_fields"]):
-                _append_error(errors, control_id, "required evidence fields differ from example norm")
-
-        if review["legal_expert_review_status"] == "reviewed" and (not review.get("reviewer_name") or not review.get("review_date")):
-            _append_error(errors, control_id, "legal expert reviewed status requires reviewer identity and review date")
-
-        if not trace.get("source_url"):
-            _append_error(errors, control_id, "control lacks official source URL")
-
-        if norm_id in objective_by_norm and objective_by_norm[norm_id] != control["control_objective"]:
-            if norm_id not in {"CN-AIGC-LABEL-001"}:
-                _append_error(errors, control_id, "same norm has conflicting control objective")
-        objective_by_norm.setdefault(norm_id, control["control_objective"])
-
-        if norm_id in expression_by_norm and expression_by_norm[norm_id] != control["test"]["expression"]:
-            if norm_id not in {"CN-AIGC-LABEL-001"}:
-                _append_error(errors, control_id, "same norm has conflicting test expression")
-        expression_by_norm.setdefault(norm_id, control["test"]["expression"])
+    for norm_id in norms:
+        if norm_id not in referenced_norms:
+            _append(errors, norm_id, "norm artifact is orphaned and has no referencing control", "norms")
+    for norm_id, norm_controls in controls_by_norm.items():
+        components = [control["control_component"] for control in norm_controls]
+        if len(components) != len(set(components)):
+            _append(errors, norm_id, "multiple controls for one norm must have distinct control_component values", "mapping")
 
     return {
         "valid": not errors,
         "checks": [
-            "norm_id presence in clause decomposition and traceability matrix",
-            "source_id presence in source index",
-            "document title, article number, effective date, and URL consistency",
-            "unique and traceable control_id",
-            "test-expression variables declared in evidence, applicability, or exception fields",
-            "required evidence fields aligned with example norms where examples exist",
-            "automation_level consistency",
-            "interpretation_version consistency",
-            "legal expert reviewed status requires reviewer identity and date",
-            "official source URL present",
-            "conflicting objective or expression detection",
+            "complete norm artifact coverage", "source, article, date, URL, and specificity consistency",
+            "automation and interpretation-version consistency", "expression variable declarations",
+            "control derivation and component semantics", "human-confirmation declarations",
+            "scoped pass exceptions", "orphan norm detection", "low-specificity source warnings",
         ],
         "errors": errors,
+        "warnings": warnings,
     }
 
 
 def validate_legal_source_metadata() -> dict:
     errors: list[dict[str, str]] = []
-    for path in sorted((ROOT / "examples").glob("*-control.yml")):
-        norm = load_yaml(path)
+    warnings: list[dict[str, str]] = []
+    for norm_id, norm in load_norm_artifacts().items():
         source = norm["source"]
         if not source.get("source_text_zh"):
-            _append_error(errors, str(path), "source_text_zh must not be empty", "source")
+            _append(errors, norm_id, "source_text_zh must not be empty", "source")
         if source.get("source_text_zh") == source.get("working_translation_en"):
-            _append_error(errors, str(path), "source_text_zh must not equal working_translation_en", "source")
-        if not source.get("source_url"):
-            _append_error(errors, str(path), "source_url must not be empty", "source")
-        if not source.get("document_title_zh") or not source.get("document_title_en"):
-            _append_error(errors, str(path), "Chinese and English document titles are required", "source")
-    return {"valid": not errors, "errors": errors}
+            _append(errors, norm_id, "source_text_zh must not equal working_translation_en", "source")
+        if not source.get("source_url") or not source.get("document_title_zh") or not source.get("document_title_en"):
+            _append(errors, norm_id, "source URL and Chinese and English titles are required", "source")
+        if source.get("source_url_specificity") == "institution_homepage":
+            _append(warnings, norm_id, "source URL uses low-specificity institution_homepage", "source")
+    return {"valid": not errors, "errors": errors, "warnings": warnings, "notice": "This check confirms required source metadata fields are present and internally consistent. It does not independently verify that the stored text is identical to the current official source."}
 
 
 def validate_repository() -> dict:
     mapping = validate_control_mapping()
+    norms = validate_norm_artifacts()
     examples = validate_example_norms()
     cross_file = validate_cross_file_integrity()
     legal_source = validate_legal_source_metadata()
-    schema_valid = mapping["valid"] and examples["valid"]
     return {
-        "schema_valid": schema_valid,
+        "schema_valid": mapping["valid"] and norms["valid"] and examples["valid"],
         "cross_file_valid": cross_file["valid"],
-        "legal_source_metadata_complete": legal_source["valid"],
-        "mapping": mapping,
-        "examples": examples,
-        "cross_file": cross_file,
-        "legal_source_metadata": legal_source,
+        "legal_source_metadata_fields_complete": legal_source["valid"],
+        "legal_source_metadata_notice": legal_source["notice"],
+        "mapping": mapping, "norms": norms, "examples": examples,
+        "cross_file": cross_file, "legal_source_metadata": legal_source,
     }
 
 

@@ -8,9 +8,15 @@ source:
   source_text_zh: 服务提供者提供的生成合成服务属于《互联网信息服务深度合成管理规定》第十七条第一款情形的，应当按照下列要求对生成合成内容添加显式标识。用户申请服务提供者提供没有添加显式标识的生成合成内容的，服务提供者可以在通过用户协议明确用户的标识义务和使用责任后，提供不含显式标识的生成合成内容，并依法留存提供对象信息等相关日志不少于六个月。
   working_translation_en: Where generated synthetic services fall within Article 17 paragraph 1 of the Deep Synthesis Provisions, providers should add explicit labels. If a user requests generated synthetic content without an explicit label, the provider may provide it after clarifying user labeling obligations and use responsibility through an agreement and retaining relevant logs for at least six months.
   source_url: https://www.cac.gov.cn/2025-03/14/c_1743654684782215.htm
+  source_url_specificity: document_page
   promulgation_date: "2025-03-07"
   effective_date: "2025-09-01"
   retrieved_at: "2026-07-15"
+  source_snapshot:
+    retrieved_at: "2026-07-15"
+    source_excerpt_sha256: metadata-only-label-example
+    source_document_sha256: null
+    verification_status: metadata_only
 norm:
   regulated_actor: generative_ai_service_provider
   modality: must

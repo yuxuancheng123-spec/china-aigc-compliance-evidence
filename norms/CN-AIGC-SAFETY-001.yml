@@ -1,0 +1,20 @@
+norm_id: CN-AIGC-SAFETY-001
+source: &genai_safety_source
+  source_id: GENAI-2023
+  document_title_zh: 生成式人工智能服务管理暂行办法
+  document_title_en: Interim Measures for the Management of Generative AI Services
+  issuing_authority: 国家互联网信息办公室等七部门
+  article: 第四条
+  source_text_zh: 提供和使用生成式人工智能服务，应当遵守法律、行政法规，尊重社会公德和伦理道德，不得生成法律、行政法规禁止的内容。
+  working_translation_en: Providers and users of generative AI services should comply with law and ethics and should not generate content prohibited by laws or administrative regulations.
+  source_url: https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm
+  source_url_specificity: document_page
+  promulgation_date: '2023-07-10'
+  effective_date: '2023-08-15'
+  retrieved_at: '2026-07-15'
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-genai-article-4, source_document_sha256: null, verification_status: metadata_only}
+norm: {regulated_actor: generative_ai_service_provider, modality: must_not, action: generate_prohibited_content, object: generated_content, trigger: {content_is_generated_for_user: true}, exceptions: [], deadline_or_timing: during_service}
+interpretation: {control_objective: Human review of selected content-safety obligations, automation_level: human_review_required, ambiguity_level: high, reviewer_note: Effective measures and content legality are not reducible to one Boolean check.}
+evidence: {evidence_type: safety_review_record, required_fields: [content_is_generated_for_user]}
+test: {expression: content_is_generated_for_user == true, pass_condition: Human review concludes pass, fail_condition: Human review concludes fail, review_condition: Human review is pending.}
+review: &default_review {author_review_status: reviewed, legal_expert_review_status: not_reviewed, reviewer_role: researcher, reviewer_name: null, review_date: '2026-07-15', interpretation_version: '1.1', review_notes: Internally reviewed by the researcher; no independent qualified legal expert review is recorded.}

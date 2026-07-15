@@ -1,0 +1,20 @@
+norm_id: CN-GB-META-001
+source:
+  source_id: GB45438-2025
+  document_title_zh: GB 45438-2025 网络安全技术 人工智能生成合成内容标识方法
+  document_title_en: "GB 45438-2025 Cybersecurity Technology: Labeling Method for AI-Generated Synthetic Content"
+  issuing_authority: 国家市场监督管理总局 国家标准化管理委员会
+  article: Metadata field method
+  source_text_zh: 本项目将 GB 45438-2025 作为元数据字段方法的技术背景，使用生成合成内容属性信息、服务提供者名称或者编码、内容编号、传播服务提供者编码和传播内容编号等字段进行研究映射。
+  working_translation_en: This prototype uses GB 45438-2025 as technical background for selected metadata-field mapping.
+  source_url: https://openstd.samr.gov.cn/bzgk/std/newGbInfo?hcno=F32EA2A561F1886CD8D606513512D547
+  source_url_specificity: registry_page
+  promulgation_date: '2025-02-28'
+  effective_date: '2025-09-01'
+  retrieved_at: '2026-07-15'
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-gb-45438-registry, source_document_sha256: null, verification_status: metadata_only}
+norm: {regulated_actor: service_provider, modality: must, action: populate_selected_metadata_fields, object: synthetic_content_file, trigger: {output_is_ai_generated: true, file_supports_metadata: true}, exceptions: [], deadline_or_timing: at_generation}
+interpretation: {control_objective: Technical implementation check for selected metadata fields, automation_level: fully_automatable, ambiguity_level: low, reviewer_note: Official registry metadata is used because a stable public full-text source is not asserted by this prototype.}
+evidence: {evidence_type: metadata_inspection, required_fields: [generated_content_attribute, service_provider_name_or_code, content_id, content_production_elements, dissemination_service_provider_code, dissemination_content_id]}
+test: {expression: generated_content_attribute is not null and service_provider_name_or_code is not null and content_id is not null and content_production_elements is not null, pass_condition: Selected metadata fields are present, fail_condition: Required field is absent, review_condition: Metadata mapping is unclear.}
+review: {author_review_status: reviewed, legal_expert_review_status: not_reviewed, reviewer_role: researcher, reviewer_name: null, review_date: '2026-07-15', interpretation_version: '1.1', review_notes: Full standard-text verification remains limited to the official registry record in this prototype.}

@@ -1,0 +1,20 @@
+norm_id: CN-PIPL-CONSENT-001
+source:
+  source_id: PIPL-2021
+  document_title_zh: 中华人民共和国个人信息保护法
+  document_title_en: Personal Information Protection Law of the People's Republic of China
+  issuing_authority: 全国人民代表大会常务委员会
+  article: 第二十九条
+  source_text_zh: 处理敏感个人信息应当取得个人的单独同意；法律、行政法规规定处理敏感个人信息应当取得书面同意的，从其规定。
+  working_translation_en: Processing sensitive personal information should obtain the individual's separate consent; where law requires written consent, that requirement applies.
+  source_url: https://www.npc.gov.cn/WZWSREL25wYy9jMi9jMzA4MzQvMjAyMTA4L3QyMDIxMDgyMF8zMTMwODguaHRtbD9yZWY9aW1i
+  source_url_specificity: article_page
+  promulgation_date: '2021-08-20'
+  effective_date: '2021-11-01'
+  retrieved_at: '2026-07-15'
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-pipl-article-29, source_document_sha256: null, verification_status: metadata_only}
+norm: {regulated_actor: personal_information_processor, modality: must, action: obtain_separate_consent, object: sensitive_personal_information, trigger: {processing_sensitive_personal_information: true}, exceptions: [lawful_exception_applies], deadline_or_timing: before_processing}
+interpretation: {control_objective: Retain separate-consent evidence after human-confirmed sensitive-information scope, automation_level: partially_automatable, ambiguity_level: medium, reviewer_note: Evidence retention is an organizational assurance implementation of the consent duty.}
+evidence: {evidence_type: consent_record, required_fields: [separate_consent_present]}
+test: {expression: separate_consent_present == true, pass_condition: Separate-consent evidence is present, fail_condition: Evidence is absent, review_condition: Data scope or exception needs review.}
+review: {author_review_status: reviewed, legal_expert_review_status: not_reviewed, reviewer_role: researcher, reviewer_name: null, review_date: '2026-07-15', interpretation_version: '1.1', review_notes: Internally reviewed by the researcher; no independent qualified legal expert review is recorded.}

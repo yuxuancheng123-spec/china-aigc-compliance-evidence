@@ -1,0 +1,20 @@
+norm_id: CN-DEEPSYN-LABEL-001
+source:
+  source_id: DEEPSYN-2023
+  document_title_zh: 互联网信息服务深度合成管理规定
+  document_title_en: Provisions on the Administration of Deep Synthesis Internet Information Services
+  issuing_authority: 国家互联网信息办公室 工业和信息化部 公安部
+  article: 第十七条
+  source_text_zh: 深度合成服务提供者提供以下深度合成服务，可能导致公众混淆或者误认的，应当在生成或者编辑的信息内容的合理位置、区域进行显著标识，向公众提示深度合成情况。
+  working_translation_en: Providers should add a prominent label in a reasonable position or area where specified deep synthesis services may cause public confusion or misidentification.
+  source_url: https://www.cac.gov.cn/2022-12/11/c_1672221949354811.htm
+  source_url_specificity: document_page
+  promulgation_date: '2022-11-25'
+  effective_date: '2023-01-10'
+  retrieved_at: '2026-07-15'
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-deepsyn-article-17, source_document_sha256: null, verification_status: metadata_only}
+norm: {regulated_actor: deep_synthesis_service_provider, modality: must, action: add_prominent_label, object: confusion_risk_deep_synthesis_content, trigger: {deep_synthesis_content: true, content_may_confuse_public: true}, exceptions: [], deadline_or_timing: before_publication}
+interpretation: {control_objective: Route confusion-risk and prominence judgments to human review, automation_level: human_review_required, ambiguity_level: high, reviewer_note: Confusion risk and prominent presentation require contextual judgment.}
+evidence: {evidence_type: labeling_check, required_fields: [visible_label_present]}
+test: {expression: visible_label_present == true, pass_condition: Human review concludes label is prominent, fail_condition: Visible label is absent or review concludes inadequate, review_condition: Classification or prominence review is pending.}
+review: {author_review_status: reviewed, legal_expert_review_status: not_reviewed, reviewer_role: researcher, reviewer_name: null, review_date: '2026-07-15', interpretation_version: '1.1', review_notes: Internally reviewed by the researcher; no independent qualified legal expert review is recorded.}

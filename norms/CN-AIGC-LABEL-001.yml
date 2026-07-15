@@ -1,0 +1,20 @@
+norm_id: CN-AIGC-LABEL-001
+source:
+  source_id: LABEL-2025
+  document_title_zh: 人工智能生成合成内容标识办法
+  document_title_en: Measures for the Labeling of AI-Generated Synthetic Content
+  issuing_authority: 国家互联网信息办公室 工业和信息化部 公安部 国家广播电视总局
+  article: 第四条 / 第九条
+  source_text_zh: 服务提供者提供的生成合成服务属于《互联网信息服务深度合成管理规定》第十七条第一款情形的，应当按照下列要求对生成合成内容添加显式标识。用户申请服务提供者提供没有添加显式标识的生成合成内容的，服务提供者可以在通过用户协议明确用户的标识义务和使用责任后，提供不含显式标识的生成合成内容，并依法留存提供对象信息等相关日志不少于六个月。
+  working_translation_en: Providers should add explicit labels for generated synthetic services within the listed Deep Synthesis Article 17 scenarios. A provider may deliver content without an explicit label on a user request after agreement-based disclosure of duties and responsibility and retention of relevant logs for at least six months.
+  source_url: https://www.cac.gov.cn/2025-03/14/c_1743654684782215.htm
+  source_url_specificity: document_page
+  promulgation_date: '2025-03-07'
+  effective_date: '2025-09-01'
+  retrieved_at: '2026-07-15'
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-label-articles-4-and-9, source_document_sha256: null, verification_status: metadata_only}
+norm: {regulated_actor: generative_ai_service_provider, modality: must, action: add_explicit_label_or_document_delivery_exception, object: user_facing_generated_synthetic_content, trigger: {output_is_ai_generated: true, output_is_user_facing: true, output_matches_explicit_label_scenario: true}, exceptions: [article_9_provider_delivery_exception], deadline_or_timing: before_delivery_or_publication}
+interpretation: {control_objective: Check label existence with human-confirmed scenario classification and scope Article 9 to provider delivery, automation_level: fully_automatable, ambiguity_level: medium, reviewer_note: The Article 9 path does not determine subsequent publication or dissemination obligations.}
+evidence: {evidence_type: labeling_check, required_fields: [visible_label_present]}
+test: {expression: visible_label_present == true, pass_condition: Visible label is present or scoped exception is complete, fail_condition: Label absent without exception, review_condition: Scenario classification or prominence review is pending.}
+review: {author_review_status: reviewed, legal_expert_review_status: not_reviewed, reviewer_role: researcher, reviewer_name: null, review_date: '2026-07-15', interpretation_version: '1.1', review_notes: Internally reviewed by the researcher; no independent qualified legal expert review is recorded.}

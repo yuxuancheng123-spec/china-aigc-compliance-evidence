@@ -2,10 +2,40 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Traceable machine-readable control derived from a legal norm",
   "type": "object",
-  "required": ["control_id", "norm_id", "control_objective", "applicability", "evidence", "test", "outcomes", "automation_level", "traceability", "review"],
+  "$defs": {
+    "human_confirmation_record": {
+      "type": "object",
+      "required": ["confirmed", "value", "reviewer_role", "reviewed_at"],
+      "properties": {
+        "confirmed": { "const": true },
+        "value": {},
+        "reviewer_role": { "type": "string", "minLength": 1 },
+        "reviewer_name": { "type": ["string", "null"] },
+        "reviewed_at": { "type": "string", "minLength": 1 },
+        "review_note": { "type": "string" }
+      }
+    },
+    "human_review_record": {
+      "type": "object",
+      "required": ["completed", "result"],
+      "properties": {
+        "completed": { "type": "boolean" },
+        "result": { "enum": ["pass", "fail", null] },
+        "reviewer_role": { "type": "string" },
+        "reviewer_name": { "type": ["string", "null"] },
+        "reviewed_at": { "type": "string" },
+        "review_note": { "type": "string" }
+      }
+    }
+  },
+  "required": ["control_id", "norm_id", "control_component", "control_derivation_type", "control_objective", "applicability", "evidence", "test", "outcomes", "automation_level", "traceability", "review"],
   "properties": {
     "control_id": { "type": "string" },
     "norm_id": { "type": "string" },
+    "control_component": { "type": "string", "minLength": 1 },
+    "control_derivation_type": {
+      "enum": ["direct_legal_requirement", "derived_organizational_control", "technical_implementation_control"]
+    },
     "control_objective": { "type": "string" },
     "applicability": {
       "type": "object",
@@ -21,7 +51,7 @@
     },
     "exception_path": {
       "type": "object",
-      "required": ["expression", "required_fields", "outcome"],
+      "required": ["expression", "required_fields", "outcome", "control_scope", "lifecycle_stage"],
       "properties": {
         "expression": { "type": "string" },
         "required_fields": {
@@ -29,7 +59,9 @@
           "items": { "type": "string" }
         },
         "outcome": { "enum": ["pass", "review", "not_applicable"] },
-        "message": { "type": "string" }
+        "message": { "type": "string" },
+        "control_scope": { "type": "string", "minLength": 1 },
+        "lifecycle_stage": { "type": "string", "minLength": 1 }
       }
     },
     "evidence": {
@@ -64,6 +96,13 @@
     "automation_level": {
       "enum": ["fully_automatable", "partially_automatable", "human_review_required"]
     },
+    "required_human_review": {
+      "type": "object",
+      "required": ["review_key"],
+      "properties": {
+        "review_key": { "type": "string", "minLength": 1 }
+      }
+    },
     "traceability": {
       "type": "object",
       "required": [
@@ -73,6 +112,7 @@
         "article",
         "effective_date",
         "source_url",
+        "source_url_specificity",
         "normative_fragment",
         "interpretation_version"
       ],
@@ -83,6 +123,9 @@
         "article": { "type": "string" },
         "effective_date": { "type": "string" },
         "source_url": { "type": "string", "format": "uri" },
+        "source_url_specificity": {
+          "enum": ["article_page", "document_page", "registry_page", "institution_homepage"]
+        },
         "normative_fragment": { "type": "string" },
         "interpretation_version": { "type": "string" }
       }

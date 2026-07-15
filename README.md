@@ -16,13 +16,11 @@ The central transformation chain is:
 
 ```text
 Formal Chinese legal provision
--> Normative sentence identification
--> Legal semantic decomposition
--> Human interpretation
--> Control objective
--> Evidence requirement
--> Machine-readable test
--> Review status and traceability
+-> Complete legal norm artifact
+-> Human-confirmed interpretation and applicability
+-> Machine-readable control
+-> Evaluator execution
+-> Machine result and human final conclusion
 ```
 
 The machine-readable layer does not interpret law on its own. It executes structured legal interpretations that have been written and reviewed by a human.
@@ -39,6 +37,7 @@ The machine-readable layer does not interpret law on its own. It executes struct
 - A small legal corpus of selected Chinese AIGC-related clauses.
 - Clause decomposition annotations with semantic fields such as actor, modality, action, object, trigger, exception, timing, evidence, automation level, ambiguity level, and review status.
 - JSON Schemas for legal norms and traceable controls.
+- One complete YAML legal norm artifact for every mapped `norm_id`.
 - Clause-to-control mappings with source traceability.
 - Example controls for consent, visible labeling, and model filing.
 - A compact evaluator that can execute reviewed machine-readable tests and return `pass`, `fail`, `review`, or `not_applicable`.
@@ -55,6 +54,8 @@ The current mapping corrects several source references and narrows automation bo
 - Deep synthesis confusion-risk labeling maps to Article 17 of the Deep Synthesis Provisions.
 - Deep synthesis face and voice editing consent is modeled separately under Article 14 of the Deep Synthesis Provisions.
 - Visible AIGC labeling is split into existence and prominence controls, and the Article 9 no-explicit-label exception path is represented as reviewable evidence rather than an automatic failure.
+- An Article 9 exception result is limited to `provider_delivery`; it does not determine later public publication, user declarations, or dissemination-platform obligations.
+- Deep Synthesis Article 14 is split between a direct provider prompt duty and a separately labelled derived organizational consent-assurance control.
 - Metadata labeling checks underlying fields such as generated-content attribute, provider name or code, and content ID instead of relying only on an aggregate flag.
 
 `Reviewed` currently means internally reviewed by the researcher unless a qualified legal expert review is separately recorded. The mapping files distinguish `author_review_status` from `legal_expert_review_status`.
@@ -65,6 +66,7 @@ The current mapping corrects several source references and narrows automation bo
 china-aigc-compliance-evidence/
 ├── legal-corpus/          # Source index and selected clause summaries
 ├── annotations/           # Legal semantic decomposition and interpretation notes
+├── norms/                 # Canonical complete legal norm YAML artifacts
 ├── schema/                # Legal norm and control JSON Schemas
 ├── mappings/              # Clause-to-control mapping and traceability matrix
 ├── examples/              # Compact rule examples and validation cases
@@ -83,40 +85,45 @@ china-aigc-compliance-evidence/
 ## Minimal Example
 
 ```text
-Source clause:
-  Public-facing AI-generated synthetic content should carry explicit labels.
+Formal Chinese source clause
+-> Structured norm: CN-AIGC-LABEL-001
+-> Human-confirmed applicability
+-> Visible-label existence control
+-> Article 9 provider-delivery exception path
+-> Prominence review control
+-> Machine result
+-> Final reviewed status
 
-Structured legal norm:
-  regulated_actor = generative_ai_service_provider
-  modality = must
-  action = add_explicit_label
-  object = user_facing_generated_content
-  trigger = output_is_user_facing and output_is_ai_generated
+applicability:
+  output_is_ai_generated: true
+  output_is_user_facing: true
+  output_matches_explicit_label_scenario: true
 
-Control objective:
-  User-facing generated content should carry a visible AIGC disclosure label before publication.
+human_confirmations:
+  output_matches_explicit_label_scenario:
+    confirmed: true
+    value: true
+    reviewer_role: compliance_reviewer
+    reviewed_at: "2026-07-15"
 
-Required evidence:
-  output_id, visible_label_present, checked_at
-
-Machine-readable test:
-  visible_label_present == true
-
-Outcome:
-  pass, fail, review, or not_applicable
+machine_result: pass
+final_status: review
+review_reason: label prominence still requires human review
 ```
+
+The label-existence control can produce a machine result after the scenario has been human-confirmed. The separate prominence control remains `review` until a keyed human review record is completed. Article 9 only records whether provider-delivery exception evidence is complete; it does not decide downstream publication or dissemination obligations.
 
 ## Automation Levels
 
 Each mapped rule declares one of three automation levels:
 
 - `fully_automatable`: The structured evidence can be checked mechanically, such as whether metadata fields exist.
-- `partially_automatable`: Software can check some evidence, but legal or contextual review may still be needed, such as visible-label prominence.
+- `partially_automatable`: Software can check some evidence, but final status remains `review` until the declared human-review key is completed.
 - `human_review_required`: The obligation depends on open-textured legal judgment, such as whether "effective measures" were sufficient.
 
 The evaluator supports four outcomes:
 
-- `pass`: reviewed evidence satisfies the machine-readable test.
+- `pass`: machine evidence satisfies a fully automatable control, or a required human review records a pass conclusion.
 - `fail`: reviewed evidence contradicts the machine-readable test.
 - `review`: evidence is missing, ambiguous, or legal judgment is required.
 - `not_applicable`: the trigger conditions for the clause are not met.
@@ -164,6 +171,8 @@ The separate `ai-generated-actor-compliance` project is the product-style demo t
 
 - The clause summaries are research annotations, not official translations.
 - The mappings are illustrative and require qualified legal review before operational use.
+- Source validation confirms field completeness and repository consistency; it does not automatically prove that stored text is identical to the current official webpage.
+- Article 9 handling is limited to provider delivery. The project does not automatically determine downstream public-distribution obligations.
 - The evaluator executes only human-reviewed structured interpretations.
 - Several obligations are intentionally classified as `partially_automatable` or `human_review_required`.
 - The synthetic proof-of-concept data do not demonstrate real-world legal compliance.

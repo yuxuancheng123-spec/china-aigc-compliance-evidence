@@ -1,0 +1,20 @@
+norm_id: CN-AIGC-LABEL-PROMINENCE-001
+source:
+  source_id: LABEL-2025
+  document_title_zh: 人工智能生成合成内容标识办法
+  document_title_en: Measures for the Labeling of AI-Generated Synthetic Content
+  issuing_authority: 国家互联网信息办公室 工业和信息化部 公安部 国家广播电视总局
+  article: 第四条
+  source_text_zh: 服务提供者提供的生成合成服务属于《互联网信息服务深度合成管理规定》第十七条第一款情形的，应当按照下列要求对生成合成内容添加显式标识。
+  working_translation_en: Providers should add explicit labels to generated synthetic content when their services fall within the specified Deep Synthesis Article 17 scenarios.
+  source_url: https://www.cac.gov.cn/2025-03/14/c_1743654684782215.htm
+  source_url_specificity: document_page
+  promulgation_date: '2025-03-07'
+  effective_date: '2025-09-01'
+  retrieved_at: '2026-07-15'
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-label-article-4-prominence, source_document_sha256: null, verification_status: metadata_only}
+norm: {regulated_actor: generative_ai_service_provider, modality: must, action: present_explicit_label_prominently, object: explicit_label, trigger: {output_is_ai_generated: true, output_is_user_facing: true, output_matches_explicit_label_scenario: true}, exceptions: [], deadline_or_timing: before_publication}
+interpretation: {control_objective: Human review of explicit-label prominence and perceptibility, automation_level: human_review_required, ambiguity_level: high, reviewer_note: Prominence cannot be conclusively evaluated using a Boolean evidence field.}
+evidence: {evidence_type: human_label_review, required_fields: [visible_label_present]}
+test: {expression: visible_label_present == true, pass_condition: Human review concludes prominence is adequate, fail_condition: Label absent or review concludes inadequate, review_condition: Prominence review is pending.}
+review: {author_review_status: reviewed, legal_expert_review_status: not_reviewed, reviewer_role: researcher, reviewer_name: null, review_date: '2026-07-15', interpretation_version: '1.1', review_notes: Internally reviewed by the researcher; no independent qualified legal expert review is recorded.}

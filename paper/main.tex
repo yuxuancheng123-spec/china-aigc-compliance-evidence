@@ -134,13 +134,16 @@ source:
   article: 第四条 / 第九条
   source_text_zh: ...
   working_translation_en: ...
+  source_url_specificity: document_page
+  source_snapshot:
+    verification_status: metadata_only
 norm:
   regulated_actor: generative_ai_service_provider
   modality: must
   action: add_or_document_explicit_label
   object: user_facing_generated_content
 interpretation:
-  automation_level: partially_automatable
+  automation_level: fully_automatable
 evidence:
   required_fields:
     - visible_label_present
@@ -151,7 +154,7 @@ review:
   legal_expert_review_status: not_reviewed
 \end{lstlisting}
 
-The schema is intentionally modest. It does not encode all legal meaning. It checks whether a proposed rule contains the minimum information needed for traceability and execution.
+The schema is intentionally modest. It does not encode all legal meaning. It checks whether a proposed rule contains the minimum information needed for traceability and execution. Source metadata validation checks that required source fields are present and internally consistent; it does not automatically prove that the stored text remains identical to the current official webpage. The prototype therefore records `metadata_only` source-snapshot status unless independent snapshot or manual verification is recorded.
 
 \section{Human Review and Traceability}
 
@@ -159,7 +162,15 @@ The framework explicitly rejects the idea that machine-readable means machine-in
 
 The initial interpretation in this prototype is performed by the author as a research exercise. The repository therefore separates \texttt{author\_review\_status} from \texttt{legal\_expert\_review\_status}. A status of ``reviewed'' currently means internally reviewed by the researcher unless a qualified legal expert review is separately recorded. Expert review is especially important for public-opinion or social-mobilization capacity, sensitive personal information classification, label prominence, and obligations that use open-textured terms such as effective measures.
 
-Rules are classified into three automation levels. Metadata field presence may be fully automatable. Visible-label existence may be partially automatable because scenario classification and exception handling require review. Label prominence, confusion risk, and content-safety adequacy are routed to human review because legal adequacy cannot be reduced to a single Boolean field.
+Rules are classified into three automation levels. Metadata field presence may be fully automatable once applicability is established. Human-confirmed applicability is represented as a structured record that identifies the confirmed value, reviewer role, and review time, and is checked against business evidence by the evaluator. Label prominence, confusion risk, and content-safety adequacy are routed through a declared human-review key because legal adequacy cannot be reduced to a single Boolean field.
+
+\subsection{Direct Obligations and Derived Organizational Controls}
+
+The framework distinguishes a direct legal obligation from a supporting organizational assurance control. The first maps the legal duty itself into a machine-readable test. The second records an evidence practice that an engineering organization may choose in order to support assurance. For Deep Synthesis Article 14, the direct control checks that the provider presents a user prompt concerning notice and separate consent. A separate derived control checks whether edited-person consent evidence and scope review have been retained. The latter is not presented as a verbatim statutory requirement that a provider must retain a particular record in every case. Each control records `control_derivation_type` and `control_component` to make this relationship visible.
+
+\subsection{Lifecycle Scope}
+
+The Article 9 exception in the Labeling Measures is scoped to provider delivery to the requesting user. A pass only means that the prototype found the specified delivery-exception evidence. It does not decide later publication, user declaration, dissemination-platform identification, or platform notice obligations. The prototype deliberately does not automate the complete dissemination chain.
 
 \section{Case Study: Synthetic Actor and Digital Human Rules}
 
@@ -180,7 +191,7 @@ Visible AIGC label & Label existence and Article 9 exception evidence & labeling
 Label prominence & Prominent placement and perceptibility & human label review & human review required \\
 Metadata label & Underlying metadata fields exist & label metadata & fully automatable \\
 Separate consent & Sensitive actor-like data has separate consent & consent record & partially automatable \\
-Face and voice editing & User notice and edited-person separate consent & consent prompt record & partially automatable \\
+Face and voice editing & Direct user prompt / derived consent assurance & prompt and assurance records & partially automatable \\
 Model filing & Filing applicability and registered metadata are checked & model filing record & partially automatable \\
 Content safety & Article 4 principle and prohibited-content review & safety review record & human review required \\
 \bottomrule
@@ -191,7 +202,7 @@ Content safety & Article 4 principle and prohibited-content review & safety revi
 
 Validation is intentionally small and explainable. The repository includes a compact set of validation cases covering applicable evidence, missing evidence, clear failures, non-applicability, human-review-required obligations, explicit-label exceptions, filing non-applicability, unreviewed filing applicability, simultaneous PIPL and deep synthesis consent duties, and metadata aggregate flags that mask missing underlying fields. The goal is not to report a pass/fail distribution. The goal is to test whether clauses can be consistently structured, controls can be traced to source provisions, machines can execute clear conditions, ambiguous duties are routed to review, and schemas detect incomplete rule definitions.
 
-The validation method has five layers. First, schema completeness checks whether norm and control artifacts contain source, review, evidence, and test fields. Second, source traceability checks whether each control can be linked back to a source identifier, official URL, article, and effective date. Third, cross-file consistency checks whether source index, clause decomposition, traceability matrix, mapping, and examples agree on norm identifiers, article numbers, titles, dates, automation level, and interpretation version. Fourth, executable coverage checks whether expression variables are declared in evidence, applicability, or exception fields. Fifth, review-routing accuracy checks whether partially automatable and human-review-required controls avoid premature final pass results.
+The validation method has five layers. First, schema completeness checks whether complete norm artifacts and controls contain source, review, evidence, and test fields. Second, source traceability checks whether each control can be linked back to a source identifier, official URL, article, effective date, and URL-specificity classification. Third, cross-file consistency checks whether source index, norm artifacts, clause decomposition, traceability matrix, and mapping agree on norm identifiers, article numbers, titles, dates, automation level, and interpretation version. Fourth, executable coverage checks whether expression variables are declared in evidence, applicability, exception, confirmation, or review structures. Fifth, review-routing accuracy checks whether human-confirmed applicability and keyed human review prevent premature final pass results.
 
 Error analysis is part of the method. The validation set includes cases for incorrect source mapping, missing source text, undeclared expression variables, incomplete explicit-label exception evidence, unreviewed filing applicability, and metadata controls where \texttt{metadata\_label\_present} is true but required underlying fields are missing.
 

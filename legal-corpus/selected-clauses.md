@@ -52,18 +52,19 @@ This corpus is intentionally small. It selects representative Chinese AIGC gover
 
 ## GB45438-2025: Metadata Label Method
 
-- Source URL: https://openstd.samr.gov.cn/
+- Source URL: https://openstd.samr.gov.cn/bzgk/std/newGbInfo?hcno=F32EA2A561F1886CD8D606513512D547
+- Source URL specificity: registry page. The repository records the official standard registry identity and dates, but does not assert stable public full-text retrieval.
 - Source text zh: 本项目将 GB 45438-2025 作为元数据字段方法的技术背景，使用生成合成内容属性信息、服务提供者名称或者编码、内容编号、传播服务提供者编码和传播内容编号等字段进行研究映射。
 - Working translation en: This project uses GB 45438-2025 as technical background for metadata-label field mapping, including generated-content attribute, provider name or code, content ID, dissemination provider code, and dissemination content ID.
 
 ## PIPL-2021 第二十八条: Sensitive Personal Information
 
-- Source URL: https://www.npc.gov.cn/
+- Source URL: https://www.npc.gov.cn/WZWSREL25wYy9jMi9jMzA4MzQvMjAyMTA4L3QyMDIxMDgyMF8zMTMwODguaHRtbD9yZWY9aW1i
 - Source text zh: 敏感个人信息是一旦泄露或者非法使用，容易导致自然人的人格尊严受到侵害或者人身、财产安全受到危害的个人信息，包括生物识别、宗教信仰、特定身份、医疗健康、金融账户、行踪轨迹等信息，以及不满十四周岁未成年人的个人信息。
 - Working translation en: Sensitive personal information refers to personal information that, once leaked or illegally used, may easily harm personal dignity or personal or property safety, including biometric identification and other listed categories.
 
 ## PIPL-2021 第二十九条: Separate Consent For Sensitive Personal Information
 
-- Source URL: https://www.npc.gov.cn/
+- Source URL: https://www.npc.gov.cn/WZWSREL25wYy9jMi9jMzA4MzQvMjAyMTA4L3QyMDIxMDgyMF8zMTMwODguaHRtbD9yZWY9aW1i
 - Source text zh: 处理敏感个人信息应当取得个人的单独同意；法律、行政法规规定处理敏感个人信息应当取得书面同意的，从其规定。
 - Working translation en: Processing sensitive personal information should obtain the individual's separate consent; where laws or administrative regulations require written consent, those requirements apply.

@@ -8,13 +8,11 @@ The transformation chain is:
 
 ```text
 Formal Chinese legal provision
--> Normative sentence identification
--> Legal semantic decomposition
--> Human interpretation
--> Control objective
--> Evidence requirement
--> Machine-readable test
--> Review status and traceability
+-> Complete legal norm artifact
+-> Human-confirmed interpretation and applicability
+-> Machine-readable control
+-> Evaluator execution
+-> Machine result and human final conclusion
 ```
 
 ## Regulatory Corpus Selection
@@ -61,7 +59,7 @@ Each selected clause is decomposed into fields such as:
 - author review status;
 - legal expert review status.
 
-These fields are stored in `annotations/clause-decomposition.csv` and reflected in the schemas and mappings.
+The canonical source is one complete YAML file per `norm_id` under `norms/`. `annotations/clause-decomposition.csv` is a compact summary view and must remain consistent with those artifacts; it is not the sole legal-norm store.
 
 ## Interpretation Protocol
 
@@ -79,9 +77,11 @@ The validator now reports three top-level layers:
 
 - `schema_valid`;
 - `cross_file_valid`;
-- `legal_source_metadata_complete`.
+- `legal_source_metadata_fields_complete`.
 
-Cross-file checks compare `legal-corpus/source-index.csv`, `annotations/clause-decomposition.csv`, `mappings/traceability-matrix.csv`, `mappings/clause-to-control.yml`, and the example YAML files.
+`legal_source_metadata_fields_complete` confirms required source metadata fields are present and internally consistent. It does not independently verify that stored source text is identical to a current official webpage. Every source includes a `source_snapshot` status, which is currently `metadata_only` unless a later snapshot verification is recorded.
+
+Cross-file checks compare `legal-corpus/source-index.csv`, `norms/`, `annotations/clause-decomposition.csv`, `mappings/traceability-matrix.csv`, and `mappings/clause-to-control.yml`. They also distinguish validation `errors` from low-specificity-source `warnings`.
 
 ## Control Evaluation
 
@@ -92,7 +92,15 @@ Cross-file checks compare `legal-corpus/source-index.csv`, `annotations/clause-d
 - `review`;
 - `not_applicable`.
 
-Fully automatable controls can reach final `pass` or `fail` directly when evidence is complete. Partially automatable controls return both a machine result and a final status: a machine expression may pass, but final status remains `review` unless required human confirmation is provided. Human-review-required controls default to `review` unless an explicit human review result is supplied. This prevents evidence fields such as `visible_label_present == true` from being treated as a complete legal conclusion about label prominence or statutory sufficiency.
+Fully automatable controls can reach final `pass` or `fail` directly when evidence is complete. A field declared in `human_confirmed_fields` must have a matching `human_confirmations` record stating `confirmed`, `value`, reviewer role, and review date. Missing or conflicting confirmations route the control to `review`.
+
+Partially automatable and human-review-required controls use a declared `required_human_review.review_key`. The evaluator reads a matching `human_reviews` record rather than hard-coding individual field names. A machine pass remains `review` until the keyed review is complete with a pass or fail conclusion. This prevents `visible_label_present == true` from being treated as a complete legal conclusion about prominence or statutory sufficiency.
+
+## Direct Obligations, Derived Controls, and Lifecycle Scope
+
+Each control is classified as `direct_legal_requirement`, `derived_organizational_control`, or `technical_implementation_control`. This distinction prevents an evidentiary practice from being presented as a verbatim statutory duty. For example, the Deep Synthesis Article 14 provider-prompt control models the direct duty to prompt a user; retaining edited-person consent evidence and reviewing its scope is a separately labelled organizational assurance control.
+
+The Article 9 explicit-label exception is evaluated only as `provider_delivery` at `delivery_to_requesting_user`. A pass means delivery exception evidence is complete. It does not determine a user's later public declaration duties, a downstream platform's identification or notice duties, or compliance across the complete dissemination lifecycle.
 
 ## Validation Set
 

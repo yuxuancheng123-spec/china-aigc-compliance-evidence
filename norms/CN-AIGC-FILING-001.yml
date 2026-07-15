@@ -1,0 +1,20 @@
+norm_id: CN-AIGC-FILING-001
+source:
+  source_id: GENAI-2023
+  document_title_zh: 生成式人工智能服务管理暂行办法
+  document_title_en: Interim Measures for the Management of Generative AI Services
+  issuing_authority: 国家互联网信息办公室等七部门
+  article: 第十七条
+  source_text_zh: 提供具有舆论属性或者社会动员能力的生成式人工智能服务的，应当按照国家有关规定开展安全评估，并按照《互联网信息服务算法推荐管理规定》履行算法备案和变更、注销备案手续。
+  working_translation_en: Providers of generative AI services with public-opinion attributes or social-mobilization capacity should conduct security assessment and complete algorithm filing procedures.
+  source_url: https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm
+  source_url_specificity: document_page
+  promulgation_date: '2023-07-10'
+  effective_date: '2023-08-15'
+  retrieved_at: '2026-07-15'
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-genai-article-17, source_document_sha256: null, verification_status: metadata_only}
+norm: {regulated_actor: generative_ai_service_provider, modality: must, action: complete_security_assessment_and_algorithm_filing, object: covered_public_facing_service, trigger: {service_is_public_facing: true, service_has_public_opinion_or_social_mobilization_capacity: true}, exceptions: [filing_not_required_after_review], deadline_or_timing: before_public_service_or_change}
+interpretation: {control_objective: Check filing only after a human applicability determination, automation_level: partially_automatable, ambiguity_level: medium, reviewer_note: Coverage and filing applicability are human-confirmed preconditions.}
+evidence: {evidence_type: model_filing_record, required_fields: [filing_applicability_reviewed, filing_required, filing_status]}
+test: {expression: filing_applicability_reviewed == true and (filing_required == false or filing_status == 'registered'), pass_condition: Applicable filing is registered or not required, fail_condition: Required filing is missing, review_condition: Applicability review is pending.}
+review: {author_review_status: reviewed, legal_expert_review_status: not_reviewed, reviewer_role: researcher, reviewer_name: null, review_date: '2026-07-15', interpretation_version: '1.1', review_notes: Internally reviewed by the researcher; no independent qualified legal expert review is recorded.}

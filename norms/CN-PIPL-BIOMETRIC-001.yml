@@ -1,0 +1,20 @@
+norm_id: CN-PIPL-BIOMETRIC-001
+source:
+  source_id: PIPL-2021
+  document_title_zh: 中华人民共和国个人信息保护法
+  document_title_en: Personal Information Protection Law of the People's Republic of China
+  issuing_authority: 全国人民代表大会常务委员会
+  article: 第二十八条
+  source_text_zh: 敏感个人信息是一旦泄露或者非法使用，容易导致自然人的人格尊严受到侵害或者人身、财产安全受到危害的个人信息，包括生物识别、宗教信仰、特定身份、医疗健康、金融账户、行踪轨迹等信息，以及不满十四周岁未成年人的个人信息。
+  working_translation_en: Sensitive personal information includes information such as biometric identifiers that may harm dignity or personal or property security if disclosed or unlawfully used.
+  source_url: https://www.npc.gov.cn/WZWSREL25wYy9jMi9jMzA4MzQvMjAyMTA4L3QyMDIxMDgyMF8zMTMwODguaHRtbD9yZWY9aW1i
+  source_url_specificity: article_page
+  promulgation_date: '2021-08-20'
+  effective_date: '2021-11-01'
+  retrieved_at: '2026-07-15'
+  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: metadata-only-pipl-article-28, source_document_sha256: null, verification_status: metadata_only}
+norm: {regulated_actor: personal_information_processor, modality: must, action: classify_biometric_information, object: biometric_identifier, trigger: {biometric_data_processed: true}, exceptions: [], deadline_or_timing: before_processing}
+interpretation: {control_objective: Route biometric classification to human review before applying downstream controls, automation_level: human_review_required, ambiguity_level: high, reviewer_note: Classification is contextual and cannot be inferred solely from an asset label.}
+evidence: {evidence_type: legal_review_record, required_fields: [biometric_data_processed]}
+test: {expression: biometric_data_processed == true, pass_condition: Human review concludes classification, fail_condition: Human review rejects classification or processing basis, review_condition: Classification review is pending.}
+review: {author_review_status: reviewed, legal_expert_review_status: not_reviewed, reviewer_role: researcher, reviewer_name: null, review_date: '2026-07-15', interpretation_version: '1.1', review_notes: Internally reviewed by the researcher; no independent qualified legal expert review is recorded.}
