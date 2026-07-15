@@ -1,0 +1,2 @@
+norm_id,reviewer_id,source_article_verified,direct_requirement_faithful,derived_control_labeled,translation_materially_consistent,open_texture_or_scope_issue,recommendation,reviewer_note,reviewed_at
+CN-EXAMPLE-001,LEGAL-EXPERT-001,,,,,,,,

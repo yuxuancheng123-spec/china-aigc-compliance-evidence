@@ -1,0 +1,2 @@
+adjudication_id,norm_id,field,author_value,reviewer_value,discussion_rationale,status,interpretation_version,resolved_by,resolved_at
+ADJ-EXAMPLE-001,CN-EXAMPLE-001,source.article,,,,needs_legal_expert_review,1.1,,

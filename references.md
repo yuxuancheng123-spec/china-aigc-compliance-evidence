@@ -4,6 +4,8 @@ This research framework uses the following Chinese AI governance rules and stand
 
 The current mappings use formal Chinese source text where included in the research corpus. English translations are working translations only. `Reviewed` in this repository means author-reviewed unless an independent qualified legal expert review is separately recorded.
 
+For the paper's cited bibliography, including methods and related work, see [paper/references.bib](paper/references.bib). The BibTeX file uses official legal and standards pages, DOI landing pages, standard-organization sources, or original preprints where applicable.
+
 ## Laws, Regulations, And Rules
 
 - Cyberspace Administration of China and other departments, [Interim Measures for the Management of Generative Artificial Intelligence Services](https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm), 2023.

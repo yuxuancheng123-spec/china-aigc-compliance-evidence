@@ -1,0 +1,50 @@
+\begin{tikzpicture}[
+  font=\scriptsize,
+  node distance=3.2mm and 5.5mm,
+  box/.style={draw, rounded corners=1pt, align=center, minimum height=6mm, text width=23mm, inner sep=2pt},
+  wide/.style={box, text width=31mm},
+  branch/.style={box, text width=25mm, minimum height=8mm},
+  route/.style={draw, dashed, align=center, text width=24mm, inner sep=2pt},
+  flow/.style={-{Stealth[length=1.6mm]}, line width=.35pt},
+  review/.style={-{Stealth[length=1.4mm]}, dashed, line width=.35pt}
+]
+  \node[box] (source) {Official Chinese\\source};
+  \node[box, below=of source] (fragment) {Normative fragment\\selection};
+  \node[wide, below=of fragment] (norm) {Canonical legal norm artifact};
+  \node[box, below=of norm] (interpretation) {Human interpretation};
+  \node[box, below=of interpretation] (applicability) {Applicability\\confirmation};
+  \node[wide, below=of applicability] (derivation) {Control derivation};
+
+  \node[branch, below left=6mm and 28mm of derivation] (direct) {Direct legal\\requirement};
+  \node[branch, below=6mm of derivation] (derived) {Derived organizational\\assurance};
+  \node[branch, below right=6mm and 28mm of derivation] (technical) {Technical implementation};
+  \node[wide, below=7mm of derived] (profile) {Automation profile\\applicability / evidence test / final decision};
+  \node[wide, below=of profile] (runtime) {Runtime evidence schema};
+  \node[box, below=of runtime] (evaluator) {Evaluator};
+  \node[box, below=of evaluator] (machine) {Machine result};
+  \node[wide, below=of machine] (final) {Human-reviewed final status};
+
+  \node[route, left=13mm of norm] (validation) {Missing or conflicting\\source / metadata};
+  \node[route, right=13mm of applicability] (open) {Open-textured legal\\concept};
+  \node[route, below=of open] (human) {Human review};
+
+  \draw[flow] (source) -- (fragment);
+  \draw[flow] (fragment) -- (norm);
+  \draw[flow] (norm) -- (interpretation);
+  \draw[flow] (interpretation) -- (applicability);
+  \draw[flow] (applicability) -- (derivation);
+  \draw[flow] (derivation.south) |- (direct.north);
+  \draw[flow] (derivation) -- (derived);
+  \draw[flow] (derivation.south) |- (technical.north);
+  \draw[flow] (direct.south) |- (profile.west);
+  \draw[flow] (derived) -- (profile);
+  \draw[flow] (technical.south) |- (profile.east);
+  \draw[flow] (profile) -- (runtime);
+  \draw[flow] (runtime) -- (evaluator);
+  \draw[flow] (evaluator) -- (machine);
+  \draw[flow] (machine) -- (final);
+  \draw[review] (norm.west) -- (validation.east) node[midway, above, font=\tiny] {validation error};
+  \draw[review] (applicability.east) -- (open.west);
+  \draw[review] (open) -- (human);
+  \draw[review] (human.south) |- (final.east);
+\end{tikzpicture}

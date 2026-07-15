@@ -4,7 +4,7 @@ A research framework for transforming selected Chinese AIGC legal provisions int
 
 This repository studies how natural-language provisions from Chinese AIGC laws, regulations, and technical standards can be decomposed into structured legal norms and then translated into machine-readable controls. It does **not** try to be a user-facing compliance assessment product. The companion project [`ai-generated-actor-compliance`](https://github.com/yuxuancheng123-spec/ai-generated-actor-compliance) demonstrates how already-defined rules can be applied to concrete AI actor, digital human, and synthetic media cases. This repository focuses on the upstream research question: **where do the rules come from, and how can their legal interpretation be traced back to source clauses?**
 
-Current paper draft: [paper/main.tex](paper/main.tex).
+Current paper draft: [paper/main.tex](paper/main.tex). Its formal bibliography is maintained in [paper/references.bib](paper/references.bib); its planned independent-review materials are in [paper/review/](paper/review/).
 
 Earlier supplementary prototype paper, superseded by the current legal-clause-to-control paper draft: [Making China AIGC Compliance Evidence Machine-Readable: A Governance Pipeline Prototype for Synthetic Actor and Digital Human Platforms](article/china-aigc-compliance-evidence-paper.pdf). The archived LaTeX package under `article/latex.zip` is likewise retained as a superseded prototype artifact.
 
@@ -76,6 +76,8 @@ china-aigc-compliance-evidence/
 │   └── ...                # Supplementary synthetic proof-of-concept pipeline
 ├── tests/                 # Regression and transformation-method tests
 ├── paper/                 # Refocused paper draft
+│   ├── figures/            # TikZ research-method figure source
+│   └── review/             # Planned independent-review protocol and templates
 ├── article/               # Earlier article-support artifacts
 ├── outputs/               # Supplementary generated proof-of-concept outputs
 ├── README.md
@@ -141,6 +143,12 @@ The evaluator supports four outcomes:
 [evaluation-evidence-schema.json](schema/evaluation-evidence-schema.json) validates runtime `human_confirmations` and keyed `human_reviews` before validation cases enter the evaluator. The schema validates record structure; the evaluator separately checks semantic facts such as whether a confirmed value matches business evidence and whether the declared review key is complete.
 
 Each norm also stores `source_excerpt_sha256`, the SHA-256 digest of `source_text_zh.strip().encode("utf-8")`. This detects changes to the repository's excerpt. Its `metadata_only` snapshot status does not assert that the excerpt has been independently verified word-for-word against the current official webpage.
+
+## Paper Companion And Review Design
+
+The paper companion distinguishes completed repository validation from planned independent validation. `paper/main.tex` cites primary legal, standards, and research sources from `paper/references.bib`; `paper/figures/transformation-pipeline.tex` renders the legal-clause-to-control method; and `paper/review/` provides blank templates for a second coder, a qualified legal reviewer, and transparent adjudication.
+
+No independent second-coder agreement or qualified legal-expert conclusion is claimed. The proposed protocol reviews all 11 norms from the formal Chinese sources and preserves disagreements rather than overwriting them.
 
 ## Quick Start
 
