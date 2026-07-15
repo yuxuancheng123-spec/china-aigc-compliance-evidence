@@ -15,7 +15,7 @@ All examples are synthetic or paraphrased for research use. The project does not
 The central transformation chain is:
 
 ```text
-Original legal provision
+Formal Chinese legal provision
 -> Normative sentence identification
 -> Legal semantic decomposition
 -> Human interpretation
