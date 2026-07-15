@@ -4,6 +4,10 @@ The article now focuses on a legal-clause-to-control transformation method for C
 
 Main thesis:
 
+Earlier supplementary PDF retained in this folder: [Making China AIGC Compliance Evidence Machine-Readable](china-aigc-compliance-evidence-paper.pdf).
+
+The repository intentionally uses synthetic or paraphrased research materials only. It does not include real face data, real voice data, biometric templates, client personal data, real consent records, or production media.
+
 ```text
 Original legal provision
 -> Normative sentence identification

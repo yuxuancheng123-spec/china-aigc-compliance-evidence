@@ -4,6 +4,8 @@ A research framework for transforming selected Chinese AIGC legal provisions int
 
 This repository studies how natural-language provisions from Chinese AIGC laws, regulations, and technical standards can be decomposed into structured legal norms and then translated into machine-readable controls. It does **not** try to be a user-facing compliance assessment product. The companion project [`ai-generated-actor-compliance`](https://github.com/yuxuancheng123-spec/ai-generated-actor-compliance) demonstrates how already-defined rules can be applied to concrete AI actor, digital human, and synthetic media cases. This repository focuses on the upstream research question: **where do the rules come from, and how can their legal interpretation be traced back to source clauses?**
 
+Earlier supplementary article PDF: [Making China AIGC Compliance Evidence Machine-Readable: A Governance Pipeline Prototype for Synthetic Actor and Digital Human Platforms](article/china-aigc-compliance-evidence-paper.pdf).
+
 All examples are synthetic or paraphrased for research use. The project does not use real personal data, face data, voice data, biometric data, contracts, company records, customer records, or production media.
 
 ## Research Focus
