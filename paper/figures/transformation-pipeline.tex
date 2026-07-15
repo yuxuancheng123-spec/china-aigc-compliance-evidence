@@ -16,13 +16,13 @@
   \node[wide, below=of applicability] (derivation) {Control derivation};
 
   \node[branch, below left=6mm and 28mm of derivation] (direct) {Direct legal\\requirement};
-  \node[branch, below=6mm of derivation] (derived) {Derived organizational\\assurance};
-  \node[branch, below right=6mm and 28mm of derivation] (technical) {Technical implementation};
+  \node[branch, below=6mm of derivation] (derived) {Derived\\assurance};
+  \node[branch, below right=6mm and 28mm of derivation] (technical) {Technical\\control};
   \node[wide, below=7mm of derived] (profile) {Automation profile\\applicability / evidence test / final decision};
   \node[wide, below=of profile] (runtime) {Runtime evidence schema};
   \node[box, below=of runtime] (evaluator) {Evaluator};
   \node[box, below=of evaluator] (machine) {Machine result};
-  \node[wide, below=of machine] (final) {Human-reviewed final status};
+  \node[wide, below=of machine] (final) {Reviewed final status};
 
   \node[route, left=13mm of norm] (validation) {Missing or conflicting\\source / metadata};
   \node[route, right=13mm of applicability] (open) {Open-textured legal\\concept};
