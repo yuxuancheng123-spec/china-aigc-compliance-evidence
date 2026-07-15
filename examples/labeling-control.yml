@@ -1,0 +1,35 @@
+norm_id: CN-AIGC-LABEL-001
+source:
+  document: Measures for the Labeling of AI-Generated Synthetic Content
+  article: Article 4
+  effective_date: "2025-09-01"
+  original_text: "Public-facing AI-generated synthetic content should carry explicit labels where required."
+norm:
+  regulated_actor: generative_ai_service_provider
+  modality: must
+  action: add_explicit_label
+  object: user_facing_generated_content
+  trigger:
+    output_is_user_facing: true
+    output_is_ai_generated: true
+  exceptions: []
+  deadline_or_timing: before_publication
+interpretation:
+  control_objective: User-facing generated content should carry a visible AIGC disclosure label before publication.
+  automation_level: partially_automatable
+  ambiguity_level: medium
+  reviewer_note: A Boolean evidence field can confirm whether a label exists, but label prominence may require interface or media review.
+evidence:
+  evidence_type: labeling_check
+  required_fields:
+    - output_id
+    - visible_label_present
+    - checked_at
+test:
+  expression: visible_label_present == true
+  pass_condition: Evidence confirms the visible label is present.
+  fail_condition: Evidence confirms the visible label is absent.
+  review_condition: Evidence is missing or visibility cannot be reliably verified.
+review:
+  legal_review_status: reviewed
+  interpretation_version: "1.0"

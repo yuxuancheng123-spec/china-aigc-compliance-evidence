@@ -1,6 +1,6 @@
 # References
 
-This prototype uses the following Chinese AI governance rules and standards as background context. The project does not claim to implement these materials completely and does not provide legal advice.
+This research framework uses the following Chinese AI governance rules and standards as background context for legal-clause-to-control transformation. The project does not claim to implement these materials completely and does not provide legal advice.
 
 ## Laws, Regulations, And Rules
 
@@ -19,12 +19,13 @@ This prototype uses the following Chinese AI governance rules and standards as b
 
 ## Prototype Mapping
 
-The code maps selected themes from these materials into synthetic controls:
+The framework maps selected themes from these materials into human-reviewed structured norms and traceable controls:
 
-- Consent and authorization evidence for virtual actor asset use.
-- Scope checks for requested commercial usage and regions.
-- Model filing or registration metadata checks.
-- Visible and invisible AIGC labeling checks.
-- Content safety disposition checks.
-- Complaint handling and escalation evidence.
-- Machine-readable label metadata, provenance manifests, and local audit API verification.
+- consent and separate consent for sensitive or biometric-like information;
+- visible and machine-readable AIGC labeling;
+- model filing or applicability review;
+- content safety measures;
+- complaint and reporting mechanisms;
+- traceability between source clause, legal interpretation, evidence requirement, and executable test.
+
+The older synthetic evidence outputs are supplementary proof-of-concept artifacts rather than the main research contribution.

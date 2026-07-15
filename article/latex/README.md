@@ -1,26 +1,15 @@
-# LaTeX Technical Paper Draft
+# LaTeX Paper Draft
 
-This folder contains a technical-paper-style LaTeX draft for the **China AIGC Compliance Evidence Generator**.
+This folder contains a LaTeX version of the refocused paper:
 
-## Files
+`From Legal Provisions to Machine-Readable Controls: A Transformation Framework for China AIGC Governance`
 
-- `main.tex` -- main paper source.
-- `references.bib` -- BibTeX references.
-- `figures/architecture_pipeline_fixed.pdf` -- readable three-layer architecture diagram.
-- `tables/validation_results.tex` -- control-level validation results table.
-- `tables/evidence_profile.tex` -- evidence profile table.
-- `tables/regulatory_mapping.tex` -- regulatory mapping table.
-- `OVERLEAF_INSTRUCTIONS.md` -- upload and compile instructions for Overleaf.
+The paper now centers on legal-clause-to-control transformation rather than a full compliance assessment product. The older synthetic request pipeline is treated as supplementary proof of concept.
 
-## Compile
-
-The draft is configured for XeLaTeX on Overleaf.
+Recommended compile path:
 
 ```bash
-xelatex main.tex
-bibtex main
-xelatex main.tex
-xelatex main.tex
+latexmk -pdf main.tex
 ```
 
-The paper is a technical prototype draft. It does not claim to certify legal compliance.
+This is a research paper draft. It does not provide legal advice, certify compliance, or claim regulatory endorsement.

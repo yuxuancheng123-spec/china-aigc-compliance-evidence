@@ -1,0 +1,231 @@
+- control_id: CTRL-AIGC-VISIBLE-LABEL
+  norm_id: CN-AIGC-LABEL-001
+  control_objective: User-facing generated content should carry a visible AIGC disclosure label before publication.
+  applicability:
+    conditions:
+      output_is_ai_generated: true
+      output_is_user_facing: true
+  evidence:
+    evidence_type: labeling_check
+    required_fields:
+      - visible_label_present
+  test:
+    expression: visible_label_present == true
+  outcomes:
+    pass: Visible label evidence is present.
+    fail: Visible label evidence confirms absence.
+    review: Evidence is missing or label prominence requires human review.
+    not_applicable: The output is not AI-generated or is not user-facing.
+  automation_level: partially_automatable
+  traceability:
+    source_document: "Measures for the Labeling of AI-Generated Synthetic Content"
+    article: Article 4
+    normative_fragment: publicly provided AI-generated synthetic content should carry explicit labels
+    interpretation_version: "1.0"
+    legal_review_status: reviewed
+
+- control_id: CTRL-AIGC-METADATA-LABEL
+  norm_id: CN-AIGC-META-001
+  control_objective: Generated synthetic content should include machine-readable label metadata where applicable.
+  applicability:
+    conditions:
+      output_is_ai_generated: true
+  evidence:
+    evidence_type: label_metadata
+    required_fields:
+      - metadata_label_present
+  test:
+    expression: metadata_label_present == true
+  outcomes:
+    pass: Machine-readable metadata label is present.
+    fail: Machine-readable metadata label is absent.
+    review: Metadata evidence is missing or cannot be parsed.
+    not_applicable: The output is not AI-generated.
+  automation_level: fully_automatable
+  traceability:
+    source_document: "Measures for the Labeling of AI-Generated Synthetic Content"
+    article: Article 5
+    normative_fragment: AI-generated synthetic content should carry implicit or metadata identifiers
+    interpretation_version: "1.0"
+    legal_review_status: reviewed
+
+- control_id: CTRL-GB-METADATA-FIELDS
+  norm_id: CN-GB-META-001
+  control_objective: Synthetic-content files that support metadata should include required machine-readable label fields.
+  applicability:
+    conditions:
+      output_is_ai_generated: true
+      file_supports_metadata: true
+  evidence:
+    evidence_type: metadata_inspection
+    required_fields:
+      - required_metadata_fields_present
+  test:
+    expression: required_metadata_fields_present == true
+  outcomes:
+    pass: Required metadata fields are present.
+    fail: Required metadata fields are absent.
+    review: Metadata cannot be inspected or field mapping is unclear.
+    not_applicable: The file does not support metadata or output is not AI-generated.
+  automation_level: fully_automatable
+  traceability:
+    source_document: "GB 45438-2025 Cybersecurity Technology: Labeling Method for AI-Generated Synthetic Content"
+    article: Section 6
+    normative_fragment: generated synthetic-content files include required metadata label fields
+    interpretation_version: "1.0"
+    legal_review_status: reviewed
+
+- control_id: CTRL-PIPL-SEPARATE-CONSENT
+  norm_id: CN-PIPL-CONSENT-001
+  control_objective: Sensitive personal information in actor or digital human workflows should have separate consent evidence unless a reviewed exception applies.
+  applicability:
+    conditions:
+      processing_sensitive_personal_information: true
+  evidence:
+    evidence_type: consent_record
+    required_fields:
+      - separate_consent_present
+  test:
+    expression: separate_consent_present == true
+  outcomes:
+    pass: Separate consent evidence is present.
+    fail: Separate consent evidence is absent and no exception applies.
+    review: Sensitivity classification, scope, or exception requires legal review.
+    not_applicable: No sensitive personal information is processed.
+  automation_level: partially_automatable
+  traceability:
+    source_document: "Personal Information Protection Law of the People's Republic of China"
+    article: Article 29
+    normative_fragment: processing sensitive personal information requires separate consent
+    interpretation_version: "1.0"
+    legal_review_status: reviewed
+
+- control_id: CTRL-PIPL-BIOMETRIC-CLASSIFICATION
+  norm_id: CN-PIPL-BIOMETRIC-001
+  control_objective: Face, voice, or biometric-like actor materials should be classified and protected before processing.
+  applicability:
+    conditions:
+      biometric_data_processed: true
+  evidence:
+    evidence_type: legal_review_record
+    required_fields:
+      - biometric_classification_reviewed
+  test:
+    expression: biometric_classification_reviewed == true
+  outcomes:
+    pass: Human-reviewed classification is recorded.
+    fail: Biometric-like data is processed without classification review.
+    review: Classification requires legal review.
+    not_applicable: No biometric-like data is processed.
+  automation_level: human_review_required
+  traceability:
+    source_document: "Personal Information Protection Law of the People's Republic of China"
+    article: Article 28
+    normative_fragment: biometric identifiers are sensitive personal information requiring specific protection
+    interpretation_version: "1.0"
+    legal_review_status: reviewed
+
+- control_id: CTRL-AIGC-MODEL-FILING
+  norm_id: CN-AIGC-FILING-001
+  control_objective: Covered model services should have reviewed filing applicability and registered filing metadata when required.
+  applicability:
+    conditions:
+      service_with_filing_obligation: true
+  evidence:
+    evidence_type: model_filing_record
+    required_fields:
+      - filing_applicability_reviewed
+      - filing_required
+      - filing_status
+  test:
+    expression: filing_required == false or filing_status == 'registered'
+  outcomes:
+    pass: Filing is not applicable or required filing metadata is registered.
+    fail: Filing is required and registration metadata is missing.
+    review: Filing applicability has not been reviewed.
+    not_applicable: Service is outside the selected filing-control scope.
+  automation_level: partially_automatable
+  traceability:
+    source_document: "Interim Measures for the Management of Generative AI Services"
+    article: Article 7
+    normative_fragment: provider obligations may include required filing or disclosure where applicable
+    interpretation_version: "1.0"
+    legal_review_status: reviewed
+
+- control_id: CTRL-AIGC-CONTENT-SAFETY
+  norm_id: CN-AIGC-SAFETY-001
+  control_objective: Generated content should be subject to safety measures before release.
+  applicability:
+    conditions:
+      content_is_generated_for_user: true
+  evidence:
+    evidence_type: safety_review_record
+    required_fields:
+      - safety_review_completed
+      - human_safety_review_required
+  test:
+    expression: safety_review_completed == true
+  outcomes:
+    pass: Safety review evidence is complete for a low-risk case.
+    fail: Safety review evidence is absent for an applicable output.
+    review: The adequacy of effective measures requires human review.
+    not_applicable: Content is not generated for a user-facing service.
+  automation_level: human_review_required
+  traceability:
+    source_document: "Interim Measures for the Management of Generative AI Services"
+    article: Article 4
+    normative_fragment: take effective measures to prevent illegal or harmful generated content
+    interpretation_version: "1.0"
+    legal_review_status: reviewed
+
+- control_id: CTRL-AIGC-COMPLAINT-MECHANISM
+  norm_id: CN-AIGC-COMPLAINT-001
+  control_objective: Complaints should be linked to a disclosed handling process and tracked for timely handling.
+  applicability:
+    conditions:
+      complaint_received: true
+  evidence:
+    evidence_type: complaint_record
+    required_fields:
+      - complaint_process_disclosed
+      - complaint_status
+  test:
+    expression: complaint_process_disclosed == true and complaint_status != 'missing'
+  outcomes:
+    pass: Complaint process and complaint status are recorded.
+    fail: Complaint process is not disclosed or status is missing.
+    review: Timeliness or substantive adequacy requires human review.
+    not_applicable: No complaint was received.
+  automation_level: partially_automatable
+  traceability:
+    source_document: "Interim Measures for the Management of Generative AI Services"
+    article: Article 17
+    normative_fragment: establish complaint and reporting mechanisms and process complaints in a timely manner
+    interpretation_version: "1.0"
+    legal_review_status: reviewed
+
+- control_id: CTRL-DEEPSYN-CONFUSION-LABEL
+  norm_id: CN-DEEPSYN-LABEL-001
+  control_objective: Deep synthesis content that may cause public confusion should carry a visible label.
+  applicability:
+    conditions:
+      deep_synthesis_content: true
+      content_may_confuse_public: true
+  evidence:
+    evidence_type: labeling_check
+    required_fields:
+      - visible_label_present
+  test:
+    expression: visible_label_present == true
+  outcomes:
+    pass: Visible label evidence is present for confusion-risk content.
+    fail: Visible label evidence is absent for confusion-risk content.
+    review: Whether the content may cause public confusion requires human review.
+    not_applicable: Content is not deep synthesis content or does not create confusion risk.
+  automation_level: partially_automatable
+  traceability:
+    source_document: "Provisions on the Administration of Deep Synthesis Internet Information Services"
+    article: Article 14
+    normative_fragment: add labels where generated or edited information may cause confusion
+    interpretation_version: "1.0"
+    legal_review_status: reviewed

@@ -1,15 +1,18 @@
-# Prototype Notes
+# Article Overview
 
-This project demonstrates a machine-readable evidence workflow for a China-based AIGC actor or digital human advertising platform.
+The article now focuses on a legal-clause-to-control transformation method for China-facing AIGC governance.
 
-It intentionally uses synthetic operational logs only. It does not include real face data, real voice data, biometric templates, client personal data, or real consent records.
+Main thesis:
 
-The prototype checks:
+```text
+Original legal provision
+-> Normative sentence identification
+-> Legal semantic decomposition
+-> Human interpretation
+-> Control objective
+-> Evidence requirement
+-> Machine-readable test
+-> Review status and traceability
+```
 
-- Synthetic virtual actor consent existence and scope.
-- Synthetic model filing or registration metadata.
-- Visible and invisible AIGC labeling.
-- Content safety status.
-- Complaint handling status and SLA evidence.
-
-The output is designed as a lightweight evidence bundle that can be reviewed by humans and parsed by machines.
+The synthetic request pipeline remains useful as supplementary proof of concept, but it is no longer the article's main contribution. The paper emphasizes rule provenance, reviewability, schema validation, automation limits, and the distinction between machine-readable rules and machine-made legal interpretation.

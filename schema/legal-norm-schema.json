@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Human-reviewed legal norm for machine-readable AIGC controls",
+  "type": "object",
+  "required": ["norm_id", "source", "norm", "interpretation", "evidence", "test", "review"],
+  "properties": {
+    "norm_id": { "type": "string", "minLength": 1 },
+    "source": {
+      "type": "object",
+      "required": ["document", "article", "effective_date", "original_text"],
+      "properties": {
+        "document": { "type": "string" },
+        "article": { "type": "string" },
+        "effective_date": { "type": "string" },
+        "original_text": { "type": "string" }
+      }
+    },
+    "norm": {
+      "type": "object",
+      "required": ["regulated_actor", "modality", "action", "object", "trigger", "exceptions"],
+      "properties": {
+        "regulated_actor": { "type": "string" },
+        "modality": { "enum": ["must", "must_not", "may"] },
+        "action": { "type": "string" },
+        "object": { "type": "string" },
+        "trigger": { "type": "object" },
+        "exceptions": { "type": "array" },
+        "deadline_or_timing": { "type": "string" }
+      }
+    },
+    "interpretation": {
+      "type": "object",
+      "required": ["control_objective", "automation_level", "ambiguity_level", "reviewer_note"],
+      "properties": {
+        "control_objective": { "type": "string" },
+        "automation_level": {
+          "enum": ["fully_automatable", "partially_automatable", "human_review_required"]
+        },
+        "ambiguity_level": { "enum": ["low", "medium", "high"] },
+        "reviewer_note": { "type": "string" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["evidence_type", "required_fields"],
+      "properties": {
+        "evidence_type": { "type": "string" },
+        "required_fields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        }
+      }
+    },
+    "test": {
+      "type": "object",
+      "required": ["expression", "pass_condition", "fail_condition", "review_condition"],
+      "properties": {
+        "expression": { "type": "string" },
+        "pass_condition": { "type": "string" },
+        "fail_condition": { "type": "string" },
+        "review_condition": { "type": "string" }
+      }
+    },
+    "review": {
+      "type": "object",
+      "required": ["legal_review_status", "interpretation_version"],
+      "properties": {
+        "legal_review_status": { "enum": ["draft", "reviewed", "needs_legal_review"] },
+        "interpretation_version": { "type": "string" }
+      }
+    }
+  }
+}

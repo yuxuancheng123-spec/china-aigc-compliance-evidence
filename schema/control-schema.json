@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Traceable machine-readable control derived from a legal norm",
+  "type": "object",
+  "required": ["control_id", "norm_id", "control_objective", "applicability", "evidence", "test", "outcomes", "automation_level", "traceability"],
+  "properties": {
+    "control_id": { "type": "string" },
+    "norm_id": { "type": "string" },
+    "control_objective": { "type": "string" },
+    "applicability": {
+      "type": "object",
+      "required": ["conditions"],
+      "properties": {
+        "conditions": { "type": "object" },
+        "not_applicable_when": { "type": "object" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["evidence_type", "required_fields"],
+      "properties": {
+        "evidence_type": { "type": "string" },
+        "required_fields": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        }
+      }
+    },
+    "test": {
+      "type": "object",
+      "required": ["expression"],
+      "properties": {
+        "expression": { "type": "string" }
+      }
+    },
+    "outcomes": {
+      "type": "object",
+      "required": ["pass", "fail", "review", "not_applicable"],
+      "properties": {
+        "pass": { "type": "string" },
+        "fail": { "type": "string" },
+        "review": { "type": "string" },
+        "not_applicable": { "type": "string" }
+      }
+    },
+    "automation_level": {
+      "enum": ["fully_automatable", "partially_automatable", "human_review_required"]
+    },
+    "traceability": {
+      "type": "object",
+      "required": ["source_document", "article", "normative_fragment", "interpretation_version", "legal_review_status"],
+      "properties": {
+        "source_document": { "type": "string" },
+        "article": { "type": "string" },
+        "normative_fragment": { "type": "string" },
+        "interpretation_version": { "type": "string" },
+        "legal_review_status": { "enum": ["draft", "reviewed", "needs_legal_review"] }
+      }
+    }
+  }
+}

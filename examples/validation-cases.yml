@@ -1,0 +1,135 @@
+- case_id: CASE-PASS-LABEL
+  description: Applicable AIGC output with visible and metadata labels.
+  evidence:
+    output_is_ai_generated: true
+    output_is_user_facing: true
+    visible_label_present: true
+    metadata_label_present: true
+  expected:
+    CTRL-AIGC-VISIBLE-LABEL: pass
+    CTRL-AIGC-METADATA-LABEL: pass
+
+- case_id: CASE-FAIL-LABEL
+  description: Applicable user-facing AIGC output without a visible label.
+  evidence:
+    output_is_ai_generated: true
+    output_is_user_facing: true
+    visible_label_present: false
+  expected:
+    CTRL-AIGC-VISIBLE-LABEL: fail
+
+- case_id: CASE-REVIEW-LABEL-MISSING-EVIDENCE
+  description: Applicable user-facing AIGC output with missing label evidence.
+  evidence:
+    output_is_ai_generated: true
+    output_is_user_facing: true
+  expected:
+    CTRL-AIGC-VISIBLE-LABEL: review
+
+- case_id: CASE-NOT-APPLICABLE-NON-AIGC
+  description: Non-AIGC output is outside AIGC label control scope.
+  evidence:
+    output_is_ai_generated: false
+    output_is_user_facing: true
+  expected:
+    CTRL-AIGC-VISIBLE-LABEL: not_applicable
+    CTRL-AIGC-METADATA-LABEL: not_applicable
+
+- case_id: CASE-PASS-METADATA
+  description: Metadata label exists for generated synthetic content.
+  evidence:
+    output_is_ai_generated: true
+    metadata_label_present: true
+  expected:
+    CTRL-AIGC-METADATA-LABEL: pass
+
+- case_id: CASE-FAIL-METADATA
+  description: Metadata label is absent for generated synthetic content.
+  evidence:
+    output_is_ai_generated: true
+    metadata_label_present: false
+  expected:
+    CTRL-AIGC-METADATA-LABEL: fail
+
+- case_id: CASE-PASS-CONSENT
+  description: Sensitive actor-like data has separate consent evidence.
+  evidence:
+    processing_sensitive_personal_information: true
+    separate_consent_present: true
+  expected:
+    CTRL-PIPL-SEPARATE-CONSENT: pass
+
+- case_id: CASE-FAIL-CONSENT
+  description: Sensitive actor-like data lacks separate consent evidence.
+  evidence:
+    processing_sensitive_personal_information: true
+    separate_consent_present: false
+  expected:
+    CTRL-PIPL-SEPARATE-CONSENT: fail
+
+- case_id: CASE-NOT-APPLICABLE-CONSENT
+  description: No sensitive personal information is processed.
+  evidence:
+    processing_sensitive_personal_information: false
+  expected:
+    CTRL-PIPL-SEPARATE-CONSENT: not_applicable
+
+- case_id: CASE-REVIEW-BIOMETRIC
+  description: Biometric-like material triggers human review.
+  evidence:
+    biometric_data_processed: true
+    biometric_classification_reviewed: true
+  expected:
+    CTRL-PIPL-BIOMETRIC-CLASSIFICATION: review
+
+- case_id: CASE-PASS-FILING
+  description: Filing is required and registered.
+  evidence:
+    service_with_filing_obligation: true
+    filing_applicability_reviewed: true
+    filing_required: true
+    filing_status: registered
+  expected:
+    CTRL-AIGC-MODEL-FILING: pass
+
+- case_id: CASE-FAIL-FILING
+  description: Filing is required but missing.
+  evidence:
+    service_with_filing_obligation: true
+    filing_applicability_reviewed: true
+    filing_required: true
+    filing_status: missing
+  expected:
+    CTRL-AIGC-MODEL-FILING: fail
+
+- case_id: CASE-NOT-APPLICABLE-FILING
+  description: Service is outside selected filing-control scope.
+  evidence:
+    service_with_filing_obligation: false
+  expected:
+    CTRL-AIGC-MODEL-FILING: not_applicable
+
+- case_id: CASE-REVIEW-SAFETY
+  description: Effective content safety measures require human review.
+  evidence:
+    content_is_generated_for_user: true
+    safety_review_completed: true
+    human_safety_review_required: true
+  expected:
+    CTRL-AIGC-CONTENT-SAFETY: review
+
+- case_id: CASE-PASS-COMPLAINT
+  description: Complaint process is disclosed and complaint status is tracked.
+  evidence:
+    complaint_received: true
+    complaint_process_disclosed: true
+    complaint_status: acknowledged
+  expected:
+    CTRL-AIGC-COMPLAINT-MECHANISM: pass
+
+- case_id: CASE-NOT-APPLICABLE-COMPLAINT
+  description: No complaint was received.
+  evidence:
+    complaint_received: false
+  expected:
+    CTRL-AIGC-COMPLAINT-MECHANISM: not_applicable

@@ -1,13 +1,14 @@
-# Results
+# Prototype Validation Draft
 
-The v0.2 prototype was evaluated on a seeded synthetic dataset representing operational activity for a digital human advertising video platform. The dataset contained 1,000 generation requests, 50 synthetic virtual actor assets, 200 synthetic consent records, 10 synthetic model records, 1,000 output records, 1,000 labeling checks, 1,000 content safety checks, and 62 complaint records. No real personal data, face data, voice data, contracts, company records, or production media were used.
+The validation section should focus on whether the transformation method produces traceable and executable controls, not on a large pass/fail distribution.
 
-The request-level assessment produced 800 passing requests, 120 requests requiring review, and 80 failing requests. This distribution corresponds to an 80.0% pass rate, 12.0% review rate, and 8.0% fail rate. The outcome mix was intentionally calibrated to model a plausible operational environment in which most requests satisfy baseline controls, a smaller portion require human or process review, and a limited set expose control failures.
+The current research artifacts include:
 
-The prototype demonstrates the feasibility of converting selected Chinese AI governance obligations into machine-readable controls, assessment results, risk records, remediation items, and per-request evidence bundles. The implemented controls cover synthetic actor consent validity, permitted use scope, model filing metadata, visible and invisible AIGC labeling, content safety disposition, and complaint handling. The run generated aggregate assessment outputs, a risk register, remediation items, summary tables, and 88 selected per-request evidence bundles.
+- a selected legal corpus;
+- semantic clause decomposition annotations;
+- legal norm and control schemas;
+- clause-to-control mappings;
+- consent, labeling, and filing examples;
+- a compact validation set with pass, fail, review, and not-applicable outcomes.
 
-The per-request evidence bundles joined the generation request with associated actor, consent, model, output, labeling, safety, and complaint records where available. This structure supports traceability from an aggregate validation result to the underlying synthetic operational evidence. It also illustrates how compliance evidence could be made inspectable at multiple levels of granularity: portfolio-level summaries, control-level exception counts, and request-level evidence packets.
-
-The validation suite contained 14 automated tests, all of which passed in the final run. The tests covered expected failure modes including expired consent, commercial use outside consent scope, revoked consent, missing model filing metadata, missing invisible or metadata labels, high-risk content that was not blocked or manually reviewed, overdue complaint handling, and report generation. These tests do not establish legal compliance; rather, they provide evidence that the prototype consistently implements its stated synthetic control logic.
-
-Overall, the results indicate that a lightweight evidence-generation pipeline can represent selected governance requirements as structured technical controls and reproducible artifacts. The prototype should be understood as a feasibility demonstration rather than a production compliance system or legal assessment.
+The legacy synthetic pipeline can be mentioned briefly as supplementary proof of concept. It shows that reviewed controls can be executed against synthetic operational records, but it does not establish legal compliance and should not be framed as the main evaluation result.

@@ -1,142 +1,157 @@
-# China AIGC Compliance Evidence Generator
+# China AIGC Legal-Clause-to-Control Framework
 
-A research prototype for machine-readable compliance evidence in China-facing AIGC actor and digital human platforms.
+A research framework for transforming selected Chinese AIGC legal provisions into traceable, reviewable, and machine-readable compliance controls.
 
-`china-ai-compliance-evidence` is a Python 3.11 prototype that converts synthetic operational logs for a China-based AIGC actor / digital human advertising platform into machine-readable compliance evidence. It models a platform that generates advertising videos from licensed virtual actor assets and evaluates whether each request has valid consent, scoped usage, model filing metadata, AIGC labels, content safety review, and complaint handling evidence. The v0.3 upgrade extends the project into a governance pipeline:
+This repository studies how natural-language provisions from Chinese AIGC laws, regulations, and technical standards can be decomposed into structured legal norms and then translated into machine-readable controls. It does **not** try to be a user-facing compliance assessment product. The companion project [`ai-generated-actor-compliance`](https://github.com/yuxuancheng123-spec/ai-generated-actor-compliance) demonstrates how already-defined rules can be applied to concrete AI actor, digital human, and synthetic media cases. This repository focuses on the upstream research question: **where do the rules come from, and how can their legal interpretation be traced back to source clauses?**
+
+All examples are synthetic or paraphrased for research use. The project does not use real personal data, face data, voice data, biometric data, contracts, company records, customer records, or production media.
+
+## Research Focus
+
+The central transformation chain is:
 
 ```text
-Policy → Controls → Evidence → Label Metadata → Provenance → Audit API
+Original legal provision
+-> Normative sentence identification
+-> Legal semantic decomposition
+-> Human interpretation
+-> Control objective
+-> Evidence requirement
+-> Machine-readable test
+-> Review status and traceability
 ```
 
-All data in this repository are synthetic. The project does not use real personal data, face data, voice data, biometric data, contracts, company records, or customer records.
+The machine-readable layer does not interpret law on its own. It executes structured legal interpretations that have been written and reviewed by a human.
 
-## Research Context
+## Research Questions
 
-This project is inspired by recent work on machine-readable AI compliance evidence and Compliance-as-Code. Instead of focusing on EU AI Act high-risk systems, this prototype adapts the idea to selected Chinese AI governance obligations around generative AI services, deep synthesis, AIGC labeling, model filing/disclosure, consent management, content safety, and complaint handling.
+- **RQ1:** Chinese AIGC legal and regulatory provisions can be decomposed into which semantic elements for machine-readable representation?
+- **RQ2:** How can traceable mappings be established between source clauses, legal interpretations, control objectives, evidence requirements, and executable tests?
+- **RQ3:** Which categories of legal obligations are fully automatable, partially automatable, or dependent on human legal review?
+- **RQ4:** Can the proposed transformation method generate consistent and executable controls for a synthetic actor and digital human use case?
 
-## Why This Project Matters
+## What This Repository Produces
 
-AI governance programs increasingly need evidence that is structured, repeatable, and reviewable by both humans and machines. This prototype explores how selected governance expectations can be represented as operational controls, assessed at request level, and exported as JSON, CSV, and Markdown artifacts suitable for audit preparation, technical documentation, and portfolio demonstration.
+- A small legal corpus of selected Chinese AIGC-related clauses.
+- Clause decomposition annotations with semantic fields such as actor, modality, action, object, trigger, exception, timing, evidence, automation level, ambiguity level, and review status.
+- JSON Schemas for legal norms and traceable controls.
+- Clause-to-control mappings with source traceability.
+- Example controls for consent, visible labeling, and model filing.
+- A compact evaluator that can execute reviewed machine-readable tests and return `pass`, `fail`, `review`, or `not_applicable`.
+- A small validation set that checks whether controls are traceable, executable, and correctly routed to human review when needed.
 
-## Regulatory Scope
+The previous synthetic request pipeline remains available as a supplementary proof of concept. It shows that structured controls can be read by software and exercised against synthetic operational records, but it is no longer the main research contribution.
 
-The prototype is informed by Chinese AI governance materials related to generative AI services, deep synthesis services, algorithmic recommendation governance, AIGC labeling, and personal information protection. It is a simplified technical model, not a legal interpretation. See [references.md](references.md) for background sources.
-
-## What The Prototype Does
-
-- Generates synthetic virtual actors, consent records, model filing records, generation requests, outputs, labeling checks, content safety checks, and complaint records.
-- Evaluates request-level controls for consent validity, consent scope, model filing metadata, visible and invisible AIGC labels, content safety disposition, and complaint SLA handling.
-- Produces assessment results, a risk register, remediation items, summary tables, a Markdown report, selected per-request evidence bundles, machine-readable label metadata, provenance manifests, and schema validation results.
-- Calibrates the default synthetic run to a realistic demonstration distribution: 75-85% pass, 8-15% review, and 5-10% fail.
-
-## Architecture Upgrade: From Evidence Generator to Governance Pipeline
-
-The v0.3 architecture links policy sources to controls, controls to request-level evidence, evidence to machine-readable label metadata, label metadata to provenance records, and provenance records to a minimal audit API. The result is still a research prototype, but it demonstrates how selected governance obligations can be represented as verifiable machine-readable artifacts rather than reconstructed from static documents after the fact.
-
-## Machine-readable Label Metadata
-
-The pipeline now generates `outputs/label_metadata.json` and `outputs/label_verification_results.json`. Each synthetic output receives a label metadata record with a label ID, request ID, output ID, model ID, actor asset ID, disclosure fields, machine-readable format, deterministic synthetic hashes, verifier URI, timestamps, and verification status. Hashes are derived from synthetic records only; no media files, faces, voices, biometric data, or personal data are used.
-
-## Provenance Export
-
-The pipeline now generates `outputs/provenance_manifest.json` and `outputs/provenance_export.ndjson`. Each manifest records a synthetic request/output timeline including request creation, consent validation, model filing check, output generation, label attachment, content safety check, complaint check, and assessment completion.
-
-## Audit API
-
-A minimal FastAPI audit interface reads generated artifacts from `outputs/`:
-
-- `GET /health`
-- `GET /requests/{request_id}/evidence`
-- `GET /outputs/{output_id}/label-metadata`
-- `GET /outputs/{output_id}/provenance`
-- `GET /controls/{control_id}/exceptions`
-- `GET /risks`
-- `GET /remediations`
-- `POST /verify/evidence-bundle`
-
-This API has no authentication and is not suitable for production use. It exists only to demonstrate how generated evidence artifacts could be queried and minimally verified in a local research setting.
-
-## Folder Structure
+## Repository Structure
 
 ```text
-china-ai-compliance-evidence/
-├── article/              # Article-support drafts
-├── data/                 # Reserved for non-sensitive synthetic input data
-├── docs/                 # Methodology and project documentation
-├── outputs/              # Generated JSON/CSV evidence artifacts
-├── policies/             # Synthetic control rules
-├── reports/              # Generated reports and article-ready tables
-├── schemas/              # JSON Schemas for evidence, labels, provenance, audit events
-├── src/                  # Python source code
-├── tests/                # Pytest tests
-├── LICENSE
+china-aigc-compliance-evidence/
+├── legal-corpus/          # Source index and selected clause summaries
+├── annotations/           # Legal semantic decomposition and interpretation notes
+├── schema/                # Legal norm and control JSON Schemas
+├── mappings/              # Clause-to-control mapping and traceability matrix
+├── examples/              # Compact rule examples and validation cases
+├── src/
+│   ├── validator.py       # Schema and traceability validation for norms/controls
+│   ├── evaluator.py       # Small reviewed-rule evaluator
+│   └── ...                # Supplementary synthetic proof-of-concept pipeline
+├── tests/                 # Regression and transformation-method tests
+├── paper/                 # Refocused paper draft
+├── article/               # Earlier article-support artifacts
+├── outputs/               # Supplementary generated proof-of-concept outputs
 ├── README.md
-├── references.md
-└── requirements.txt
+└── references.md
 ```
+
+## Minimal Example
+
+```text
+Source clause:
+  Public-facing AI-generated synthetic content should carry explicit labels.
+
+Structured legal norm:
+  regulated_actor = generative_ai_service_provider
+  modality = must
+  action = add_explicit_label
+  object = user_facing_generated_content
+  trigger = output_is_user_facing and output_is_ai_generated
+
+Control objective:
+  User-facing generated content should carry a visible AIGC disclosure label before publication.
+
+Required evidence:
+  output_id, visible_label_present, checked_at
+
+Machine-readable test:
+  visible_label_present == true
+
+Outcome:
+  pass, fail, review, or not_applicable
+```
+
+## Automation Levels
+
+Each mapped rule declares one of three automation levels:
+
+- `fully_automatable`: The structured evidence can be checked mechanically, such as whether metadata fields exist.
+- `partially_automatable`: Software can check some evidence, but legal or contextual review may still be needed, such as visible-label prominence.
+- `human_review_required`: The obligation depends on open-textured legal judgment, such as whether "effective measures" were sufficient.
+
+The evaluator supports four outcomes:
+
+- `pass`: reviewed evidence satisfies the machine-readable test.
+- `fail`: reviewed evidence contradicts the machine-readable test.
+- `review`: evidence is missing, ambiguous, or legal judgment is required.
+- `not_applicable`: the trigger conditions for the clause are not met.
 
 ## Quick Start
 
 ```bash
-python3.11 -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python -m src.cli --seed 20260625
-pytest
+python -m src.validator
+python -m src.evaluator
+python -m pytest
 ```
 
-To run the prototype audit API after generating artifacts:
-
-```bash
-uvicorn src.audit_api:app --reload
-```
-
-If `python3.11` is not available on your machine, use an installed Python 3.11 interpreter path.
-
-Expected seeded output:
-
-- 1,000 synthetic generation requests
-- 800 pass, 120 review, 80 fail
-- 88 selected per-request evidence bundles
-- 22 passing tests
-
-## Example Outputs
-
-The default run generates:
-
-- `outputs/synthetic_dataset.json`
-- `outputs/evidence_bundle.json`
-- `outputs/assessment_results.json`
-- `outputs/risk_register.json`
-- `outputs/remediation_items.json`
-- `outputs/label_metadata.json`
-- `outputs/label_verification_results.json`
-- `outputs/provenance_manifest.json`
-- `outputs/provenance_export.ndjson`
-- `outputs/request_control_matrix.csv`
-- `outputs/summary_table.csv`
-- `outputs/evidence_bundles/REQ-xxxx.json`
-- `reports/evidence_report.md`
-- `reports/table_3_validation_results.md`
-
-The current seeded run produces 1,000 generation requests: 800 pass, 120 review, and 80 fail. The repository keeps a small representative sample of per-request evidence bundles for GitHub readability. The full set of 88 selected per-request bundles can be regenerated locally by running the pipeline:
+Supplementary proof-of-concept pipeline:
 
 ```bash
 python -m src.cli --seed 20260625
 ```
+
+That command regenerates synthetic request-level artifacts under `outputs/`. Those artifacts are useful for demonstrating that controls can be executed, but they are not the core research contribution.
+
+## Selected Clause Scope
+
+The selected corpus is intentionally limited. It covers representative clauses related to:
+
+- consent and separate consent for sensitive personal information;
+- actor, voice, face, or biometric-like material classification;
+- visible AIGC labels;
+- machine-readable or metadata labels;
+- model filing or applicability review;
+- content safety measures;
+- complaint and reporting mechanisms.
+
+The project does not attempt full coverage of Chinese AI law, sector-specific obligations, or production compliance workflows.
+
+## Relationship To The Actor Compliance Demo
+
+This repository produces machine-readable rules and traceability artifacts. It is not a user-facing compliance assessment product.
+
+The separate `ai-generated-actor-compliance` project is the product-style demo that receives business facts, runs rules, and produces risk reports and remediation suggestions for concrete cases. In contrast, this repository studies how a rule is transformed from a legal clause into a reviewed, traceable, executable control.
 
 ## Limitations
 
-This is a minimal prototype. The controls are intentionally simplified, the data are generated rather than collected from production systems, and the policy mapping is illustrative. The project does not implement authentication, secure evidence retention, cryptographic watermarking, production logging, legal workflow management, or regulator-facing filing integrations.
-
-## Roadmap
-
-- Add richer JSON Schema coverage for aggregate and per-request evidence profiles.
-- Add optional signature or C2PA-inspired manifest simulation for label metadata.
-- Add configurable policy mappings for additional sectors and lifecycle phases.
-- Add a production-style storage adapter while preserving synthetic-only demo data.
-- Add authenticated API patterns and access logging for future governance-system experiments.
+- The clause summaries are research annotations, not official translations.
+- The mappings are illustrative and require qualified legal review before operational use.
+- The evaluator executes only human-reviewed structured interpretations.
+- Several obligations are intentionally classified as `partially_automatable` or `human_review_required`.
+- The synthetic proof-of-concept data do not demonstrate real-world legal compliance.
+- No real personal, biometric, face, voice, contract, company, customer, or production media data are used.
 
 ## Legal Disclaimer
 
-This project is for technical demonstration, research, and portfolio use only. It is not legal advice and does not establish compliance with any law, regulation, standard, or filing obligation. Any production use would require qualified legal review, full policy mapping, validated data lineage, security controls, governance ownership, and human oversight.
+This project is for research, technical demonstration, and portfolio use only. It is not legal advice, does not certify compliance, and does not establish that any real system satisfies any law, regulation, standard, filing obligation, or regulator expectation.
