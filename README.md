@@ -1,5 +1,34 @@
 # China AIGC Legal-Clause-to-Control Framework
 
+**English** | [中文](README.zh-CN.md)
+
+> Turning selected Chinese AIGC regulations into traceable, human-reviewed, machine-readable compliance controls.
+
+![Python](https://img.shields.io/badge/python-3-3776AB?logo=python&logoColor=white)
+![License: MIT](https://img.shields.io/badge/license-MIT-green)
+![JURIX 2026 short paper](https://img.shields.io/badge/JURIX%202026-short%20paper-6f42c1)
+
+**Paper:** [JURIX 2026 short paper](paper/jurix2026/main.tex) · [full draft](paper/main.tex) &nbsp;|&nbsp; **Demo:** [AI Actor compliance demo](https://yuxuancheng123-spec.github.io/ai-generated-actor-compliance/web/) &nbsp;|&nbsp; **Portfolio:** [yuxuan-cheng-portfolio-next.vercel.app](https://yuxuan-cheng-portfolio-next.vercel.app)
+
+```mermaid
+flowchart LR
+    A["Chinese legal clause<br/>(legal-corpus/)"] --> B["Structured norm YAML<br/>(norms/)"]
+    B --> C["Human confirmation<br/>applicability + interpretation"]
+    C --> D["Machine-readable control<br/>(mappings/)"]
+    D --> E["Evaluator<br/>(src/evaluator.py)"]
+    E --> F["Machine result<br/>pass / fail / review / n.a."]
+    F --> G["Human final conclusion"]
+```
+
+| Artifact | Count |
+|---|---|
+| Source legal documents ([source-index.csv](legal-corpus/source-index.csv)) | 5 |
+| Structured legal norms ([norms/](norms/)) | 11 |
+| Machine-readable controls ([clause-to-control.yml](mappings/clause-to-control.yml)) | 12 |
+| Controls by final automation level | 2 fully · 1 partially · 9 human review |
+| Validation cases ([validation-cases.yml](examples/validation-cases.yml)) | 21 |
+| Test modules / test functions ([tests/](tests/)) | 8 / 46 |
+
 A research framework for transforming selected Chinese AIGC legal provisions into traceable, reviewable, and machine-readable compliance controls.
 
 This repository studies how natural-language provisions from Chinese AIGC laws, regulations, and technical standards can be decomposed into structured legal norms and then translated into machine-readable controls. It does **not** try to be a user-facing compliance assessment product. The companion project [`ai-generated-actor-compliance`](https://github.com/yuxuancheng123-spec/ai-generated-actor-compliance) demonstrates how already-defined rules can be applied to concrete AI actor, digital human, and synthetic media cases. This repository focuses on the upstream research question: **where do the rules come from, and how can their legal interpretation be traced back to source clauses?**
@@ -45,20 +74,11 @@ The machine-readable layer does not interpret law on its own. It executes struct
 
 The previous synthetic request pipeline remains available as a supplementary proof of concept. It shows that structured controls can be read by software and exercised against synthetic operational records, but it is no longer the main research contribution.
 
-## Legal Source Accuracy Updates
-
-The current mapping corrects several source references and narrows automation boundaries:
-
-- Complaint handling maps to Article 15 of the Interim Measures for the Management of Generative AI Services.
-- Model filing maps to Article 17 of the Interim Measures and requires reviewed applicability fields before checking filing status.
-- Deep synthesis confusion-risk labeling maps to Article 17 of the Deep Synthesis Provisions.
-- Deep synthesis face and voice editing consent is modeled separately under Article 14 of the Deep Synthesis Provisions.
-- Visible AIGC labeling is split into existence and prominence controls, and the Article 9 no-explicit-label exception path is represented as reviewable evidence rather than an automatic failure.
-- An Article 9 exception result is limited to `provider_delivery`; it does not determine later public publication, user declarations, or dissemination-platform obligations.
-- Deep Synthesis Article 14 is split between a direct provider prompt duty and a separately labelled derived organizational consent-assurance control.
-- Metadata labeling checks underlying fields such as generated-content attribute, provider name or code, and content ID instead of relying only on an aggregate flag.
+## Review Status
 
 `Reviewed` currently means internally reviewed by the researcher unless a qualified legal expert review is separately recorded. The mapping files distinguish `author_review_status` from `legal_expert_review_status`.
+
+Legal-source corrections and narrowed automation boundaries are recorded in [CHANGELOG.md](CHANGELOG.md).
 
 ## Repository Structure
 
