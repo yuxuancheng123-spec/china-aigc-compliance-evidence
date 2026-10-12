@@ -197,3 +197,71 @@
   description: No complaint is outside complaint-record scope.
   evidence: {complaint_received: false}
   expected: {CTRL-AIGC-COMPLAINT-MECHANISM: not_applicable}
+
+- case_id: CASE-PASS-DEEPSYN-CONFUSION-LABEL-AFTER-REVIEW
+  description: Confirmed confusion risk, label evidence, and a keyed prominence review complete the deep synthesis label conclusion.
+  evidence:
+    deep_synthesis_content: true
+    content_may_confuse_public: true
+    visible_label_present: true
+    human_confirmations:
+      content_may_confuse_public: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+    human_reviews:
+      deep_synthesis_label_prominence: {completed: true, result: pass, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-DEEPSYN-CONFUSION-LABEL: pass}
+
+- case_id: CASE-REVIEW-DEEPSYN-CONFUSION-LABEL-PROMINENCE
+  description: Label presence alone does not complete the required deep synthesis prominence review.
+  evidence:
+    deep_synthesis_content: true
+    content_may_confuse_public: true
+    visible_label_present: true
+    human_confirmations:
+      content_may_confuse_public: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-DEEPSYN-CONFUSION-LABEL: review}
+
+- case_id: CASE-FAIL-DEEPSYN-CONFUSION-LABEL-MISSING
+  description: Missing label evidence fails once confusion risk is human-confirmed.
+  evidence:
+    deep_synthesis_content: true
+    content_may_confuse_public: true
+    visible_label_present: false
+    human_confirmations:
+      content_may_confuse_public: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-DEEPSYN-CONFUSION-LABEL: fail}
+
+- case_id: CASE-PASS-GB-METADATA-FIELDS
+  description: A metadata-capable file with the selected technical metadata fields passes the field-implementation check.
+  evidence: {output_is_ai_generated: true, file_supports_metadata: true, generated_content_attribute: ai_generated, service_provider_name_or_code: synthetic-provider-001, content_id: CONTENT-101, content_production_elements: synthetic-elements-001, dissemination_service_provider_code: null, dissemination_content_id: null}
+  expected: {CTRL-GB-METADATA-FIELDS: pass}
+
+- case_id: CASE-FAIL-GB-METADATA-PRODUCTION-ELEMENTS
+  description: A missing content-production-elements field fails the selected technical metadata check.
+  evidence: {output_is_ai_generated: true, file_supports_metadata: true, generated_content_attribute: ai_generated, service_provider_name_or_code: synthetic-provider-001, content_id: CONTENT-102, content_production_elements: null, dissemination_service_provider_code: null, dissemination_content_id: null}
+  expected: {CTRL-GB-METADATA-FIELDS: fail}
+
+- case_id: CASE-NOT-APPLICABLE-GB-METADATA-UNSUPPORTED
+  description: A file format without metadata support is outside the technical metadata field control.
+  evidence: {output_is_ai_generated: true, file_supports_metadata: false}
+  expected: {CTRL-GB-METADATA-FIELDS: not_applicable}
+
+- case_id: CASE-REVIEW-PIPL-BIOMETRIC-CLASSIFICATION
+  description: Processing biometric-like actor material requires a keyed legal classification review.
+  evidence: {biometric_data_processed: true}
+  expected: {CTRL-PIPL-BIOMETRIC-CLASSIFICATION: review}
+
+- case_id: CASE-PASS-PIPL-BIOMETRIC-AFTER-REVIEW
+  description: A completed biometric classification review records the sensitive-information classification.
+  evidence:
+    biometric_data_processed: true
+    human_reviews:
+      biometric_classification: {completed: true, result: pass, reviewer_role: privacy_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-PIPL-BIOMETRIC-CLASSIFICATION: pass}
+
+- case_id: CASE-FAIL-PIPL-BIOMETRIC-REVIEW-REJECTED
+  description: A completed review that rejects the classification produces a fail conclusion.
+  evidence:
+    biometric_data_processed: true
+    human_reviews:
+      biometric_classification: {completed: true, result: fail, reviewer_role: privacy_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-PIPL-BIOMETRIC-CLASSIFICATION: fail}

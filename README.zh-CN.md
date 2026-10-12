@@ -9,7 +9,7 @@
 ![JURIX 2026 short paper](https://img.shields.io/badge/JURIX%202026-short%20paper-6f42c1)
 [![CI](https://github.com/yuxuancheng123-spec/china-aigc-compliance-evidence/actions/workflows/ci.yml/badge.svg)](https://github.com/yuxuancheng123-spec/china-aigc-compliance-evidence/actions/workflows/ci.yml)
 
-**论文：** [JURIX 2026 短论文](paper/jurix2026/main.tex) · [完整稿](paper/main.tex) &nbsp;|&nbsp; **Demo：** [AI 演员合规 Demo](https://yuxuancheng123-spec.github.io/ai-generated-actor-compliance/web/) &nbsp;|&nbsp; **作品集：** [yuxuan-cheng-portfolio-next.vercel.app](https://yuxuan-cheng-portfolio-next.vercel.app)
+**Norm Explorer：** [法条 → 控制项交互浏览](https://yuxuancheng123-spec.github.io/china-aigc-compliance-evidence/explorer/) &nbsp;|&nbsp; **论文：** [JURIX 2026 短论文](paper/jurix2026/main.tex) · [完整稿](paper/main.tex) &nbsp;|&nbsp; **Demo：** [AI 演员合规 Demo](https://yuxuancheng123-spec.github.io/ai-generated-actor-compliance/web/) &nbsp;|&nbsp; **作品集：** [yuxuan-cheng-portfolio-next.vercel.app](https://yuxuan-cheng-portfolio-next.vercel.app)
 
 ```mermaid
 flowchart LR
@@ -27,7 +27,7 @@ flowchart LR
 | 结构化法律规范（[norms/](norms/)） | 11 |
 | 机器可读控制项（[clause-to-control.yml](mappings/clause-to-control.yml)） | 12 |
 | 按最终自动化程度划分的控制项 | 完全自动 2 · 部分自动 1 · 需人工复核 9 |
-| 验证用例（[validation-cases.yml](examples/validation-cases.yml)） | 21 |
+| 验证用例（[validation-cases.yml](examples/validation-cases.yml)） | 30 |
 | 测试模块 / 测试函数（[tests/](tests/)） | 8 / 46 |
 
 本项目是一个研究框架，用于把选定的中国 AIGC 法律条款转化为可追溯、可复核、机器可读的合规控制项。

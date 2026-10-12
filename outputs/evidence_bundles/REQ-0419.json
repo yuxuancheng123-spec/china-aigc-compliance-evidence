@@ -1,6 +1,6 @@
 {
   "schema_version": "0.3",
-  "generated_at": "2026-10-12T01:34:53+00:00",
+  "generated_at": "2026-10-12T02:11:06+00:00",
   "jurisdiction": "CN",
   "case_ref": {
     "request_id": "REQ-0419",
@@ -389,8 +389,8 @@
       "HK",
       "CN"
     ],
-    "valid_from": "2025-08-10T01:34:52Z",
-    "valid_until": "2027-04-14T01:34:52Z",
+    "valid_from": "2025-08-10T02:11:06Z",
+    "valid_until": "2027-04-14T02:11:06Z",
     "evidence_uri": "synthetic://consents/CONSENT-SYN-0099.json"
   },
   "model": {
@@ -398,7 +398,7 @@
     "provider": "Synthetic Model Provider 03",
     "filing_status": "registered",
     "registration_ref": "CN-AIGC-SYN-2026-0003",
-    "last_reviewed_at": "2026-10-03T01:34:52Z"
+    "last_reviewed_at": "2026-10-03T02:11:06Z"
   },
   "generation_request": {
     "request_id": "REQ-0419",
@@ -422,7 +422,7 @@
     "request_id": "REQ-0419",
     "format": "mp4",
     "storage_uri": "synthetic://outputs/OUT-0419.mp4",
-    "created_at": "2026-10-12T01:41:51Z",
+    "created_at": "2026-10-12T02:18:05Z",
     "synthetic_media_only": true
   },
   "labeling_check": {
@@ -431,7 +431,7 @@
     "has_visible_label": true,
     "has_invisible_label": true,
     "metadata_label_status": "present",
-    "checked_at": "2026-10-12T01:42:01Z"
+    "checked_at": "2026-10-12T02:18:15Z"
   },
   "content_safety_check": {
     "safety_check_id": "SAFE-0419",
@@ -439,15 +439,15 @@
     "risk_level": "low",
     "action": "allow",
     "categories": [],
-    "checked_at": "2026-10-12T01:42:11Z"
+    "checked_at": "2026-10-12T02:18:25Z"
   },
   "complaint": {
     "complaint_id": "CMP-0419",
     "request_id": "REQ-0419",
     "category": "content_safety",
     "status": "resolved",
-    "received_at": "2026-10-10T11:34:52Z",
-    "resolved_at": "2026-10-11T15:34:52Z"
+    "received_at": "2026-10-10T12:11:06Z",
+    "resolved_at": "2026-10-11T16:11:06Z"
   },
   "label_metadata": {
     "label_id": "LABEL-META-0419",
@@ -460,11 +460,11 @@
     "visible_label_position": "lower_third_overlay",
     "machine_readable_format": "synthetic_metadata",
     "ai_generated": true,
-    "output_hash_sha256": "6e38e0421a87d3f0dc01d1ece296a7ee921fc4fb37d27836a236573a57d72f8b",
-    "metadata_hash_sha256": "2a23800ae3b843f400616228d4119a1c34cc6053dc11cd380dc25999ab99dffd",
+    "output_hash_sha256": "bbde062e902003b39b0a73f84e9824c63e8945a8dab3c5612f914e55d8ae0d31",
+    "metadata_hash_sha256": "945e49134dbdfcde81ebd638e829eea2d7dca830cb2f85e45c057f1210957b83",
     "verifier_uri": "synthetic://verifier/outputs/OUT-0419",
-    "label_created_at": "2026-10-12T01:42:01Z",
-    "label_verified_at": "2026-10-12T01:42:01Z",
+    "label_created_at": "2026-10-12T02:18:15Z",
+    "label_verified_at": "2026-10-12T02:18:15Z",
     "verification_status": "valid"
   },
   "provenance": {
@@ -480,56 +480,56 @@
     "events": [
       {
         "event_type": "request_created",
-        "timestamp": "2026-10-12T01:41:21Z",
+        "timestamp": "2026-10-12T02:17:35Z",
         "actor": "synthetic_client",
         "status": "submitted",
         "evidence_ref": "synthetic://requests/REQ-0419"
       },
       {
         "event_type": "consent_validated",
-        "timestamp": "2026-10-12T01:41:31Z",
+        "timestamp": "2026-10-12T02:17:45Z",
         "actor": "consent_control",
         "status": "checked",
         "evidence_ref": "synthetic://consents/CONSENT-SYN-0099"
       },
       {
         "event_type": "model_filing_checked",
-        "timestamp": "2026-10-12T01:41:36Z",
+        "timestamp": "2026-10-12T02:17:50Z",
         "actor": "model_registry_control",
         "status": "checked",
         "evidence_ref": "synthetic://models/MODEL-AIGC-003"
       },
       {
         "event_type": "output_generated",
-        "timestamp": "2026-10-12T01:41:51Z",
+        "timestamp": "2026-10-12T02:18:05Z",
         "actor": "synthetic_generation_service",
         "status": "generated",
         "evidence_ref": "synthetic://outputs/OUT-0419"
       },
       {
         "event_type": "label_attached",
-        "timestamp": "2026-10-12T01:42:01Z",
+        "timestamp": "2026-10-12T02:18:15Z",
         "actor": "label_metadata_service",
         "status": "valid",
         "evidence_ref": "synthetic://labels/LABEL-META-0419"
       },
       {
         "event_type": "content_safety_checked",
-        "timestamp": "2026-10-12T01:42:11Z",
+        "timestamp": "2026-10-12T02:18:25Z",
         "actor": "content_safety_control",
         "status": "allow",
         "evidence_ref": "synthetic://safety/SAFE-0419"
       },
       {
         "event_type": "complaint_checked",
-        "timestamp": "2026-10-12T01:42:16Z",
+        "timestamp": "2026-10-12T02:18:30Z",
         "actor": "complaint_sla_control",
         "status": "linked",
         "evidence_ref": "synthetic://complaints/CMP-0419"
       },
       {
         "event_type": "assessment_completed",
-        "timestamp": "2026-10-12T01:42:21Z",
+        "timestamp": "2026-10-12T02:18:35Z",
         "actor": "compliance_assessment_engine",
         "status": "pass",
         "evidence_ref": "synthetic://assessments/REQ-0419"
@@ -537,7 +537,7 @@
     ]
   },
   "audit": {
-    "evidence_hash_sha256": "ca49c7c9853b060378be6ef7faf9958edc4f94fbf52fe9241eb350465aea7ce0",
+    "evidence_hash_sha256": "b13320babb5494b64bb3fa5f80595f6211389c50d468e3ffc6a4feac52acb700",
     "schema_valid": true,
     "generated_by": "china-ai-compliance-evidence v0.3",
     "retention_class": "synthetic_research_artifact",

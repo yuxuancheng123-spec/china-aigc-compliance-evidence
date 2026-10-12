@@ -9,7 +9,7 @@
 ![JURIX 2026 short paper](https://img.shields.io/badge/JURIX%202026-short%20paper-6f42c1)
 [![CI](https://github.com/yuxuancheng123-spec/china-aigc-compliance-evidence/actions/workflows/ci.yml/badge.svg)](https://github.com/yuxuancheng123-spec/china-aigc-compliance-evidence/actions/workflows/ci.yml)
 
-**Paper:** [JURIX 2026 short paper](paper/jurix2026/main.tex) · [full draft](paper/main.tex) &nbsp;|&nbsp; **Demo:** [AI Actor compliance demo](https://yuxuancheng123-spec.github.io/ai-generated-actor-compliance/web/) &nbsp;|&nbsp; **Portfolio:** [yuxuan-cheng-portfolio-next.vercel.app](https://yuxuan-cheng-portfolio-next.vercel.app)
+**Norm Explorer:** [interactive clause → control explorer](https://yuxuancheng123-spec.github.io/china-aigc-compliance-evidence/explorer/) &nbsp;|&nbsp; **Paper:** [JURIX 2026 short paper](paper/jurix2026/main.tex) · [full draft](paper/main.tex) &nbsp;|&nbsp; **Demo:** [AI Actor compliance demo](https://yuxuancheng123-spec.github.io/ai-generated-actor-compliance/web/) &nbsp;|&nbsp; **Portfolio:** [yuxuan-cheng-portfolio-next.vercel.app](https://yuxuan-cheng-portfolio-next.vercel.app)
 
 ```mermaid
 flowchart LR
@@ -27,7 +27,7 @@ flowchart LR
 | Structured legal norms ([norms/](norms/)) | 11 |
 | Machine-readable controls ([clause-to-control.yml](mappings/clause-to-control.yml)) | 12 |
 | Controls by final automation level | 2 fully · 1 partially · 9 human review |
-| Validation cases ([validation-cases.yml](examples/validation-cases.yml)) | 21 |
+| Validation cases ([validation-cases.yml](examples/validation-cases.yml)) | 30 |
 | Test modules / test functions ([tests/](tests/)) | 8 / 46 |
 
 A research framework for transforming selected Chinese AIGC legal provisions into traceable, reviewable, and machine-readable compliance controls.
