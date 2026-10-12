@@ -181,6 +181,14 @@ python -m src.evaluator
 python -m pytest
 ```
 
+一条命令运行端到端演示（条款 -> 规范 -> 控制项 -> 评估）：
+
+```bash
+make demo            # 或：python -m src.demo / ./scripts/demo.sh
+```
+
+CI 配置（测试 + 校验器 + 演示，Python 3.11）已准备好，将在后续提交中加入。
+
 补充性概念验证流水线：
 
 ```bash

@@ -181,6 +181,14 @@ python -m src.evaluator
 python -m pytest
 ```
 
+One-command end-to-end demo (clause -> norm -> control -> evaluation):
+
+```bash
+make demo            # or: python -m src.demo / ./scripts/demo.sh
+```
+
+CI configuration (tests + validator + demo, Python 3.11) is prepared and will be added in a follow-up commit.
+
 Supplementary proof-of-concept pipeline:
 
 ```bash
