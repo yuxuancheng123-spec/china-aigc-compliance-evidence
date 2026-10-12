@@ -239,15 +239,6 @@
       relation: extrapolation
       note: Used only for the service type (face-swap deep synthesis). The judgment addressed personal-information rights; the labeling angle is our extrapolation.
       note_zh: 仅借用其服务类型（换脸类深度合成）。判决处理的是个人信息权益，标识角度是本项目的延伸推演。
-    - case_name: User v. platform (platform determination that user content was AI-generated)
-      case_name_zh: 用户诉某平台（平台判定用户内容为 AI 生成案）
-      court: Beijing Internet Court
-      court_zh: 北京互联网法院
-      date: '2025-09-05'
-      source_url: http://legalinfo.moj.gov.cn/sfbzfpffzll/202509/t20250905_524655.html
-      relation: extrapolation
-      note: A contract dispute in which the court relied on the Deep Synthesis Provisions for platform review authority and set evidence standards for AI-generation determinations; not a face-swap or missing-label case. Linking it to this control is our extrapolation. Date is the commentary publication date.
-      note_zh: 网络服务合同纠纷，法院依据《深度合成管理规定》确认平台审查权限，并对"是否为 AI 生成"的判定提出证明标准；并非换脸或缺失标识案件。将其与本控制项关联是本项目的延伸推演。日期为评论文章发布日期。
   disclaimer:
     en: Adapted from publicly reported facts; not a legal conclusion.
     zh: 根据公开报道的事实改编，不构成法律结论。
