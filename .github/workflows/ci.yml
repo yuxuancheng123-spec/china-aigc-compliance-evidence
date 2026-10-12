@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pytest
+      - name: Run tests
+        run: python -m pytest -q
+      - name: Validate norms, controls, and traceability
+        run: |
+          python -m src.validator > validator-report.json
+          python -c "import json,sys; r=json.load(open('validator-report.json')); f=['schema_valid','cross_file_valid','legal_source_metadata_fields_complete','runtime_evidence_schema_valid']; bad=[k for k in f if not r[k]]; print('validator flags:', {k: r[k] for k in f}); sys.exit(1 if bad else 0)"
+      - name: Run end-to-end demo
+        run: python -m src.demo

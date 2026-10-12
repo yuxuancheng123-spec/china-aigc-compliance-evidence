@@ -7,6 +7,7 @@
 ![Python](https://img.shields.io/badge/python-3-3776AB?logo=python&logoColor=white)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 ![JURIX 2026 short paper](https://img.shields.io/badge/JURIX%202026-short%20paper-6f42c1)
+[![CI](https://github.com/yuxuancheng123-spec/china-aigc-compliance-evidence/actions/workflows/ci.yml/badge.svg)](https://github.com/yuxuancheng123-spec/china-aigc-compliance-evidence/actions/workflows/ci.yml)
 
 **论文：** [JURIX 2026 短论文](paper/jurix2026/main.tex) · [完整稿](paper/main.tex) &nbsp;|&nbsp; **Demo：** [AI 演员合规 Demo](https://yuxuancheng123-spec.github.io/ai-generated-actor-compliance/web/) &nbsp;|&nbsp; **作品集：** [yuxuan-cheng-portfolio-next.vercel.app](https://yuxuan-cheng-portfolio-next.vercel.app)
 
@@ -187,7 +188,7 @@ python -m pytest
 make demo            # 或：python -m src.demo / ./scripts/demo.sh
 ```
 
-CI 配置（测试 + 校验器 + 演示，Python 3.11）已准备好，将在后续提交中加入。
+每次 push 和 pull request 都会由 CI（Python 3.11）运行测试、校验器和演示。
 
 补充性概念验证流水线：
 
