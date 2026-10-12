@@ -52,6 +52,9 @@ def build_data() -> dict:
                         "expected": case["expected"][c["control_id"]],
                         "machine": r["machine_result"], "final": r["final_status"],
                         "review_reason": r.get("review_reason"),
+                        "inspired_by": case.get("inspired_by", []),
+                        "disclaimer": case.get("disclaimer"),
+                        "grounding_note": case.get("grounding_note"),
                     })
             ctrl_out.append({
                 "control_id": c["control_id"], "component": c.get("control_component"),

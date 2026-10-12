@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Validation case",
+  "type": "object",
+  "required": ["case_id", "description", "evidence", "expected"],
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^CASE-[A-Z0-9-]+$"},
+    "description": {"type": "string", "minLength": 1},
+    "evidence": {"type": "object"},
+    "expected": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"enum": ["pass", "fail", "review", "not_applicable"]}
+    },
+    "inspired_by": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["case_name", "court", "date", "source_url", "relation"],
+        "properties": {
+          "case_name": {"type": "string", "description": "Abstracted case name without real party names."},
+          "case_name_zh": {"type": "string"},
+          "court": {"type": "string"},
+          "court_zh": {"type": "string"},
+          "date": {"type": "string", "pattern": "^\\d{4}(-\\d{2}(-\\d{2})?)?$"},
+          "source_url": {"type": "string", "format": "uri"},
+          "relation": {"enum": ["adapted_facts", "extrapolation"], "description": "adapted_facts: case facts adapted into evidence; extrapolation: our own extension beyond what the court decided."},
+          "note": {"type": "string"},
+          "note_zh": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "disclaimer": {
+      "type": "object",
+      "required": ["en", "zh"],
+      "properties": {"en": {"type": "string", "minLength": 1}, "zh": {"type": "string", "minLength": 1}},
+      "additionalProperties": false
+    },
+    "grounding_note": {"type": "string"}
+  },
+  "dependentRequired": {"inspired_by": ["disclaimer"]},
+  "additionalProperties": false
+}

@@ -45,11 +45,18 @@ def validate_runtime_evidence(evidence: dict) -> dict:
     return validate_instance(evidence, ROOT / "schema" / "evaluation-evidence-schema.json")
 
 
+def validate_validation_case(case: dict) -> dict:
+    """Validate case-level structure, including optional inspired_by provenance and disclaimer."""
+    return validate_instance(case, ROOT / "schema" / "validation-case-schema.json")
+
+
 def validate_validation_case_evidence(path: Path | None = None) -> dict:
     cases = load_yaml(path or ROOT / "examples" / "validation-cases.yml")
     results = []
     for case in cases:
         result = validate_runtime_evidence(case["evidence"])
+        case_result = validate_validation_case(case)
+        result = {"valid": result["valid"] and case_result["valid"], "errors": result["errors"] + case_result["errors"]}
         results.append({"case_id": case["case_id"], **result})
     return {"valid": all(item["valid"] for item in results), "cases_checked": len(results), "results": results}
 

@@ -229,21 +229,46 @@
     human_confirmations:
       content_may_confuse_public: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
   expected: {CTRL-DEEPSYN-CONFUSION-LABEL: fail}
+  inspired_by:
+    - case_name: Creator v. face-swap app operator (AI face-swap templates)
+      case_name_zh: 短视频模特诉某换脸 App 运营者（AI 换脸模板案）
+      court: Beijing Internet Court
+      court_zh: 北京互联网法院
+      date: '2024-06-20'
+      source_url: https://legal.gmw.cn/2024-06/20/content_37390759.htm
+      relation: extrapolation
+      note: Used only for the service type (face-swap deep synthesis). The judgment addressed personal-information rights; the labeling angle is our extrapolation.
+      note_zh: 仅借用其服务类型（换脸类深度合成）。判决处理的是个人信息权益，标识角度是本项目的延伸推演。
+    - case_name: User v. platform (platform determination that user content was AI-generated)
+      case_name_zh: 用户诉某平台（平台判定用户内容为 AI 生成案）
+      court: Beijing Internet Court
+      court_zh: 北京互联网法院
+      date: '2025-09-05'
+      source_url: http://legalinfo.moj.gov.cn/sfbzfpffzll/202509/t20250905_524655.html
+      relation: extrapolation
+      note: A contract dispute in which the court relied on the Deep Synthesis Provisions for platform review authority and set evidence standards for AI-generation determinations; not a face-swap or missing-label case. Linking it to this control is our extrapolation. Date is the commentary publication date.
+      note_zh: 网络服务合同纠纷，法院依据《深度合成管理规定》确认平台审查权限，并对"是否为 AI 生成"的判定提出证明标准；并非换脸或缺失标识案件。将其与本控制项关联是本项目的延伸推演。日期为评论文章发布日期。
+  disclaimer:
+    en: Adapted from publicly reported facts; not a legal conclusion.
+    zh: 根据公开报道的事实改编，不构成法律结论。
 
 - case_id: CASE-PASS-GB-METADATA-FIELDS
   description: A metadata-capable file with the selected technical metadata fields passes the field-implementation check.
   evidence: {output_is_ai_generated: true, file_supports_metadata: true, generated_content_attribute: ai_generated, service_provider_name_or_code: synthetic-provider-001, content_id: CONTENT-101, content_production_elements: synthetic-elements-001, dissemination_service_provider_code: null, dissemination_content_id: null}
   expected: {CTRL-GB-METADATA-FIELDS: pass}
+  grounding_note: Synthetic. No reported judgment citing GB 45438-2025 was identified, so this case is not grounded in a court decision.
 
 - case_id: CASE-FAIL-GB-METADATA-PRODUCTION-ELEMENTS
   description: A missing content-production-elements field fails the selected technical metadata check.
   evidence: {output_is_ai_generated: true, file_supports_metadata: true, generated_content_attribute: ai_generated, service_provider_name_or_code: synthetic-provider-001, content_id: CONTENT-102, content_production_elements: null, dissemination_service_provider_code: null, dissemination_content_id: null}
   expected: {CTRL-GB-METADATA-FIELDS: fail}
+  grounding_note: Synthetic. No reported judgment citing GB 45438-2025 was identified, so this case is not grounded in a court decision.
 
 - case_id: CASE-NOT-APPLICABLE-GB-METADATA-UNSUPPORTED
   description: A file format without metadata support is outside the technical metadata field control.
   evidence: {output_is_ai_generated: true, file_supports_metadata: false}
   expected: {CTRL-GB-METADATA-FIELDS: not_applicable}
+  grounding_note: Synthetic. No reported judgment citing GB 45438-2025 was identified, so this case is not grounded in a court decision.
 
 - case_id: CASE-REVIEW-PIPL-BIOMETRIC-CLASSIFICATION
   description: Processing biometric-like actor material requires a keyed legal classification review.
@@ -259,9 +284,26 @@
   expected: {CTRL-PIPL-BIOMETRIC-CLASSIFICATION: pass}
 
 - case_id: CASE-FAIL-PIPL-BIOMETRIC-REVIEW-REJECTED
-  description: A completed review that rejects the classification produces a fail conclusion.
+  description: Face information from a creator's published video is processed into a paid face-swap template without any consent record; the keyed review finds the processing unsupported.
   evidence:
     biometric_data_processed: true
+    face_source: third_party_published_video
+    source_account_marked_not_authorised_for_paid_apps: true
+    consent_record_present: false
+    commercial_use: true
     human_reviews:
       biometric_classification: {completed: true, result: fail, reviewer_role: privacy_reviewer, reviewed_at: '2026-07-15'}
   expected: {CTRL-PIPL-BIOMETRIC-CLASSIFICATION: fail}
+  inspired_by:
+    - case_name: Creator v. face-swap app operator (AI face-swap templates)
+      case_name_zh: 短视频模特诉某换脸 App 运营者（AI 换脸模板案）
+      court: Beijing Internet Court (first instance, not yet effective when reported)
+      court_zh: 北京互联网法院（一审，报道时尚未生效）
+      date: '2024-06-20'
+      source_url: https://legal.gmw.cn/2024-06/20/content_37390759.htm
+      relation: adapted_facts
+      note: The court found infringement of personal-information rights, not portrait rights; publicly posted video did not imply consent to commercial face-information processing.
+      note_zh: 法院认定侵害个人信息权益，而非肖像权；公开发布的视频不能推定同意他人对其人脸信息进行商业化处理。
+  disclaimer:
+    en: Adapted from publicly reported facts; not a legal conclusion.
+    zh: 根据公开报道的事实改编，不构成法律结论。
