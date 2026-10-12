@@ -25,3 +25,7 @@ jobs:
           python -c "import json,sys; r=json.load(open('validator-report.json')); f=['schema_valid','cross_file_valid','legal_source_metadata_fields_complete','runtime_evidence_schema_valid']; bad=[k for k in f if not r[k]]; print('validator flags:', {k: r[k] for k in f}); sys.exit(1 if bad else 0)"
       - name: Run end-to-end demo
         run: python -m src.demo
+      - name: Build Norm Explorer
+        run: |
+          python scripts/build_explorer.py
+          git diff --exit-code docs/explorer || (echo "docs/explorer is stale: run python scripts/build_explorer.py and commit" && exit 1)

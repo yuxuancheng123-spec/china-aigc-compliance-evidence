@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norm Explorer · China AIGC Legal-Clause-to-Control</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<style>
+:root{--canvas:#fafaf9;--surface:#fff;--soft:#f6f7f8;--tint:#eef3f7;--ink:#16191d;--muted:#4a525c;--subtle:#6b7380;--line:#e6e8eb;--line2:#d3d7dc;--rail:#cfd6dd;--accent:#315f82;--accent-ink:#284e6b;--ok:#2f6f55;--fail:#b3362b;--warn:#9a6212;
+--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--ink);font:13px/1.5 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+.wrap{max-width:860px;margin:0 auto;padding:28px 20px 60px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:1px solid var(--line);padding-bottom:14px}
+.eyebrow{font:500 10.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:19px;font-weight:600;letter-spacing:-.01em;margin:6px 0 4px}
+.lede{color:var(--muted);margin:0;max-width:600px;font-size:12.5px}
+.meta{color:var(--subtle);font:11px var(--mono);margin-top:8px}
+.lang{display:flex;border:1px solid var(--line2);border-radius:6px;overflow:hidden;flex:none}
+.lang button{border:0;background:none;padding:4px 9px;font:500 11px inherit;font-family:inherit;color:var(--muted);cursor:pointer}
+.lang button.on{background:var(--ink);color:#fff}
+.filters{display:flex;flex-wrap:wrap;gap:14px 22px;padding:12px 0;border-bottom:1px solid var(--line);margin-bottom:14px}
+.fgroup{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.flabel{font:10.5px var(--mono);color:var(--subtle);text-transform:uppercase;letter-spacing:.06em;margin-right:4px}
+.chip{border:1px solid var(--line2);background:var(--surface);color:var(--muted);border-radius:999px;padding:2px 9px;font-size:11.5px;cursor:pointer;font-family:inherit}
+.chip.on{border-color:var(--accent);color:var(--accent-ink);background:var(--tint)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;margin-bottom:8px}
+.card>summary{list-style:none;cursor:pointer;padding:11px 14px;display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center}
+.card>summary::-webkit-details-marker{display:none}
+.card[open]>summary{border-bottom:1px solid var(--line)}
+.id{font:500 11.5px var(--mono);color:var(--accent-ink)}
+.ctitle{font-size:13px;font-weight:500;grid-column:1}
+.csub{font-size:11.5px;color:var(--subtle);grid-column:1}
+.right{grid-row:1/4;grid-column:2;display:flex;align-items:center;gap:8px}
+.chev{width:7px;height:7px;border-right:1.5px solid var(--subtle);border-bottom:1.5px solid var(--subtle);transform:rotate(45deg);transition:.15s}
+.card[open] .chev{transform:rotate(225deg)}
+.lvl{font:500 10.5px var(--mono);padding:1px 7px;border-radius:4px;border:1px solid}
+.lvl.fully_automatable{color:var(--ok);border-color:#bcd6c9}
+.lvl.partially_automatable{color:var(--warn);border-color:#e6cfa2}
+.lvl.human_review_required{color:var(--muted);border-color:var(--line2)}
+.tl{padding:6px 14px 12px 14px}
+.step{position:relative;padding:10px 0 10px 24px}
+.step:before{content:"";position:absolute;left:5px;top:0;bottom:0;border-left:1px solid var(--rail)}
+.step:first-child:before{top:16px}.step:last-child:before{bottom:calc(100% - 16px)}
+.step:after{content:"";position:absolute;left:1px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--surface);border:1.5px solid var(--accent)}
+.sh{font:500 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--subtle);margin-bottom:4px}
+.quote{border-left:2px solid var(--accent);padding:2px 0 2px 10px;margin:4px 0 6px;font-size:13px}
+.tr{color:var(--muted);font-size:12px}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:3px 12px;margin:4px 0 0;font-size:12px}
+dt{color:var(--subtle)}dd{margin:0;word-break:break-word}
+code,.m{font-family:var(--mono);font-size:11.5px}
+.hash{font:11px var(--mono);color:var(--muted);word-break:break-all}
+.okmark{color:var(--ok)}.badmark{color:var(--fail)}
+.ctrl{border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;background:var(--soft)}
+.expr{display:block;background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:5px 7px;margin-top:5px;white-space:pre-wrap;word-break:break-word}
+.prof{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.prof span{font:10.5px var(--mono);color:var(--muted);border:1px solid var(--line2);border-radius:4px;padding:0 5px;background:var(--surface)}
+.case{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:6px 0;border-top:1px dashed var(--line)}
+.case:first-child{border-top:0}
+.cdesc{font-size:12px;color:var(--muted)}
+.res{display:flex;gap:4px;align-items:center;grid-row:1/3;grid-column:2}
+.st{font:500 10.5px var(--mono);padding:1px 6px;border-radius:4px}
+.st.pass{color:var(--ok);background:#eaf3ee}.st.fail{color:var(--fail);background:#f8ecea}.st.review{color:var(--warn);background:#f8f1e4}.st.not_applicable{color:var(--subtle);background:var(--soft)}
+.arrow{color:var(--subtle);font-size:10px}
+.none{color:var(--subtle);font-size:12px;font-style:italic}
+.empty{color:var(--subtle);text-align:center;padding:30px}
+footer{margin-top:22px;padding-top:12px;border-top:1px solid var(--line);color:var(--subtle);font-size:11px}
+[data-zh]{display:none}html[lang=zh] [data-en]{display:none}html[lang=zh] [data-zh]{display:revert}
+@media(max-width:600px){.wrap{padding:18px 12px 40px}header{flex-direction:column}.right{grid-row:auto;grid-column:1}.card>summary{grid-template-columns:1fr}.chev{display:none}dl{grid-template-columns:1fr}dt{margin-top:4px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <div class="eyebrow">Norm Explorer</div>
+    <h1><span data-en>China AIGC legal clauses → controls</span><span data-zh>中国 AIGC 法条 → 控制项</span></h1>
+    <p class="lede"><span data-en>Each card traces one structured legal norm from its Chinese source clause through decomposition, machine-readable controls, automation level and evaluated example cases. Generated from repository data.</span><span data-zh>每张卡片追溯一条结构化法律规范：从中文原始条款，到语义拆解、机器可读控制项、自动化程度，再到经评估的示例用例。内容均由仓库数据生成。</span></p>
+    <div class="meta" id="meta"></div>
+  </div>
+  <div class="lang"><button id="b-en" class="on">EN</button><button id="b-zh">中文</button></div>
+</header>
+<div class="filters">
+  <div class="fgroup" id="f-src"><span class="flabel"><span data-en>Source</span><span data-zh>来源</span></span></div>
+  <div class="fgroup" id="f-lvl"><span class="flabel"><span data-en>Automation</span><span data-zh>自动化</span></span></div>
+</div>
+<div id="list"></div>
+<footer><span data-en>Research prototype. Clause excerpts are research annotations; English is a working translation, not official. Not legal advice.</span><span data-zh>研究原型。条款摘录为研究标注，英文为工作译文而非官方译本。不构成法律意见。</span> · <a href="https://github.com/yuxuancheng123-spec/china-aigc-compliance-evidence">GitHub</a> · <a href="https://yuxuan-cheng-portfolio-next.vercel.app">Portfolio</a></footer>
+</div>
+<script>
+const DATA=/*__DATA__*/null;
+const LV={fully_automatable:["fully automatable","完全可自动化"],partially_automatable:["partially automatable","部分可自动化"],human_review_required:["human review required","需人工复核"]};
+const ST={pass:"pass",fail:"fail",review:"review",not_applicable:"n/a"};
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const bi=(en,zh)=>`<span data-en>${en}</span><span data-zh>${zh}</span>`;
+const state={src:null,lvl:null};
+function chips(id,items,key){const g=document.getElementById(id);
+  const all=[{v:null,l:bi("All","全部")},...items];
+  all.forEach(it=>{const b=document.createElement("button");b.className="chip"+(it.v===null?" on":"");b.innerHTML=it.l;
+    b.onclick=()=>{state[key]=it.v;[...g.querySelectorAll(".chip")].forEach(x=>x.classList.remove("on"));b.classList.add("on");render()};g.appendChild(b)});}
+function st(s){return `<span class="st ${s}">${ST[s]||esc(s)}</span>`}
+function card(n){
+  const lvl=n.interpretation.automation_level, d=n.norm;
+  const fields=[["actor","主体",d.regulated_actor],["modality","模态",d.modality],["action","行为",d.action],["object","对象",d.object],
+    ["trigger","触发条件",d.trigger&&Object.entries(d.trigger).map(([k,v])=>`${k} = ${v}`).join("; ")],
+    ["exceptions","例外",(d.exceptions||[]).length?(d.exceptions||[]).map(e=>typeof e==="string"?e:JSON.stringify(e)).join("; "):"—"],
+    ["timing","时限",d.deadline_or_timing]];
+  const ctrls=n.controls.map(c=>`<div class="ctrl"><div class="id">${esc(c.control_id)}</div>
+    <div style="font-size:12px;margin-top:2px">${esc(c.objective)}</div>
+    <div class="prof"><span>${esc(c.component)}</span><span>${esc(c.derivation)}</span>${c.human_review_key?`<span>review_key: ${esc(c.human_review_key)}</span>`:""}</div>
+    <code class="expr">${esc(c.expression)}</code></div>`).join("");
+  const autos=n.controls.map(c=>`<div style="margin:4px 0"><span class="m">${esc(c.control_id)}</span> <span class="lvl ${c.automation_level}">${bi(LV[c.automation_level][0],LV[c.automation_level][1])}</span>
+    <div class="prof">${Object.entries(c.automation_profile).map(([k,v])=>`<span>${esc(k)}: ${esc(v)}</span>`).join("")}</div></div>`).join("");
+  const cases=n.controls.flatMap(c=>c.outcomes.map(o=>({...o,cid:c.control_id})));
+  const caseHtml=cases.length?cases.map(o=>`<div class="case"><div class="m">${esc(o.case_id)}</div><div class="cdesc">${esc(o.description)}${o.review_reason?` <span class="m" style="color:var(--warn)">· ${esc(o.review_reason)}</span>`:""}</div>
+    <div class="res"><span class="arrow">${bi("machine","机器")}</span>${st(o.machine)}<span class="arrow">→ ${bi("final","最终")}</span>${st(o.final)}${o.final===o.expected?'<span class="okmark" title="matches expected">✓</span>':'<span class="badmark">✗</span>'}</div></div>`).join("")
+    :`<div class="none">${bi("No validation case covers this norm yet.","暂无覆盖此规范的验证用例。")}</div>`;
+  return `<details class="card"><summary>
+    <span class="id">${esc(n.norm_id)}</span>
+    <span class="ctitle">${bi(esc(n.title_en),esc(n.title_zh))} · ${esc(n.article)}</span>
+    <span class="csub">${esc(d.regulated_actor)} · <b style="font-weight:500">${esc(d.modality)}</b> · ${esc(d.action)}</span>
+    <span class="right"><span class="lvl ${lvl}">${bi(LV[lvl][0],LV[lvl][1])}</span><span class="chev"></span></span></summary>
+  <div class="tl">
+   <div class="step"><div class="sh">01 · ${bi("Source clause","原始条款")}</div>
+     <div class="quote" lang="zh">${esc(n.text_zh)}</div>
+     <div class="tr" data-en>${esc(n.text_en)}</div>
+     <dl><dt>${bi("Instrument","文件")}</dt><dd>${esc(n.title_zh)} · ${esc(n.article)} <span class="m">${esc(n.source_id)}</span></dd>
+     <dt>${bi("Authority","发布机关")}</dt><dd>${esc(n.authority)}</dd>
+     <dt>${bi("Effective","施行日期")}</dt><dd class="m">${esc(n.effective)}</dd>
+     <dt>${bi("Source","来源")}</dt><dd><a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.url)}</a></dd>
+     <dt>SHA-256</dt><dd><span class="hash">${esc(n.sha256)}</span> ${n.sha256_matches?`<span class="okmark">✓ ${bi("matches excerpt","与摘录一致")}</span>`:`<span class="badmark">✗ ${bi("mismatch","不一致")}</span>`}</dd>
+     <dt>${bi("Verification","核验状态")}</dt><dd class="m">${esc(n.verification)}</dd></dl></div>
+   <div class="step"><div class="sh">02 · ${bi("Decomposed norm","语义拆解")}</div>
+     <dl>${fields.map(([e,z,v])=>`<dt>${bi(e,z)}</dt><dd class="m">${esc(v)}</dd>`).join("")}
+     <dt>${bi("ambiguity","模糊程度")}</dt><dd class="m">${esc(n.interpretation.ambiguity_level)}</dd>
+     <dt>${bi("evidence","证据")}</dt><dd class="m">${esc(n.evidence.evidence_type)}${(n.evidence.required_fields||[]).length?" · "+n.evidence.required_fields.map(esc).join(", "):""}</dd>
+     <dt>${bi("review","复核")}</dt><dd class="m">author: ${esc(n.review.author_review_status)} · legal expert: ${esc(n.review.legal_expert_review_status)}</dd></dl>
+     <div class="tr" style="margin-top:4px">${esc(n.interpretation.reviewer_note)}</div></div>
+   <div class="step"><div class="sh">03 · ${bi("Machine-readable control","机器可读控制项")} (${n.controls.length})</div>${ctrls}</div>
+   <div class="step"><div class="sh">04 · ${bi("Automation level","自动化程度")}</div>${autos}</div>
+   <div class="step"><div class="sh">05 · ${bi("Example outcomes","示例结果")} (${cases.length})</div>${caseHtml}</div>
+  </div></details>`;}
+function render(){const list=document.getElementById("list");
+  const ns=DATA.norms.filter(n=>(!state.src||n.source_id===state.src)&&(!state.lvl||n.controls.some(c=>c.automation_level===state.lvl)||n.interpretation.automation_level===state.lvl));
+  list.innerHTML=ns.length?ns.map(card).join(""):`<div class="empty">${bi("No norms match.","没有匹配的规范。")}</div>`;}
+const c=DATA.counts;
+document.getElementById("meta").innerHTML=`${c.sources} ${bi("sources","份来源")} · ${c.norms} ${bi("norms","条规范")} · ${c.controls} ${bi("controls","个控制项")} · ${c.cases} ${bi("validation cases","个验证用例")}`;
+chips("f-src",DATA.sources.map(s=>({v:s.id,l:`<span class="m">${esc(s.id)}</span>`})),"src");
+chips("f-lvl",Object.keys(LV).map(k=>({v:k,l:bi(LV[k][0],LV[k][1])})),"lvl");
+function setLang(l){document.documentElement.lang=l;document.getElementById("b-en").classList.toggle("on",l==="en");document.getElementById("b-zh").classList.toggle("on",l==="zh");try{localStorage.setItem("ne-lang",l)}catch(e){}}
+document.getElementById("b-en").onclick=()=>setLang("en");document.getElementById("b-zh").onclick=()=>setLang("zh");
+setLang(new URLSearchParams(location.search).get("lang")||(()=>{try{return localStorage.getItem("ne-lang")}catch(e){}})()||"en");
+render();
+if(location.hash==="#open")document.querySelector(".card")?.setAttribute("open","");
+</script>
+</body>
+</html>
