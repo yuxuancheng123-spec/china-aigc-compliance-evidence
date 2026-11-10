@@ -67,25 +67,29 @@
   before_fix_9694fb3: review
   expected: review
 - case_id: complaint_record_no_review
-  control_id: CTRL-AIGC-COMPLAINT-MECHANISM
-  description: Complaint disclosed and resolved, no timeliness review.
+  control_id: CTRL-AIGC-COMPLAINT-HANDLING
+  description: Complaint accepted, handled, and answered, but no timeliness (及时) review. Re-expressed for the split handling
+    control.
   evidence:
+    service_provided_to_public_in_prc: true
     complaint_received: true
-    complaint_process_disclosed: true
-    feedback_time_limit_disclosed: true
-    complaint_status: resolved
-    complaint_received_at: '2026-01-01'
-    complaint_resolved_at: '2026-02-10'
+    complaint_accepted: true
+    complaint_handled: true
+    handling_result_fed_back: true
   before_fix_9694fb3: review
   expected: review
 - case_id: complaint_none
   control_id: CTRL-AIGC-COMPLAINT-MECHANISM
-  description: 'No complaint received. Known scope limitation: the ongoing mechanism duty under GENAI Article 15 is not yet
-    split from per-complaint handling.'
+  description: No complaint received. Before the split, the whole Article 15 control was skipped; the standing mechanism duty
+    now still applies and awaits its convenience review.
   evidence:
+    service_provided_to_public_in_prc: true
     complaint_received: false
+    complaint_entry_point_available: true
+    complaint_process_disclosed: true
+    feedback_time_limit_disclosed: true
   before_fix_9694fb3: not_applicable
-  expected: not_applicable
+  expected: review
 - case_id: confirmed_outside_scenario
   control_id: CTRL-AIGC-VISIBLE-LABEL-EXISTENCE
   description: Scenario value and its completed confirmation are both false while the trigger requires true.
@@ -126,31 +130,30 @@
   expected: fail
 - case_id: gb_two_keys_absent
   control_id: CTRL-GB-METADATA-FIELDS
-  description: Two dissemination metadata keys absent.
+  description: Two dissemination metadata keys absent. Evaluated at first write.
   evidence:
     output_is_ai_generated: true
     file_supports_metadata: true
     generated_content_attribute: '1'
     service_provider_name_or_code: P
     content_id: I
-    content_production_elements: local
+    metadata_write_stage: first_write
   before_fix_9694fb3: review
   expected: review
 - case_id: gb_two_keys_null
   control_id: CTRL-GB-METADATA-FIELDS
-  description: 'Two dissemination metadata keys present but null. Open issue: stage semantics of dissemination fields under
-    GB 45438-2025 Appendix E are not yet modelled.'
+  description: Two dissemination metadata keys present but null. Evaluated at first write.
   evidence:
     output_is_ai_generated: true
     file_supports_metadata: true
     generated_content_attribute: '1'
     service_provider_name_or_code: P
     content_id: I
-    content_production_elements: local
     dissemination_service_provider_code: null
     dissemination_content_id: null
+    metadata_write_stage: first_write
   before_fix_9694fb3: pass
-  expected: pass
+  expected: fail
 - case_id: metadata_empty_strings
   control_id: CTRL-AIGC-METADATA-LABEL
   description: Three base metadata fields are empty strings.
@@ -184,7 +187,7 @@
   expected: review
 - case_id: prompt_without_consent_prompt
   control_id: CTRL-DEEPSYN-FACE-VOICE-USER-PROMPT
-  description: Prompt told the user to inform the edited person but not to obtain separate consent (Deep Synthesis Art. 14(2)).
+  description: Prompt told the user to inform the edited person but not to obtain separate consent (Deep Synthesis Art. 14(2)). The feature-scope review says pass, but a reviewer pass cannot overturn the failed evidence test, so the control stays in review.
   evidence:
     deep_synthesis_face_or_voice_editing_feature: true
     user_notified_to_inform_edited_person: true
@@ -197,4 +200,4 @@
         reviewer_role: compliance_reviewer
         reviewed_at: '2026-07-15'
   before_fix_9694fb3: null
-  expected: fail
+  expected: review

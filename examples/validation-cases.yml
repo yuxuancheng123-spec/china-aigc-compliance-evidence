@@ -115,12 +115,14 @@
   expected: {CTRL-PIPL-SEPARATE-CONSENT: pass}
 
 - case_id: CASE-FAIL-PIPL-CONSENT
-  description: Missing separate consent fails once the sensitive-data scope is confirmed.
+  description: Missing separate consent fails once the sensitive-data scope is confirmed. The keyed reviewer confirms the negative machine finding.
   evidence:
     processing_sensitive_personal_information: true
     separate_consent_present: false
     human_confirmations:
       processing_sensitive_personal_information: {confirmed: true, value: true, reviewer_role: privacy_reviewer, reviewed_at: '2026-07-15'}
+    human_reviews:
+      sensitive_information_scope: {completed: true, result: fail, reviewer_role: compliance_reviewer, reviewed_at: '2026-11-10'}
   expected: {CTRL-PIPL-SEPARATE-CONSENT: fail}
 
 - case_id: CASE-PROMPT-PASS-ASSURANCE-REVIEW
@@ -135,11 +137,13 @@
   expected: {CTRL-DEEPSYN-FACE-VOICE-USER-PROMPT: pass, CTRL-DEEPSYN-FACE-VOICE-CONSENT-ASSURANCE: review}
 
 - case_id: CASE-FAIL-DERIVED-CONSENT-ASSURANCE
-  description: A derived assurance record with explicit missing evidence fails.
+  description: A derived assurance record with explicit missing evidence fails. The keyed reviewer confirms the negative machine finding.
   evidence:
     deep_synthesis_face_or_voice_editing_feature: true
     edited_person_separate_consent_evidence_present: false
     consent_scope_reviewed: false
+    human_reviews:
+      consent_assurance: {completed: true, result: fail, reviewer_role: compliance_reviewer, reviewed_at: '2026-11-10'}
   expected: {CTRL-DEEPSYN-FACE-VOICE-CONSENT-ASSURANCE: fail}
 
 - case_id: CASE-REVIEW-FILING-APPLICABILITY-NOT-CONFIRMED
@@ -164,7 +168,7 @@
   expected: {CTRL-AIGC-MODEL-FILING: pass}
 
 - case_id: CASE-FAIL-FILING
-  description: Required filing that is missing fails after confirmed applicability.
+  description: Required filing that is missing fails after confirmed applicability. The keyed reviewer confirms the negative machine finding.
   evidence:
     service_is_public_facing: true
     service_has_public_opinion_or_social_mobilization_capacity: true
@@ -175,6 +179,8 @@
       service_has_public_opinion_or_social_mobilization_capacity: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
       filing_applicability_reviewed: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
       filing_required: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+    human_reviews:
+      filing_applicability: {completed: true, result: fail, reviewer_role: compliance_reviewer, reviewed_at: '2026-11-10'}
   expected: {CTRL-AIGC-MODEL-FILING: fail}
 
 - case_id: CASE-PASS-SAFETY-KEYED-REVIEW
@@ -186,20 +192,44 @@
   expected: {CTRL-AIGC-CONTENT-SAFETY-PRINCIPLE: pass}
 
 - case_id: CASE-PASS-COMPLAINT-AFTER-REVIEW
-  description: Complaint disclosures and a timeliness review support a final result.
+  description: A standing mechanism and a handled complaint each close only after their own keyed reviews (convenience and timeliness).
   evidence:
-    complaint_received: true
+    service_provided_to_public_in_prc: true
+    complaint_entry_point_available: true
     complaint_process_disclosed: true
     feedback_time_limit_disclosed: true
-    complaint_status: acknowledged
+    complaint_received: true
+    complaint_accepted: true
+    complaint_handled: true
+    handling_result_fed_back: true
     human_reviews:
-      complaint_timeliness: {completed: true, result: pass, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
-  expected: {CTRL-AIGC-COMPLAINT-MECHANISM: pass}
+      complaint_entry_convenience: {completed: true, result: pass, reviewer_role: compliance_reviewer, reviewed_at: '2026-11-10'}
+      complaint_timeliness: {completed: true, result: pass, reviewer_role: compliance_reviewer, reviewed_at: '2026-11-10'}
+  expected: {CTRL-AIGC-COMPLAINT-MECHANISM: pass, CTRL-AIGC-COMPLAINT-HANDLING: pass}
 
 - case_id: CASE-NOT-APPLICABLE-COMPLAINT
-  description: No complaint is outside complaint-record scope.
-  evidence: {complaint_received: false}
-  expected: {CTRL-AIGC-COMPLAINT-MECHANISM: not_applicable}
+  description: With no complaint received, per-complaint handling does not apply, but the standing mechanism duty still does.
+  evidence:
+    service_provided_to_public_in_prc: true
+    complaint_entry_point_available: true
+    complaint_process_disclosed: true
+    feedback_time_limit_disclosed: true
+    complaint_received: false
+  expected: {CTRL-AIGC-COMPLAINT-HANDLING: not_applicable, CTRL-AIGC-COMPLAINT-MECHANISM: review}
+
+- case_id: CASE-REVIEW-UNCONFIRMED-NEGATIVE-FINDING
+  description: A missing filing is a machine finding; on a review-gated control it stays in review until the keyed reviewer confirms it.
+  evidence:
+    service_is_public_facing: true
+    service_has_public_opinion_or_social_mobilization_capacity: true
+    filing_applicability_reviewed: true
+    filing_required: true
+    filing_status: missing
+    human_confirmations:
+      service_has_public_opinion_or_social_mobilization_capacity: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+      filing_applicability_reviewed: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+      filing_required: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+  expected: {CTRL-AIGC-MODEL-FILING: review}
 
 - case_id: CASE-PASS-DEEPSYN-CONFUSION-LABEL-AFTER-REVIEW
   description: Confirmed confusion risk, label evidence, and a keyed prominence review complete the deep synthesis label conclusion.
@@ -224,13 +254,15 @@
   expected: {CTRL-DEEPSYN-CONFUSION-LABEL: review}
 
 - case_id: CASE-FAIL-DEEPSYN-CONFUSION-LABEL-MISSING
-  description: Missing label evidence fails once confusion risk is human-confirmed.
+  description: Missing label evidence fails once confusion risk is human-confirmed. The keyed reviewer confirms the negative machine finding.
   evidence:
     deep_synthesis_content: true
     content_may_confuse_public: true
     visible_label_present: false
     human_confirmations:
       content_may_confuse_public: {confirmed: true, value: true, reviewer_role: compliance_reviewer, reviewed_at: '2026-07-15'}
+    human_reviews:
+      deep_synthesis_label_prominence: {completed: true, result: fail, reviewer_role: compliance_reviewer, reviewed_at: '2026-11-10'}
   expected: {CTRL-DEEPSYN-CONFUSION-LABEL: fail}
   inspired_by:
     - case_name: Creator v. face-swap app operator (AI face-swap templates)
@@ -247,14 +279,14 @@
     zh: 根据公开报道的事实改编，不构成法律结论。
 
 - case_id: CASE-PASS-GB-METADATA-FIELDS
-  description: A metadata-capable file with the selected technical metadata fields passes the field-implementation check.
-  evidence: {output_is_ai_generated: true, file_supports_metadata: true, generated_content_attribute: ai_generated, service_provider_name_or_code: synthetic-provider-001, content_id: CONTENT-101, content_production_elements: synthetic-elements-001, dissemination_service_provider_code: null, dissemination_content_id: null}
+  description: At first write, the five implicit-label elements are non-empty and the propagator fields repeat the producer fields.
+  evidence: {output_is_ai_generated: true, file_supports_metadata: true, metadata_write_stage: first_write, generated_content_attribute: ai_generated, service_provider_name_or_code: synthetic-provider-001, content_id: CONTENT-101, dissemination_service_provider_code: synthetic-provider-001, dissemination_content_id: CONTENT-101}
   expected: {CTRL-GB-METADATA-FIELDS: pass}
   grounding_note: Synthetic. No reported judgment citing GB 45438-2025 was identified, so this case is not grounded in a court decision.
 
-- case_id: CASE-FAIL-GB-METADATA-PRODUCTION-ELEMENTS
-  description: A missing content-production-elements field fails the selected technical metadata check.
-  evidence: {output_is_ai_generated: true, file_supports_metadata: true, generated_content_attribute: ai_generated, service_provider_name_or_code: synthetic-provider-001, content_id: CONTENT-102, content_production_elements: null, dissemination_service_provider_code: null, dissemination_content_id: null}
+- case_id: CASE-FAIL-GB-METADATA-PROPAGATOR-MISMATCH
+  description: At first write, propagator fields that differ from the producer fields fail the field check.
+  evidence: {output_is_ai_generated: true, file_supports_metadata: true, metadata_write_stage: first_write, generated_content_attribute: ai_generated, service_provider_name_or_code: synthetic-provider-001, content_id: CONTENT-102, dissemination_service_provider_code: other-platform-009, dissemination_content_id: PROP-555}
   expected: {CTRL-GB-METADATA-FIELDS: fail}
   grounding_note: Synthetic. No reported judgment citing GB 45438-2025 was identified, so this case is not grounded in a court decision.
 

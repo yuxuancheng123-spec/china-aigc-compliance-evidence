@@ -25,11 +25,11 @@ flowchart LR
 |---|---|
 | Source legal documents ([source-index.csv](legal-corpus/source-index.csv)) | 5 |
 | Structured legal norms ([norms/](norms/)) | 11 |
-| Machine-readable controls ([clause-to-control.yml](mappings/clause-to-control.yml)) | 12 |
-| Controls by final automation level | 2 fully · 1 partially · 9 human review |
-| Validation cases ([validation-cases.yml](examples/validation-cases.yml)) | 30 |
+| Machine-readable controls ([clause-to-control.yml](mappings/clause-to-control.yml)) | 13 |
+| Controls by final automation level | 2 fully · 1 partially · 10 human review |
+| Validation cases ([validation-cases.yml](examples/validation-cases.yml)) | 31 |
 | Boundary diagnostics ([boundary-diagnostics.yml](examples/boundary-diagnostics.yml)) | 13 |
-| Test modules / test functions ([tests/](tests/)) | 10 / 54 (plus 13 parametrized boundary cases) |
+| Test modules / test functions ([tests/](tests/)) | 10 / 56 (plus 13 parametrized boundary cases) |
 
 A research framework for transforming selected Chinese AIGC legal provisions into traceable, reviewable, and machine-readable compliance controls.
 

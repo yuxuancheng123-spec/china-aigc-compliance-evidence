@@ -142,7 +142,7 @@
   norm_id: CN-GB-META-001
   control_component: metadata_field_implementation
   control_derivation_type: technical_implementation_control
-  control_objective: Synthetic-content files that support metadata should include the selected technical metadata fields used by the prototype mapping.
+  control_objective: Synthetic-content files that support metadata should carry non-empty values for the five GB 45438-2025 implicit-label elements, mapped locally as Label=generated_content_attribute, ContentProducer=service_provider_name_or_code, ProduceID=content_id, ContentPropagator=dissemination_service_provider_code, PropagateID=dissemination_content_id. At first write the propagator fields repeat the producer fields. String encoding and serialisation format are not checked.
   applicability:
     conditions:
       output_is_ai_generated: true
@@ -150,14 +150,14 @@
   evidence:
     evidence_type: metadata_inspection
     required_fields:
+      - metadata_write_stage
       - generated_content_attribute
       - service_provider_name_or_code
       - content_id
-      - content_production_elements
       - dissemination_service_provider_code
       - dissemination_content_id
   test:
-    expression: generated_content_attribute is not null and generated_content_attribute != '' and service_provider_name_or_code is not null and service_provider_name_or_code != '' and content_id is not null and content_id != '' and content_production_elements is not null and content_production_elements != ''
+    expression: generated_content_attribute is not null and generated_content_attribute != '' and service_provider_name_or_code is not null and service_provider_name_or_code != '' and content_id is not null and content_id != '' and dissemination_service_provider_code is not null and dissemination_service_provider_code != '' and dissemination_content_id is not null and dissemination_content_id != '' and (metadata_write_stage != 'first_write' or (dissemination_service_provider_code == service_provider_name_or_code and dissemination_content_id == content_id))
   outcomes:
     pass: Required metadata fields are present.
     fail: Required metadata fields are absent.
@@ -341,7 +341,7 @@
   norm_id: CN-AIGC-FILING-001
   control_component: filing_applicability_and_status
   control_derivation_type: direct_legal_requirement
-  control_objective: Public-facing generative AI services with public opinion attributes or social mobilization capacity should have reviewed filing applicability and registered filing metadata when filing is required.
+  control_objective: Public-facing generative AI services with public opinion attributes or social mobilization capacity should have reviewed filing applicability and registered initial algorithm-filing metadata when filing is required. Security assessment and change or cancellation filings under the same article are outside this control.
   applicability:
     conditions:
       service_is_public_facing: true
@@ -422,25 +422,69 @@
 
 - control_id: CTRL-AIGC-COMPLAINT-MECHANISM
   norm_id: CN-AIGC-COMPLAINT-001
-  control_component: process_and_feedback_disclosure
+  control_component: standing_mechanism
   control_derivation_type: direct_legal_requirement
-  control_objective: Complaints should be linked to a disclosed handling process, feedback time limit, and tracked handling result.
+  control_objective: A public-facing generative AI service should maintain a complaint mechanism with an entry point and a published handling process and feedback time limit, whether or not any complaint has been received.
   applicability:
     conditions:
+      service_provided_to_public_in_prc: true
+  evidence:
+    evidence_type: complaint_mechanism_record
+    required_fields:
+      - complaint_entry_point_available
+      - complaint_process_disclosed
+      - feedback_time_limit_disclosed
+  test:
+    expression: complaint_entry_point_available == true and complaint_process_disclosed == true and feedback_time_limit_disclosed == true
+  outcomes:
+    pass: The entry point exists, the handling process and feedback time limit are published, and the convenience of the entry point has been reviewed.
+    fail: The reviewer confirms that the entry point, process disclosure, or time-limit disclosure is missing.
+    review: Whether the entry point is convenient (便捷), or a negative evidence finding, requires human review.
+    not_applicable: The service is not provided to the public in the PRC.
+  automation_level: human_review_required
+  automation_profile:
+    applicability: fully_automatable
+    evidence_test: fully_automatable
+    final_decision: human_review_required
+  required_human_review:
+    review_key: complaint_entry_convenience
+  traceability:
+    source_id: GENAI-2023
+    document_title_zh: 生成式人工智能服务管理暂行办法
+    document_title_en: Interim Measures for the Management of Generative AI Services
+    article: 第十五条
+    effective_date: "2023-08-15"
+    source_url: https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm
+    source_url_specificity: document_page
+    normative_fragment: 提供者应当建立健全投诉、举报机制，设置便捷的投诉、举报入口，公布处理流程和反馈时限，及时受理、处理公众投诉举报并反馈处理结果。
+    interpretation_version: "1.2"
+  review:
+    <<: *default_review
+    interpretation_version: "1.2"
+    review_date: "2026-11-10"
+
+- control_id: CTRL-AIGC-COMPLAINT-HANDLING
+  norm_id: CN-AIGC-COMPLAINT-001
+  control_component: per_complaint_handling
+  control_derivation_type: direct_legal_requirement
+  control_objective: Each received complaint should be accepted, handled, and answered with a result; whether this was timely (及时) remains a human judgment.
+  applicability:
+    conditions:
+      service_provided_to_public_in_prc: true
       complaint_received: true
   evidence:
     evidence_type: complaint_record
     required_fields:
-      - complaint_process_disclosed
-      - feedback_time_limit_disclosed
-      - complaint_status
+      - complaint_accepted
+      - complaint_handled
+      - handling_result_fed_back
   test:
-    expression: complaint_process_disclosed == true and feedback_time_limit_disclosed == true and complaint_status != 'missing'
+    expression: complaint_accepted == true and complaint_handled == true and handling_result_fed_back == true
   outcomes:
-    pass: Complaint process, feedback time limit, and complaint status are recorded.
-    fail: Complaint process or feedback time limit is not disclosed, or status is missing.
-    review: Timeliness or substantive adequacy requires human review.
-    not_applicable: No complaint was received.
+    pass: The complaint was accepted, handled, and answered, and the timeliness review is complete.
+    fail: The reviewer confirms that acceptance, handling, or feedback did not occur as required.
+    review: Timeliness or a negative evidence finding requires human review.
+    not_applicable: The service is out of scope or no complaint was received.
   automation_level: human_review_required
   automation_profile:
     applicability: fully_automatable
@@ -456,9 +500,12 @@
     effective_date: "2023-08-15"
     source_url: https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm
     source_url_specificity: document_page
-    normative_fragment: 提供者应建立健全投诉、举报机制，设置便捷入口，公布处理流程和反馈时限，及时受理、处理并反馈结果。
-    interpretation_version: "1.1"
-  review: *default_review
+    normative_fragment: 提供者应当建立健全投诉、举报机制，设置便捷的投诉、举报入口，公布处理流程和反馈时限，及时受理、处理公众投诉举报并反馈处理结果。
+    interpretation_version: "1.2"
+  review:
+    <<: *default_review
+    interpretation_version: "1.2"
+    review_date: "2026-11-10"
 
 - control_id: CTRL-DEEPSYN-CONFUSION-LABEL
   norm_id: CN-DEEPSYN-LABEL-001

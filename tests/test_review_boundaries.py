@@ -41,3 +41,17 @@ def test_unattributed_human_review_cannot_close_a_control() -> None:
         case = next(c for c in CASES if c["case_id"] == case_id)
         assert not validate_runtime_evidence(case["evidence"])["valid"]
         assert evaluate_control(CONTROLS[case["control_id"]], case["evidence"])["final_status"] == "review"
+
+
+def test_reviewer_pass_cannot_overturn_a_failed_evidence_test() -> None:
+    case = next(c for c in CASES if c["case_id"] == "prompt_without_consent_prompt")
+    result = evaluate_control(CONTROLS[case["control_id"]], case["evidence"])
+    assert result["machine_result"] == "fail"
+    assert result["final_status"] == "review"
+
+
+def test_standing_complaint_mechanism_applies_without_complaints() -> None:
+    case = next(c for c in CASES if c["case_id"] == "complaint_none")
+    assert case["before_fix_9694fb3"] == "not_applicable"
+    assert evaluate_control(CONTROLS["CTRL-AIGC-COMPLAINT-MECHANISM"], case["evidence"])["final_status"] == "review"
+    assert evaluate_control(CONTROLS["CTRL-AIGC-COMPLAINT-HANDLING"], case["evidence"])["final_status"] == "not_applicable"

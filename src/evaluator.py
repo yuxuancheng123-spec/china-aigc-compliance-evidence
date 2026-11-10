@@ -235,6 +235,20 @@ def evaluate_control(control: dict, evidence: dict[str, Any]) -> dict:
         exception_result = _exception_applies(control, evidence, confirmations)
         if exception_result:
             return exception_result
+        if control.get("automation_profile", {}).get("final_decision") == "human_review_required":
+            # Negative-result policy: on a review-gated control, a failed evidence test is a
+            # machine finding, not a closed conclusion; absent evidence does not by itself establish
+            # which duty was breached. The keyed reviewer may confirm it (fail). A reviewer "pass"
+            # cannot silently overturn a failed test: the evidence record must be corrected instead.
+            result = _review_result(control, evidence, "fail", confirmations)
+            if result["final_status"] == "pass":
+                return _base_result(
+                    control, "review", control["outcomes"]["review"], machine_result="fail",
+                    requires_human_confirmation=True, confirmations_checked=confirmations,
+                    human_review_key=result.get("human_review_key"), human_review_completed=True,
+                    review_reason="reviewer conclusion 'pass' conflicts with a failed evidence test; correct the evidence record or record a negative conclusion",
+                )
+            return result
         return _base_result(control, "fail", control["outcomes"]["fail"], machine_result="fail", confirmations_checked=confirmations)
 
     if control.get("automation_profile", {}).get("final_decision") == "automated_after_confirmation":

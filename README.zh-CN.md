@@ -25,10 +25,11 @@ flowchart LR
 |---|---|
 | 法规来源文件（[source-index.csv](legal-corpus/source-index.csv)） | 5 |
 | 结构化法律规范（[norms/](norms/)） | 11 |
-| 机器可读控制项（[clause-to-control.yml](mappings/clause-to-control.yml)） | 12 |
-| 按最终自动化程度划分的控制项 | 完全自动 2 · 部分自动 1 · 需人工复核 9 |
-| 验证用例（[validation-cases.yml](examples/validation-cases.yml)） | 30 |
-| 测试模块 / 测试函数（[tests/](tests/)） | 8 / 46 |
+| 机器可读控制项（[clause-to-control.yml](mappings/clause-to-control.yml)） | 13 |
+| 按最终自动化程度划分的控制项 | 完全自动 2 · 部分自动 1 · 需人工复核 10 |
+| 验证用例（[validation-cases.yml](examples/validation-cases.yml)） | 31 |
+| 边界诊断（[boundary-diagnostics.yml](examples/boundary-diagnostics.yml)） | 13 |
+| 测试模块 / 测试函数（[tests/](tests/)） | 10 / 56（另含 13 个参数化边界用例） |
 
 本项目是一个研究框架，用于把选定的中国 AIGC 法律条款转化为可追溯、可复核、机器可读的合规控制项。
 

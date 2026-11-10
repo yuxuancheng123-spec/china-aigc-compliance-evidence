@@ -12,7 +12,14 @@ Targeted counterexamples (`examples/boundary-diagnostics.yml`) exposed defects t
 - **Source fidelity.** `CN-AIGC-SAFETY-001` previously stored a condensed paraphrase as `source_text_zh`. It now stores the verbatim lead sentence and item (1) of Article 4 from the official CAC text, with a new excerpt hash.
 - **Annotation drift.** Eight `clause-decomposition.csv` entries had drifted from the canonical norm artifacts (actor, action, object). They are synchronised, and the validator now checks these fields.
 
-Still open: the GENAI Article 15 complaint control does not yet separate the ongoing mechanism duty from per-complaint handling; dissemination metadata fields under GB 45438-2025 Appendix E are not yet modelled by lifecycle stage; `content_production_elements` is a local field, not a named element of the standard; Article 17 change and cancellation filings are not modelled; and the policy for negative results on review-gated controls is not yet specified.
+## Legal design decisions (interpretation version 1.2 where changed)
+
+- **Complaint duty split (GENAI Article 15).** `CTRL-AIGC-COMPLAINT-MECHANISM` now covers the standing duty (entry point, published process and feedback time limit) and applies whether or not a complaint has arrived; convenience (便捷) goes to keyed review. The new `CTRL-AIGC-COMPLAINT-HANDLING` covers acceptance, handling, and feedback for each complaint; timeliness (及时) goes to keyed review.
+- **GB 45438-2025 fields.** `content_production_elements` was removed. Labeling Measures Article 5 uses 制作要素信息 as the umbrella term for attribute, provider, and content ID, not as a separate element. The control now checks five non-empty elements mapped to Label, ContentProducer, ProduceID, ContentPropagator, and PropagateID. At `metadata_write_stage: first_write`, the propagator fields must repeat the producer fields; this follows the author's reading of Appendix E Note 1 and should be re-verified against the standard text.
+- **Filing scope (GENAI Article 17).** The control is explicitly limited to initial algorithm-filing status. Security assessment and change or cancellation filings are outside it, and the timing field no longer claims "before launch".
+- **Negative-result policy.** On a control whose final decision requires human review, a failed evidence test now yields `machine_result: fail, final_status: review` until the keyed reviewer confirms the negative finding. A reviewer "pass" cannot overturn a failed evidence test; the evidence record must be corrected instead. Fully automatable and confirmation-gated controls still fail directly.
+
+Still open: string encoding and serialisation of GB metadata are not checked; dissemination-stage rewrites beyond first write are not modelled.
 
 ## Legal source accuracy updates
 
