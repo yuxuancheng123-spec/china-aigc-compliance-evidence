@@ -1,0 +1,200 @@
+# Boundary diagnostics: targeted counterexamples for review boundaries.
+# Cases 1-11 were run against commit 9694fb3 (before_fix_9694fb3) and exposed defects that
+# the 21 designed validation cases did not. Two cases were added with the fixes.
+# `expected` is the current evaluator outcome; it encodes the intended routing, not legal truth.
+# before_fix_9694fb3: null means the case did not exist at that commit.
+- case_id: prominence_no_review
+  control_id: CTRL-AIGC-VISIBLE-LABEL-PROMINENCE
+  description: Label present and scenario confirmed, but no prominence review.
+  evidence:
+    output_is_ai_generated: true
+    output_is_user_facing: true
+    output_matches_explicit_label_scenario: true
+    visible_label_present: true
+    human_confirmations:
+      output_matches_explicit_label_scenario:
+        confirmed: true
+        value: true
+        reviewer_role: researcher
+        reviewed_at: '2026-10-16'
+  before_fix_9694fb3: review
+  expected: review
+- case_id: prominence_minimal_review_pass
+  control_id: CTRL-AIGC-VISIBLE-LABEL-PROMINENCE
+  description: Prominence review record has only completed/result (pass), no reviewer attribution.
+  evidence:
+    output_is_ai_generated: true
+    output_is_user_facing: true
+    output_matches_explicit_label_scenario: true
+    visible_label_present: true
+    human_confirmations:
+      output_matches_explicit_label_scenario:
+        confirmed: true
+        value: true
+        reviewer_role: researcher
+        reviewed_at: '2026-10-16'
+    human_reviews:
+      label_prominence:
+        completed: true
+        result: pass
+  before_fix_9694fb3: pass
+  expected: review
+- case_id: prominence_minimal_review_fail
+  control_id: CTRL-AIGC-VISIBLE-LABEL-PROMINENCE
+  description: Prominence review record has only completed/result (fail), no reviewer attribution.
+  evidence:
+    output_is_ai_generated: true
+    output_is_user_facing: true
+    output_matches_explicit_label_scenario: true
+    visible_label_present: true
+    human_confirmations:
+      output_matches_explicit_label_scenario:
+        confirmed: true
+        value: true
+        reviewer_role: researcher
+        reviewed_at: '2026-10-16'
+    human_reviews:
+      label_prominence:
+        completed: true
+        result: fail
+  before_fix_9694fb3: fail
+  expected: review
+- case_id: safety_no_review
+  control_id: CTRL-AIGC-CONTENT-SAFETY-PRINCIPLE
+  description: Content-safety applicability only; no human review.
+  evidence:
+    content_is_generated_for_user: true
+  before_fix_9694fb3: review
+  expected: review
+- case_id: complaint_record_no_review
+  control_id: CTRL-AIGC-COMPLAINT-MECHANISM
+  description: Complaint disclosed and resolved, no timeliness review.
+  evidence:
+    complaint_received: true
+    complaint_process_disclosed: true
+    feedback_time_limit_disclosed: true
+    complaint_status: resolved
+    complaint_received_at: '2026-01-01'
+    complaint_resolved_at: '2026-02-10'
+  before_fix_9694fb3: review
+  expected: review
+- case_id: complaint_none
+  control_id: CTRL-AIGC-COMPLAINT-MECHANISM
+  description: 'No complaint received. Known scope limitation: the ongoing mechanism duty under GENAI Article 15 is not yet
+    split from per-complaint handling.'
+  evidence:
+    complaint_received: false
+  before_fix_9694fb3: not_applicable
+  expected: not_applicable
+- case_id: confirmed_outside_scenario
+  control_id: CTRL-AIGC-VISIBLE-LABEL-EXISTENCE
+  description: Scenario value and its completed confirmation are both false while the trigger requires true.
+  evidence:
+    output_is_ai_generated: true
+    output_is_user_facing: true
+    output_matches_explicit_label_scenario: false
+    visible_label_present: true
+    human_confirmations:
+      output_matches_explicit_label_scenario:
+        confirmed: true
+        value: false
+        reviewer_role: researcher
+        reviewed_at: '2026-10-16'
+  before_fix_9694fb3: pass
+  expected: not_applicable
+- case_id: exception_wrong_lifecycle
+  control_id: CTRL-AIGC-VISIBLE-LABEL-EXISTENCE
+  description: Article 9 exception evidence complete, but the record is at public_dissemination.
+  evidence:
+    output_is_ai_generated: true
+    output_is_user_facing: true
+    output_matches_explicit_label_scenario: true
+    visible_label_present: false
+    human_confirmations:
+      output_matches_explicit_label_scenario:
+        confirmed: true
+        value: true
+        reviewer_role: researcher
+        reviewed_at: '2026-10-16'
+    visible_label_exception_requested: true
+    user_labeling_obligation_disclosed: true
+    user_use_responsibility_disclosed: true
+    exception_log_retained: true
+    log_retention_period_months: 6
+    lifecycle_stage: public_dissemination
+  before_fix_9694fb3: pass
+  expected: fail
+- case_id: gb_two_keys_absent
+  control_id: CTRL-GB-METADATA-FIELDS
+  description: Two dissemination metadata keys absent.
+  evidence:
+    output_is_ai_generated: true
+    file_supports_metadata: true
+    generated_content_attribute: '1'
+    service_provider_name_or_code: P
+    content_id: I
+    content_production_elements: local
+  before_fix_9694fb3: review
+  expected: review
+- case_id: gb_two_keys_null
+  control_id: CTRL-GB-METADATA-FIELDS
+  description: 'Two dissemination metadata keys present but null. Open issue: stage semantics of dissemination fields under
+    GB 45438-2025 Appendix E are not yet modelled.'
+  evidence:
+    output_is_ai_generated: true
+    file_supports_metadata: true
+    generated_content_attribute: '1'
+    service_provider_name_or_code: P
+    content_id: I
+    content_production_elements: local
+    dissemination_service_provider_code: null
+    dissemination_content_id: null
+  before_fix_9694fb3: pass
+  expected: pass
+- case_id: metadata_empty_strings
+  control_id: CTRL-AIGC-METADATA-LABEL
+  description: Three base metadata fields are empty strings.
+  evidence:
+    output_is_ai_generated: true
+    generated_content_attribute: ''
+    service_provider_name_or_code: ''
+    content_id: ''
+  before_fix_9694fb3: pass
+  expected: fail
+- case_id: exception_missing_lifecycle_stage
+  control_id: CTRL-AIGC-VISIBLE-LABEL-EXISTENCE
+  description: Article 9 exception evidence complete, but the record does not state its lifecycle stage.
+  evidence:
+    output_is_ai_generated: true
+    output_is_user_facing: true
+    output_matches_explicit_label_scenario: true
+    visible_label_present: false
+    human_confirmations:
+      output_matches_explicit_label_scenario:
+        confirmed: true
+        value: true
+        reviewer_role: researcher
+        reviewed_at: '2026-10-16'
+    visible_label_exception_requested: true
+    user_labeling_obligation_disclosed: true
+    user_use_responsibility_disclosed: true
+    exception_log_retained: true
+    log_retention_period_months: 6
+  before_fix_9694fb3: null
+  expected: review
+- case_id: prompt_without_consent_prompt
+  control_id: CTRL-DEEPSYN-FACE-VOICE-USER-PROMPT
+  description: Prompt told the user to inform the edited person but not to obtain separate consent (Deep Synthesis Art. 14(2)).
+  evidence:
+    deep_synthesis_face_or_voice_editing_feature: true
+    user_notified_to_inform_edited_person: true
+    user_prompted_to_obtain_separate_consent: false
+    user_prompt_timestamp: '2026-07-15T10:00:00Z'
+    human_reviews:
+      face_voice_feature_scope:
+        completed: true
+        result: pass
+        reviewer_role: compliance_reviewer
+        reviewed_at: '2026-07-15'
+  before_fix_9694fb3: null
+  expected: fail

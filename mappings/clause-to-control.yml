@@ -115,7 +115,7 @@
       - service_provider_name_or_code
       - content_id
   test:
-    expression: generated_content_attribute is not null and service_provider_name_or_code is not null and content_id is not null
+    expression: generated_content_attribute is not null and generated_content_attribute != '' and service_provider_name_or_code is not null and service_provider_name_or_code != '' and content_id is not null and content_id != ''
   outcomes:
     pass: Required underlying metadata label fields are populated.
     fail: One or more required underlying metadata label fields are absent.
@@ -157,7 +157,7 @@
       - dissemination_service_provider_code
       - dissemination_content_id
   test:
-    expression: generated_content_attribute is not null and service_provider_name_or_code is not null and content_id is not null and content_production_elements is not null
+    expression: generated_content_attribute is not null and generated_content_attribute != '' and service_provider_name_or_code is not null and service_provider_name_or_code != '' and content_id is not null and content_id != '' and content_production_elements is not null and content_production_elements != ''
   outcomes:
     pass: Required metadata fields are present.
     fail: Required metadata fields are absent.
@@ -270,9 +270,10 @@
     evidence_type: consent_prompt_record
     required_fields:
       - user_notified_to_inform_edited_person
+      - user_prompted_to_obtain_separate_consent
       - user_prompt_timestamp
   test:
-    expression: user_notified_to_inform_edited_person == true and user_prompt_timestamp is not null
+    expression: user_notified_to_inform_edited_person == true and user_prompted_to_obtain_separate_consent == true and user_prompt_timestamp is not null and user_prompt_timestamp != ''
   outcomes:
     pass: A provider prompt record is present for the face or voice editing feature.
     fail: Face or voice editing is offered without the required provider prompt record.

@@ -28,7 +28,8 @@ flowchart LR
 | Machine-readable controls ([clause-to-control.yml](mappings/clause-to-control.yml)) | 12 |
 | Controls by final automation level | 2 fully · 1 partially · 9 human review |
 | Validation cases ([validation-cases.yml](examples/validation-cases.yml)) | 30 |
-| Test modules / test functions ([tests/](tests/)) | 8 / 46 |
+| Boundary diagnostics ([boundary-diagnostics.yml](examples/boundary-diagnostics.yml)) | 13 |
+| Test modules / test functions ([tests/](tests/)) | 10 / 54 (plus 13 parametrized boundary cases) |
 
 A research framework for transforming selected Chinese AIGC legal provisions into traceable, reviewable, and machine-readable compliance controls.
 

@@ -58,7 +58,7 @@ def test_article_9_exception_is_scoped_to_provider_delivery() -> None:
     visible = next(control for control in load_controls() if control["control_id"] == "CTRL-AIGC-VISIBLE-LABEL-EXISTENCE")
     result = evaluate_control(visible, {
         "output_is_ai_generated": True, "output_is_user_facing": True, "output_matches_explicit_label_scenario": True,
-        "visible_label_present": False, "visible_label_exception_requested": True,
+        "visible_label_present": False, "lifecycle_stage": "delivery_to_requesting_user", "visible_label_exception_requested": True,
         "user_labeling_obligation_disclosed": True, "user_use_responsibility_disclosed": True,
         "exception_log_retained": True, "log_retention_period_months": 6,
         "human_confirmations": {"output_matches_explicit_label_scenario": _confirmation()},
@@ -86,7 +86,7 @@ def test_article_14_direct_and_derived_controls_are_distinct() -> None:
     controls = {control["control_id"]: control for control in load_controls()}
     assert controls["CTRL-DEEPSYN-FACE-VOICE-USER-PROMPT"]["control_derivation_type"] == "direct_legal_requirement"
     assert controls["CTRL-DEEPSYN-FACE-VOICE-CONSENT-ASSURANCE"]["control_derivation_type"] == "derived_organizational_control"
-    evidence = {"deep_synthesis_face_or_voice_editing_feature": True, "user_notified_to_inform_edited_person": True, "user_prompt_timestamp": "2026-07-15T10:00:00Z", "human_reviews": {"face_voice_feature_scope": {"completed": True, "result": "pass"}}}
+    evidence = {"deep_synthesis_face_or_voice_editing_feature": True, "user_notified_to_inform_edited_person": True, "user_prompted_to_obtain_separate_consent": True, "user_prompt_timestamp": "2026-07-15T10:00:00Z", "human_reviews": {"face_voice_feature_scope": {"completed": True, "result": "pass", "reviewer_role": "compliance_reviewer", "reviewed_at": "2026-07-15"}}}
     assert evaluate_control(controls["CTRL-DEEPSYN-FACE-VOICE-USER-PROMPT"], evidence)["status"] == "pass"
     assert evaluate_control(controls["CTRL-DEEPSYN-FACE-VOICE-CONSENT-ASSURANCE"], evidence)["status"] == "review"
 
