@@ -5,40 +5,109 @@
   "properties": {
     "human_confirmations": {
       "type": "object",
-      "additionalProperties": {"$ref": "#/$defs/human_confirmation_record"}
+      "additionalProperties": {
+        "$ref": "#/$defs/human_confirmation_record"
+      }
     },
     "human_reviews": {
       "type": "object",
-      "additionalProperties": {"$ref": "#/$defs/human_review_record"}
+      "additionalProperties": {
+        "$ref": "#/$defs/human_review_record"
+      }
+    },
+    "lifecycle_stage": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Lifecycle stage of the runtime record; exception paths that declare a lifecycle_stage apply only when it matches."
     }
   },
   "additionalProperties": true,
   "$defs": {
     "human_confirmation_record": {
       "type": "object",
-      "required": ["confirmed", "value", "reviewer_role", "reviewed_at"],
+      "required": [
+        "confirmed",
+        "value",
+        "reviewer_role",
+        "reviewed_at"
+      ],
       "properties": {
-        "confirmed": {"const": true},
+        "confirmed": {
+          "const": true
+        },
         "value": {},
-        "reviewer_role": {"type": "string", "minLength": 1},
-        "reviewer_name": {"type": ["string", "null"]},
-        "reviewed_at": {"type": "string", "minLength": 1},
-        "review_note": {"type": "string"}
+        "reviewer_role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewer_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reviewed_at": {
+          "type": "string",
+          "minLength": 1
+        },
+        "review_note": {
+          "type": "string"
+        }
       },
       "additionalProperties": false
     },
     "human_review_record": {
       "type": "object",
-      "required": ["completed", "result"],
+      "required": [
+        "completed",
+        "result"
+      ],
       "properties": {
-        "completed": {"type": "boolean"},
-        "result": {"enum": ["pass", "fail", null]},
-        "reviewer_role": {"type": "string"},
-        "reviewer_name": {"type": ["string", "null"]},
-        "reviewed_at": {"type": "string"},
-        "review_note": {"type": "string"}
+        "completed": {
+          "type": "boolean"
+        },
+        "result": {
+          "enum": [
+            "pass",
+            "fail",
+            null
+          ]
+        },
+        "reviewer_role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewer_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reviewed_at": {
+          "type": "string",
+          "minLength": 1
+        },
+        "review_note": {
+          "type": "string"
+        }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "if": {
+        "properties": {
+          "completed": {
+            "const": true
+          }
+        },
+        "required": [
+          "completed"
+        ]
+      },
+      "then": {
+        "required": [
+          "reviewer_role",
+          "reviewed_at"
+        ]
+      }
     }
   }
 }

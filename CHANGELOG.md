@@ -1,5 +1,19 @@
 # Changelog
 
+## Review-boundary fixes (after commit 9694fb3)
+
+Targeted counterexamples (`examples/boundary-diagnostics.yml`) exposed defects that the designed validation cases did not. Each is now pinned by `tests/test_review_boundaries.py`.
+
+- **Confirmed applicability.** A human confirmation was only checked for agreement with the business record, never against the value the trigger requires. A scenario confirmed as `false` therefore passed. The evaluator now returns `not_applicable` when a confirmed value does not satisfy the trigger.
+- **Exception lifecycle scope.** `exception_path.lifecycle_stage` was descriptive only. The Article 9 exception now applies only when the runtime record's `lifecycle_stage` matches; a missing stage routes to `review`, and a different stage leaves the ordinary label test in force.
+- **Human review attribution.** A completed human review now needs `reviewer_role` and `reviewed_at` before it can close a control; otherwise the control stays in `review`. The runtime evidence schema enforces this for completed reviews.
+- **Metadata values.** Metadata expressions now reject empty strings as well as null values.
+- **Deep Synthesis Article 14(2) prompt.** The provider-prompt control now requires evidence that the prompt covers obtaining the edited person's separate consent, not only informing them.
+- **Source fidelity.** `CN-AIGC-SAFETY-001` previously stored a condensed paraphrase as `source_text_zh`. It now stores the verbatim lead sentence and item (1) of Article 4 from the official CAC text, with a new excerpt hash.
+- **Annotation drift.** Eight `clause-decomposition.csv` entries had drifted from the canonical norm artifacts (actor, action, object). They are synchronised, and the validator now checks these fields.
+
+Still open: the GENAI Article 15 complaint control does not yet separate the ongoing mechanism duty from per-complaint handling; dissemination metadata fields under GB 45438-2025 Appendix E are not yet modelled by lifecycle stage; `content_production_elements` is a local field, not a named element of the standard; Article 17 change and cancellation filings are not modelled; and the policy for negative results on review-gated controls is not yet specified.
+
 ## Legal source accuracy updates
 
 The current mapping corrects several source references and narrows automation boundaries:

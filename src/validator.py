@@ -161,6 +161,10 @@ def validate_cross_file_integrity() -> dict:
                 _append(errors, control_id, f"{field} is inconsistent between norm artifact and clause decomposition")
             if row and field in row and row[field] and row[field] != expected:
                 _append(errors, control_id, f"{field} is inconsistent between norm artifact and traceability matrix")
+        if decomposition:
+            for column, key in (("regulated_actor", "regulated_actor"), ("modality", "modality"), ("required_action", "action"), ("regulated_object", "object")):
+                if decomposition.get(column) and decomposition[column] != norm["norm"].get(key):
+                    _append(errors, control_id, f"{column} is inconsistent between norm artifact and clause decomposition")
         if control["automation_level"] != norm["interpretation"]["automation_level"]:
             _append(errors, control_id, "automation_level is inconsistent between mapping and norm artifact")
         if control["review"]["interpretation_version"] != norm["review"]["interpretation_version"] or trace["interpretation_version"] != norm["review"]["interpretation_version"]:
@@ -214,6 +218,7 @@ def validate_cross_file_integrity() -> dict:
         "valid": not errors,
         "checks": [
             "complete norm artifact coverage", "source, article, date, URL, and specificity consistency",
+            "actor, modality, action, and object consistency with clause decomposition",
             "automation and interpretation-version consistency", "expression variable declarations",
             "control derivation and component semantics", "human-confirmation declarations",
             "automation-profile consistency", "scoped pass exceptions", "orphan norm detection", "low-specificity source warnings",

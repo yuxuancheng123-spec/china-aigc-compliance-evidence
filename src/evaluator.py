@@ -112,6 +112,20 @@ def _check_human_confirmations(control: dict, evidence: dict[str, Any]) -> tuple
     return checked, None
 
 
+def _confirmed_conditions_hold(control: dict, evidence: dict[str, Any]) -> bool:
+    """A consistent confirmation only shows the record agrees with the business fact.
+
+    The confirmed value must also equal the value the trigger requires; otherwise the
+    control is confirmed not to apply.
+    """
+    applicability = control.get("applicability", {})
+    conditions = applicability.get("conditions", {})
+    for field in applicability.get("human_confirmed_fields", []):
+        if field in conditions and evidence["human_confirmations"][field]["value"] != conditions[field]:
+            return False
+    return True
+
+
 def _human_review(control: dict, evidence: dict[str, Any]) -> tuple[str | None, dict | None]:
     key = control.get("required_human_review", {}).get("review_key")
     if not key:
@@ -131,6 +145,14 @@ def _review_result(control: dict, evidence: dict[str, Any], machine_result: str,
             requires_human_confirmation=True, confirmations_checked=confirmations,
             human_review_key=review_key, review_reason=f"required human review '{review_key}' has not been completed",
         )
+    unattributed = [key for key in ("reviewer_role", "reviewed_at") if not review.get(key)]
+    if unattributed:
+        return _base_result(
+            control, "review", control["outcomes"]["review"], machine_result=machine_result,
+            requires_human_confirmation=True, confirmations_checked=confirmations,
+            human_review_key=review_key, human_review_completed=True,
+            review_reason=f"required human review '{review_key}' lacks attribution: {', '.join(unattributed)}",
+        )
     result = review.get("result")
     if result not in {"pass", "fail"}:
         return _base_result(
@@ -149,6 +171,17 @@ def _exception_applies(control: dict, evidence: dict[str, Any], confirmations: l
     exception = control.get("exception_path")
     if not exception or any(field not in evidence for field in exception["required_fields"]):
         return None
+    declared_stage = exception.get("lifecycle_stage")
+    if declared_stage:
+        actual_stage = evidence.get("lifecycle_stage")
+        if actual_stage in (None, ""):
+            return _base_result(
+                control, "review", control["outcomes"]["review"], machine_result="review",
+                confirmations_checked=confirmations,
+                review_reason=f"exception requires lifecycle_stage '{declared_stage}' but the runtime record does not state its stage",
+            )
+        if actual_stage != declared_stage:
+            return None
     try:
         if _safe_eval(exception["expression"], evidence):
             status = exception.get("outcome", "pass")
@@ -173,6 +206,11 @@ def evaluate_control(control: dict, evidence: dict[str, Any]) -> dict:
             control, "review", control["outcomes"]["review"], machine_result="review",
             requires_human_confirmation=True, confirmations_checked=confirmations,
             review_reason=confirmation_problem,
+        )
+    if not _confirmed_conditions_hold(control, evidence):
+        return _base_result(
+            control, "not_applicable", control["outcomes"]["not_applicable"], machine_result="not_applicable",
+            confirmations_checked=confirmations,
         )
 
     missing = [field for field in control["evidence"]["required_fields"] if field not in evidence]

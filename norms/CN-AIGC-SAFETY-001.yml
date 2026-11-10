@@ -5,14 +5,14 @@ source: &genai_safety_source
   document_title_en: Interim Measures for the Management of Generative AI Services
   issuing_authority: 国家互联网信息办公室等七部门
   article: 第四条
-  source_text_zh: 提供和使用生成式人工智能服务，应当遵守法律、行政法规，尊重社会公德和伦理道德，不得生成法律、行政法规禁止的内容。
-  working_translation_en: Providers and users of generative AI services should comply with law and ethics and should not generate content prohibited by laws or administrative regulations.
+  source_text_zh: 提供和使用生成式人工智能服务，应当遵守法律、行政法规，尊重社会公德和伦理道德，遵守以下规定：（一）坚持社会主义核心价值观，不得生成煽动颠覆国家政权、推翻社会主义制度，危害国家安全和利益、损害国家形象，煽动分裂国家、破坏国家统一和社会稳定，宣扬恐怖主义、极端主义，宣扬民族仇恨、民族歧视，暴力、淫秽色情，以及虚假有害信息等法律、行政法规禁止的内容；
+  working_translation_en: Providers and users of generative AI services should comply with laws, administrative regulations, social morality and ethics, and observe the listed rules. Item (1), the only item selected here, prohibits generating content prohibited by laws or administrative regulations, with listed examples.
   source_url: https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm
   source_url_specificity: document_page
   promulgation_date: '2023-07-10'
   effective_date: '2023-08-15'
   retrieved_at: '2026-07-15'
-  source_snapshot: {retrieved_at: '2026-07-15', source_excerpt_sha256: 021079ec6fda5cb80f72942e5a3cc0aedd4ff61414a5e652b1128b6182e41c68, source_document_sha256: null, verification_status: metadata_only}
+  source_snapshot: {retrieved_at: '2026-11-10', source_excerpt_sha256: fb97a910ebe8d55c97c428196280a29c09d7cf4b5553f1059355b3786d9c7f48, source_document_sha256: null, verification_status: metadata_only}
 norm: {regulated_actor: generative_ai_service_provider, modality: must_not, action: generate_prohibited_content, object: generated_content, trigger: {content_is_generated_for_user: true}, exceptions: [], deadline_or_timing: during_service}
 interpretation: {control_objective: Human review of selected content-safety obligations, automation_level: human_review_required, ambiguity_level: high, reviewer_note: Effective measures and content legality are not reducible to one Boolean check.}
 evidence: {evidence_type: safety_review_record, required_fields: [content_is_generated_for_user]}
