@@ -44,7 +44,7 @@ We make three contributions. (1)~We separate a control's automation profile into
 
 Representing exceptions, priorities, and alternative interpretations is well established. LegalRuleML represents defeasible rules, deontic modalities, temporal parameters, and links to sources~\cite{legalRuleMl2021}; defeasible logic and its reasoners handle rules that are overridden by exceptions~\cite{prakken1997logical,lam2009spindle}; DAPRECO encodes GDPR provisions in reified input/output logic~\cite{robaldo2020dapreco}; Catala gives statutory computations a programming language with default logic~\cite{merigoux2021catala}. FLINT makes interpretations of sources explicit and separates legal rules from case-handling requirements~\cite{doesburg2019aliens}. Witt et al.\ distinguish technical validation from legal alignment and use independent legally trained coders~\cite{witt2024encoding}. Work on business process compliance surveys how obligations are checked against process models and execution traces~\cite{hashmi2018compliance,francesconi2023patterns}, and OSCAL models controls and assessment results for security frameworks~\cite{nistOscal}.
 
-We do not claim greater expressive power than these formalisms. Our claim concerns how far a \emph{result} may travel once a check has run. The failure modes below are formalism-independent: a defeasible theory in which an Article~9 exception defeats the labeling obligation reproduces scope mismatch unless the lifecycle stage is an antecedent of the defeater. Our counterexample method borrows from property-based testing~\cite{claessen2000quickcheck}: each counterexample perturbs one boundary and asks whether the outcome changes as the legal analysis says it should.
+We do not claim greater expressive power than these formalisms. Our claim concerns how far a \emph{result} may travel once a check has run. The failure modes below are formalism-independent. Consider a defeasible theory with a rule $r_1\colon \mathit{aigc}(x) \Rightarrow O\,\mathit{label}(x)$ and a defeater $r_2\colon \mathit{art9}(x) \leadsto \neg O\,\mathit{label}(x)$, where $\mathit{art9}$ holds when the request, agreement, and log conditions are met. It derives no labeling obligation for $x$ at every later stage unless the stage is an antecedent of $r_2$. The representation can express the boundary; nothing in it requires the boundary to be expressed. What is missing is a discipline for checking that results stay within it. Our counterexample method borrows from property-based testing~\cite{claessen2000quickcheck}: each counterexample perturbs one boundary and asks whether the outcome changes as the legal analysis says it should.
 
 \section{Representation}
 
@@ -67,6 +67,17 @@ Complaint handling & computed & automated & keyed review \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\paragraph{Worked example.} The norm for Articles~4 and~9 of the Labeling Measures yields two controls over the same facts. The existence control is applicable when an output is AI-generated, user-facing, and within an explicit-label scenario; the last condition requires a recorded confirmation. Its evidence test is the proposition below; its exception path requires the Article~9 evidence \emph{and} a lifecycle stage of delivery to the requesting user.
+
+\begin{verbatim}
+test:      visible_label_present == true
+exception: request, agreement terms, logs kept,
+           retention >= 6 months,
+           lifecycle_stage == delivery_to_requesting_user
+\end{verbatim}
+
+\noindent Given an AI-generated, user-facing output with a confirmed scenario and \texttt{visible\_label\_present: true}, the existence control returns \emph{pass}. Removing the confirmation record returns \emph{review} although the label fact is unchanged. The prominence control, fed the same record, returns \emph{review} until a keyed review with a reviewer role and date closes it. The same fact thus supports different conclusions because the controls test different propositions and carry different finality.
 
 \section{Three Failure Modes}
 
