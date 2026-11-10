@@ -1,0 +1,135 @@
+% ICAIL 2027 short-paper draft.
+% Compile with XeLaTeX + BibTeX (Overleaf: Menu -> Compiler -> XeLaTeX). Chinese terms need xeCJK.
+% Double-blind: the `anonymous` option hides authors; do not add the repository URL before acceptance.
+% Formatting assumes the ACM sigconf template used by previous ICAIL editions; check the ICAIL 2027 call
+% for page limits and template before submission.
+\documentclass[sigconf,review,anonymous]{acmart}
+
+\usepackage{iftex}
+\ifXeTeX
+  \usepackage{xeCJK}
+  \setCJKmainfont{FandolSong-Regular}
+\fi
+\usepackage{booktabs}
+
+\settopmatter{printacmref=false}
+\setcopyright{none}
+\renewcommand\footnotetextcopyrightpermission[1]{}
+
+\begin{document}
+
+\title{When Can Software Close a Legal Check?}
+\subtitle{Review Boundaries and Counterexamples in Executable Controls for Chinese AIGC Regulation}
+
+\author{Anonymous Author(s)}
+\affiliation{\institution{Withheld for review}\country{}}
+
+\begin{abstract}
+Executable compliance controls often carry a single label: automated or manual. We argue that this label hides three separate questions---whether a control applies, what its evidence test can establish, and whether its result may close without a person---and that confusing them produces a recurring kind of error: a check that claims more than it shows. Working from selected Chinese provisions on AI-generated content, we identify three failure modes: scope mismatch, derivation mismatch, and promotion of an observation into a judgment. We then apply targeted counterexamples to a prototype built around these very distinctions. All 21 designed validation cases had passed; eleven counterexamples exposed five defects, each an instance of one of the three failure modes. We report the defects, their fixes, and a negative-result rule that follows from the analysis. The contribution is a failure-mode account of executable legal controls and evidence that designed cases alone do not test it.
+\end{abstract}
+
+\keywords{AI and law, rules as code, compliance checking, legal knowledge representation, AIGC regulation, testing}
+
+\maketitle
+
+\section{Introduction}
+
+A compliance control that returns \emph{pass} invites the reading that a legal duty has been met. Often the control has tested something narrower: that a label exists, not that it is prominent; that an exception was documented for delivery to one user, not that later publication is covered; that a review record says \emph{completed}, not that anyone accountable made the judgment. When the narrower proposition is reported as the broader one, software has quietly become the interpreter of the law.
+
+This paper asks a focused question: \emph{which distinctions must an executable legal control record so that its result does not claim more than its evidence supports, and do designed test cases reveal when an implementation breaks them?} We study the question with selected Chinese provisions on AI-generated content (AIGC), a domain where new labeling rules, deep synthesis rules, and personal information law overlap and where open-textured terms---\emph{prominent} (显著), \emph{convenient} (便捷), \emph{timely} (及时)---sit next to checkable facts such as metadata fields.
+
+We make three contributions. (1)~We separate a control's automation profile into applicability, evidence testing, and finality, and record each control's derivation from its source as a direct duty, a derived organizational safeguard, or a technical implementation. (2)~We identify three failure modes in which a result overreaches: \emph{scope mismatch}, \emph{derivation mismatch}, and \emph{promotion}. (3)~We test a prototype built around these distinctions with targeted counterexamples. Its 21 designed cases all passed, yet eleven counterexamples exposed five defects, each an instance of one of the three modes. The prototype covers five instruments, 11 norm records, and 13 controls. It is a purposive case study, not a representative sample of Chinese AI law.
+
+\section{Related Work}
+
+Representing exceptions, priorities, and alternative interpretations is well established. LegalRuleML represents defeasible rules, deontic modalities, temporal parameters, and links to sources~\cite{legalRuleMl2021}; defeasible logic and its reasoners handle rules that are overridden by exceptions~\cite{prakken1997logical,lam2009spindle}; DAPRECO encodes GDPR provisions in reified input/output logic~\cite{robaldo2020dapreco}; Catala gives statutory computations a programming language with default logic~\cite{merigoux2021catala}. FLINT makes interpretations of sources explicit and separates legal rules from case-handling requirements~\cite{doesburg2019aliens}. Witt et al.\ distinguish technical validation from legal alignment and use independent legally trained coders~\cite{witt2024encoding}. Work on business process compliance surveys how obligations are checked against process models and execution traces~\cite{hashmi2018compliance,francesconi2023patterns}, and OSCAL models controls and assessment results for security frameworks~\cite{nistOscal}.
+
+We do not claim greater expressive power than these formalisms. Our claim concerns how far a \emph{result} may travel once a check has run. The failure modes below are formalism-independent. Consider a defeasible theory with a rule $r_1\colon \mathit{aigc}(x) \Rightarrow O\,\mathit{label}(x)$ and a defeater $r_2\colon \mathit{art9}(x) \leadsto \neg O\,\mathit{label}(x)$, where $\mathit{art9}$ holds when the request, agreement, and log conditions are met. It derives no labeling obligation for $x$ at every later stage unless the stage is an antecedent of $r_2$. The representation can express the boundary; nothing in it requires the boundary to be expressed. What is missing is a discipline for checking that results stay within it. Our counterexample method borrows from property-based testing~\cite{claessen2000quickcheck}: each counterexample perturbs one boundary and asks whether the outcome changes as the legal analysis says it should.
+
+\section{Representation}
+
+A \emph{norm record} stores the provision's actor, modality, action, object, trigger, exceptions, timing, ambiguity, and review status, with the verbatim Chinese source excerpt and its hash. A \emph{control} is an executable proposition derived from a norm; one norm may yield several controls. \emph{Runtime evidence} is a separate record of supplied facts, human confirmations of applicability, and keyed human reviews. The evaluator returns \emph{pass}, \emph{fail}, \emph{review}, or \emph{not\_applicable}, and reports a machine result separately from the final status.
+
+Each control carries a three-part automation profile (Table~\ref{tab:profile}). \emph{Applicability} is either computed from facts or requires a recorded human confirmation. The \emph{evidence test} is the proposition the software checks. \emph{Finality} states whether the control may close on that test, after a confirmation, or only after a keyed review. Separately, each control declares its derivation: a direct legal requirement, a derived organizational control, or a technical implementation. The two labels are orthogonal: a derived control may be fully testable, and a direct duty may never close without review.
+
+\begin{table}[t]
+\caption{Automation profiles of four controls.}
+\label{tab:profile}
+\small
+\begin{tabular}{@{}p{2.5cm}p{1.6cm}p{1.5cm}p{1.6cm}@{}}
+\toprule
+Control & Applicability & Evidence test & Finality \\
+\midrule
+Label existence & confirmed & automated & after confirmation \\
+Label prominence & confirmed & automated & keyed review \\
+Metadata fields & computed & automated & automated \\
+Complaint handling & computed & automated & keyed review \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Worked example.} The norm for Articles~4 and~9 of the Labeling Measures yields two controls over the same facts. The existence control is applicable when an output is AI-generated, user-facing, and within an explicit-label scenario; the last condition requires a recorded confirmation. Its evidence test is the proposition below; its exception path requires the Article~9 evidence \emph{and} a lifecycle stage of delivery to the requesting user.
+
+\begin{verbatim}
+test:      visible_label_present == true
+exception: request, agreement terms, logs kept,
+           retention >= 6 months,
+           lifecycle_stage == delivery_to_requesting_user
+\end{verbatim}
+
+\noindent Given an AI-generated, user-facing output with a confirmed scenario and \texttt{visible\_label\_present: true}, the existence control returns \emph{pass}. Removing the confirmation record returns \emph{review} although the label fact is unchanged. The prominence control, fed the same record, returns \emph{review} until a keyed review with a reviewer role and date closes it. The same fact thus supports different conclusions because the controls test different propositions and carry different finality.
+
+\section{Three Failure Modes}
+
+\subsection{Scope mismatch}
+
+A result covers a different activity, stage, or period than the duty it reports on. Article~9 of the Labeling Measures lets a provider deliver content without an explicit label at a user's request, once a user agreement sets out the user's labeling obligations and responsibility and logs are kept for at least six months~\cite{aigcLabelingMeasures2025}. The exception concerns delivery by the provider; implicit labels (Article~5), dissemination platforms (Article~6), and users who publish (Article~10) are addressed separately. A \emph{pass} on the exception therefore cannot stand for compliance at publication. Scope can also err in the other direction: Article~15 of the Generative AI Measures requires a complaint mechanism, an accessible entry point, and a published process and time limit, as well as the handling of each complaint~\cite{genaiMeasures2023}. Conditioning the whole article on receipt of a complaint silently drops the standing duty.
+
+\subsection{Derivation mismatch}
+
+The proposition a control tests differs from the duty it claims to implement---broader, narrower, or of a different kind. Article~14(2) of the Deep Synthesis Provisions requires providers of face and voice editing functions to ``prompt users to inform the edited individual according to law and obtain that individual's separate consent''~\cite{deepSynthesisProvisions2022}. The final text leaves open who must obtain the consent. The draft for comment was unambiguous: the provider prompts users to inform \emph{and} obtain the consent of the person whose information is edited~\cite{deepSynthesisDraft2022}. The regulator's official Q\&A repeats the final wording~\cite{deepSynthesisQA2022}. We therefore read the provider's direct duty as a prompt with two parts and treat a provider's retention and review of consent evidence as a derived organizational control. Two mismatches follow. Presenting the safeguard as the statutory duty overstates the law. A prompt control that checks only the instruction to inform tests half of the duty. A residual question remains for legal review: when the user is an individual acting in a personal capacity, the Personal Information Protection Law may not apply~\cite{pipl2021}, and the content of ``according to law'' is then uncertain.
+
+\subsection{Promotion}
+
+Evidence for one proposition is treated as establishing a stronger one. That a label is present does not establish that it is prominent; that a review record says \emph{completed} does not establish that an accountable person reviewed; that a metadata key exists does not establish that it holds a value. Promotion also runs in the negative direction: the absence of a prompt record does not establish which duty was breached. This motivates an asymmetric rule. On controls whose finality requires review, a failed evidence test yields a machine \emph{fail} and a final \emph{review} until the keyed reviewer confirms it, and a reviewer's \emph{pass} cannot overturn a failed test; the evidence record must be corrected instead.
+
+\section{Counterexample Evaluation}
+
+\paragraph{Method.} The prototype was evaluated at a fixed snapshot with 21 designed cases, each authored with its expected outcome; all passed. We then wrote counterexamples, each perturbing a single boundary from the analysis: the value of a confirmed trigger, the lifecycle stage of an exception, the attribution of a review, the emptiness of a field, and event versus standing duties. Eleven counterexamples passed the runtime-evidence schema and were executed unchanged against the snapshot. Their outcomes were compared with the routing that the analysis in Section~4 requires. After the fixes, two counterexamples were re-expressed for redesigned controls (the split complaint controls and stage-aware metadata fields); the before column reports the original inputs.
+
+\paragraph{Results.} Four counterexamples routed as intended; for example, a present label without a prominence review stayed in \emph{review}. Seven exposed five defects (Table~\ref{tab:defects}). Each defect is an instance of a failure mode from Section~4, although the prototype had been designed to prevent exactly these failures. The confirmed-trigger defect is instructive. The evaluator checked that a human confirmation agreed with the business record but never that the confirmed value satisfied the trigger, so a scenario confirmed as \emph{out of scope} passed. Agreement between two records was promoted into satisfaction of a legal condition. All five defects were fixed. The counterexamples, two further cases added with the fixes, and the updated designed cases (now 31) are kept as regression tests. Separately, rereading Article~14(2) exposed the half-prompt mismatch in Section~4.2, which no counterexample had targeted.
+
+\begin{table}[t]
+\caption{Defects exposed by counterexamples at the evaluated snapshot, with the outcome after the fix.}
+\label{tab:defects}
+\small
+\begin{tabular}{@{}p{3.25cm}p{0.9cm}p{1.1cm}p{1.3cm}@{}}
+\toprule
+Counterexample & Mode & Before & After \\
+\midrule
+Trigger confirmed false & promotion & pass & not\_applicable \\
+Art.~9 exception at public dissemination & scope & pass & fail \\
+Review record without reviewer or date (2 cases) & promotion & pass/fail & review \\
+Metadata keys present but empty or null (2 cases) & promotion & pass & fail \\
+No complaint received; standing duty skipped & scope & n/a & review \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Why designed cases missed them.} The designed cases were written by the person who wrote the controls, from the same reading of the law. They exercised the paths that reading anticipated: an unconfirmed scenario, a missing label, a completed review. None varied a dimension the implementation silently ignored, such as the stage of an exception or the value of a confirmation. Counterexamples derived from the failure modes target these dimensions directly. This is the practical value of the taxonomy: it tells a tester where to look.
+
+\section{Discussion and Limitations}
+
+The results concern routing behavior, not legal correctness. Every interpretation here is a single author's; no second-coder agreement study or qualified review in PRC law has been completed, and the Article~14(2) reading in particular needs one. The counterexamples were also constructed by us, with AI assistance, although they were derived systematically from the failure modes rather than from expected paths. The corpus is small and purposive, all records are synthetic, and English renderings of Chinese provisions are working translations. Two choices rest on interpretation: the reading of an implicit-label rule in the national standard GB~45438-2025~\cite{gb45438}, and the asymmetric negative-result rule, which is a design position rather than a legal requirement. Natural next steps are an independent coding study of the 11 norms, review of the three cases by PRC-qualified lawyers, and automatic generation of counterexamples from control definitions.
+
+\section{Conclusion}
+
+Whether software may close a legal check depends on three separate questions, and a result overreaches when they are conflated. Scope mismatch, derivation mismatch, and promotion describe how this happens in practice, including inside a prototype built to prevent it. Designed cases confirmed the expected paths; counterexamples derived from the failure modes found the defects. Executable controls should be tested against the ways their results can claim too much, not only against the cases their authors expect.
+
+\section*{Disclosure}
+Generative AI tools assisted with drafting, constructing and running counterexamples, and checking sources. All outputs were reviewed by the author, who is responsible for the content. % TODO(author): adjust to match actual use and the ICAIL 2027 AI policy.
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}
